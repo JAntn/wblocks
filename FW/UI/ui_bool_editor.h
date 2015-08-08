@@ -19,8 +19,8 @@ class C_UiBoolEditor : public QDialog
 
 public:
 
-    explicit            C_UiBoolEditor(C_BoolRecord& record, C_Document& document, QWidget* parent=0);
-                        ~C_UiBoolEditor();
+                        C_UiBoolEditor(C_BoolRecord& record, C_Document& document, QWidget* parent=0);
+                        ~C_UiBoolEditor() override;
 
     C_POINTER           (Record,   C_BoolRecord)
     C_POINTER           (Document, C_Document)

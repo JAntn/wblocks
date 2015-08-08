@@ -6,7 +6,7 @@
 #include <QWidget>
 
 namespace Ui {
-class C_UiRecordContainerView;
+class C_UiRecordStructView;
 }
 
 class C_UiRecordTableModel;
@@ -18,11 +18,10 @@ class C_UiRecordStructView : public QWidget
     Q_OBJECT
 
 public:
-    explicit                      C_UiRecordStructView(C_Document& document, QWidget *parent = 0);
-                                  ~C_UiRecordStructView();
+    explicit C_UiRecordStructView(C_Document& document, QWidget *parent = 0);
+    ~C_UiRecordStructView() override;
 
     void                          Update();
-
 
     C_POINTER                     (Document,         C_Document)
     C_POINTER                     (RecordTableModel, C_UiRecordTableModel)
@@ -38,7 +37,7 @@ private slots:
 
 private:
 
-    Ui::C_UiRecordContainerView*  ui;
+    Ui::C_UiRecordStructView*  ui;
 };
 
 #endif // UIRECORDTABLEVIEW_H

@@ -1,28 +1,27 @@
-#ifndef C_RCSTRING_H
-#define C_RCSTRING_H
+#ifndef C_STRING_RECORD_H
+#define C_STRING_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
 
-class C_Document;
-
-class C_StringRecord : public C_Record{
+class C_StringRecord : public C_Record
+{
 
 public:
 
+    explicit C_StringRecord( C_DataState& state, C_Variant* parent );
+    C_StringRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
 
-    explicit            C_StringRecord(QString name, QString value, C_Variant* parent=0);
+    ~C_StringRecord() override;
 
-    QString             Id()        const override;
-    QString             Name()      const override;
     QString             Class() const override;
     QString             Script()    const override;
     C_RecordStruct*     Struct()    const override;
 
-    void 			    GetState(C_DataState& state) override;
-    void                SetState(C_DataState& value_list) override;
+    void 			    GetState( C_DataState& state ) override;
+    void                SetState( C_DataState& value_list ) override;
 
-    void                ShowEditor(C_Document& document) override;
+    void                ShowEditor( C_Document& document ) override;
 
 private:
 
@@ -30,16 +29,17 @@ private:
     friend class        C_StringRecordFactory;
 };
 
-class C_StringRecordFactory : public C_RecordFactory {
+class C_StringRecordFactory : public C_RecordFactory
+{
 public:
 
-    C_SINGLETON_CLASS(C_StringRecordFactory)
+    C_SINGLETON_CLASS( C_StringRecordFactory )
 
     QString             RecordClass() const override;
 
-    C_Record*           CreateInstance(QString name, QString value, C_Variant* parent=0) override;
-    C_Record*           CreateInstance(C_DataState& state, C_Variant* parent=0) override;
+    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0 ) override;
+    C_Record*           CreateInstance( C_DataState& state, C_Variant* parent = 0 ) override;
 
 };
 
-#endif // C_RCSTRING_H
+#endif // C_STRING_RECORD_H

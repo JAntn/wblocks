@@ -21,7 +21,6 @@ C_UiStructEditor::~C_UiStructEditor()
     delete ui;
 }
 
-
 void C_UiStructEditor::on_ButtonBox_accepted()
 {
     if(!ui->NameLineEdit->text().contains(QRegExp("^\\S+$"))) {

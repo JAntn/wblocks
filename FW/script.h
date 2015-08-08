@@ -13,7 +13,9 @@ class C_Script : public C_Variant
 {
 public:
 
-    explicit            C_Script(C_Document& document, C_Variant* parent=0);
+    explicit C_Script(C_Document& document, C_Variant* parent=0);
+    ~C_Script() override;
+
     void                Generate(C_RecordStruct& record_container);
 
     C_POINTER           (Document,   C_Document)

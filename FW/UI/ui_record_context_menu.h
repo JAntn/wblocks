@@ -14,12 +14,12 @@ class C_UiRecordContextMenu : QObject
 
 public:
 
-    explicit            C_UiRecordContextMenu(C_Document& document,
+                        C_UiRecordContextMenu(C_Document& document,
                                   const QPoint& position,
                                   C_Record* record = 0,
                                   QObject* parent = 0);
 
-                        ~C_UiRecordContextMenu(){}
+                        ~C_UiRecordContextMenu() override;
 
     C_POINTER           (Record,   C_Record)
     C_POINTER           (Document, C_Document)

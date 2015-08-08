@@ -38,6 +38,12 @@
 #include <list>
 using std::list;
 
+#define FLAG_ALL          0xFF
+#define FLAG_ADD          0x01
+#define FLAG_REMOVE       0x02
+#define FLAG_EDIT         0x04
+#define FLAG_ADD_SCENE    0x08
+#define FLAG_REMOVE_SCENE 0x10
 
 #endif // MACRO
 

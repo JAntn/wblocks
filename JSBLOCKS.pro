@@ -98,6 +98,9 @@ FORMS += \
     FW/UI/scripteditor.ui \
     FW/UI/recordstructview.ui
 
+DISTFILES += \
+    format_code.astylerc
+
 
 
 

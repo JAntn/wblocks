@@ -17,8 +17,9 @@ class C_UiAddRecord : public QDialog
     Q_OBJECT
 
 public:
-    explicit            C_UiAddRecord(C_Document& document, int position = -1, QWidget *parent = 0);
-                        ~C_UiAddRecord();
+
+    explicit C_UiAddRecord(C_Document& document, int position = -1, QWidget *parent = 0);
+    ~C_UiAddRecord() override;
 
     bool                CheckFormData() const;
 

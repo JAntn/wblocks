@@ -1,31 +1,47 @@
 #include "FW/RC/script_record.h"
 #include "FW/RC/string_record.h"
+#include "FW/RC/record_struct.h"
+#include "FW/RC/bool_record.h"
+#include "FW/RC/string_record.h"
 
 #include "FW/document.h"
 #include "FW/data_state.h"
 
-#include "bool_record.h"
-
 #include "FW/UI/ui_main_window.h"
-#include "FW/RC/string_record.h"
-#include <FW/UI/ui_script_editor.h>
-#include "FW/RC/record_struct.h"
+#include "FW/UI/ui_script_editor.h"
 
 #define CLASS_NAME "Script"
+#include <qDebug>
 
-C_ScriptRecord::C_ScriptRecord(QString name, C_Variant* parent)
-    : C_Record(name,"0",parent)
+C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value,  C_Variant* parent )
+    : C_Record( id, name, value, parent )
 {
-    m_Records = new C_RecordStruct(name,this);
+    m_Records = new C_RecordStruct( m_Name, this );
+    Records().SetFlags( FLAG_EDIT | FLAG_ADD_SCENE );
+    m_IsFromFile = static_cast<C_BoolRecord*>   ( Records().CreateRecord( "IsFromFile", "False", "Bool" ) );
+    m_Code       = static_cast<C_StringRecord*> ( Records().CreateRecord( "Code", "//Script: \n", "String" ) );
+    m_FileName   = static_cast<C_StringRecord*> ( Records().CreateRecord( "FileName", "", "String" ) );
 
-    m_IsFromFile = static_cast<C_BoolRecord*>   ( Records().CreateRecord("IsFromFile", "False", "Bool") );
-    m_Code       = static_cast<C_StringRecord*> ( Records().CreateRecord("Code", "//Script: \n", "String") );
-    m_FileName   = static_cast<C_StringRecord*> ( Records().CreateRecord("FileName", "", "String") );
+    m_IsFromFile ->SetFlags( ~FLAG_REMOVE );
+    m_Code       ->SetFlags( ~FLAG_REMOVE );
+    m_FileName   ->SetFlags( ~FLAG_REMOVE );
+}
+
+C_ScriptRecord::C_ScriptRecord( C_DataState& state, C_Variant* parent )
+    : C_Record( "", "", "", parent )
+{
+    m_Records = new C_RecordStruct( "", this );
+    Records().SetFlags( FLAG_EDIT | FLAG_ADD_SCENE );
+    SetState( state );
+}
+
+C_ScriptRecord::~C_ScriptRecord()
+{
+    // void
 }
 
 QString C_ScriptRecord::Script() const
 {
-    // TODO load file
     return Code().Value();
 }
 
@@ -34,24 +50,14 @@ C_RecordStruct* C_ScriptRecord::Struct() const
     return m_Records;
 }
 
-QString C_ScriptRecord::Name() const
-{
-    return m_Name;
-}
-
 QString C_ScriptRecord::Value() const
 {
-    return QString::number(Records().Size());
+    return QString::number( Records().Size() );
 }
 
-void C_ScriptRecord::SetValue(QString)
+void C_ScriptRecord::SetValue( QString )
 {
     // void
-}
-
-QString C_ScriptRecord::Id() const
-{
-    return m_Id;
 }
 
 QString C_ScriptRecord::Class() const
@@ -59,63 +65,64 @@ QString C_ScriptRecord::Class() const
     return CLASS_NAME;
 }
 
-void C_ScriptRecord::ShowEditor(C_Document& document)
-{
-    QWidget* dialog = new C_UiScriptEditor(*this,document,&document.MainWindow());
-    dialog->show();
-}
 
-void C_ScriptRecord::GetState(C_DataState& state)
+void C_ScriptRecord::GetState( C_DataState& state )
 {
     QStringList row;
+    row.append( Id() );
+    row.append( Name() );
+    row.append( Value() );
+    row.append( Class() );
+    state.Append( row );
 
-    row.append(Id());
-    row.append(Name());
-    row.append(Value());
-    row.append(Class());
-
-    state.Insert(row);
-
-    m_IsFromFile ->GetState(state);
-    m_Code       ->GetState(state);
-    m_FileName   ->GetState(state);
-}
-
-void C_ScriptRecord::SetState(C_DataState& state)
-{
-    QStringList row;
-
-    state.Extract(row);
-
-    m_Id    = row.at(0);
-    m_Name  = row.at(1);
-    m_Value = row.at(2);
-
-    m_IsFromFile ->SetState(state);
-    m_Code       ->SetState(state);
-    m_FileName   ->SetState(state);
-
-    if( m_IsFromFile->Value() == "True" ) {
-        m_Code->SetValue(C_Document::LoadTextFile(m_FileName->Value()));
+    for( C_Variant* node : Records() )
+    {
+        auto record = static_cast<C_Record*>( node );
+        record->GetState( state );
     }
 }
 
-
-C_Record* C_ScriptRecordFactory::CreateInstance(QString name, QString, C_Variant* parent)
+void C_ScriptRecord::SetState( C_DataState& state )
 {
-    C_ScriptRecord *record = new C_ScriptRecord(name,parent);
+    Records().Clear();
 
-    record->m_Id = C_RecordFactory::GenerateId();
+    QStringList row;
+    state.Read( row );
+    m_Id    = row.at( 0 );
+    m_Name  = row.at( 1 );
+    m_Value = row.at( 2 );
+    int size = m_Value.toInt();
 
+    for( int count = 0; count < size; ++count )
+        Records().CreateRecord( state );
+
+    m_IsFromFile = static_cast<C_BoolRecord*>( Records().FromName( "IsFromFile" ) );
+    m_FileName   = static_cast<C_StringRecord*>( Records().FromName( "FileName" ) );
+    m_Code       = static_cast<C_StringRecord*>( Records().FromName( "Code" ) );
+
+    m_IsFromFile ->SetFlags( ~FLAG_REMOVE );
+    m_Code       ->SetFlags( ~FLAG_REMOVE );
+    m_FileName   ->SetFlags( ~FLAG_REMOVE );
+
+    if( IsFromFile().Value() == "True" )
+        Code().SetValue( C_Document::LoadTextFile( FileName().Value() ) );
+}
+
+void C_ScriptRecord::ShowEditor( C_Document& document )
+{
+    QWidget* dialog = new C_UiScriptEditor( *this, document, &document.MainWindow() );
+    dialog->show();
+}
+
+C_Record* C_ScriptRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
+{
+    C_ScriptRecord* record = new C_ScriptRecord( C_RecordFactory::GenerateId(), name, value, parent );
     return record;
 }
 
-C_Record* C_ScriptRecordFactory::CreateInstance(C_DataState& state, C_Variant* parent)
+C_Record* C_ScriptRecordFactory::CreateInstance( C_DataState& state, C_Variant* parent )
 {
-    C_ScriptRecord *record = new C_ScriptRecord(state.Data().at(1),parent);
-
-    record->SetState(state);
-
+    C_ScriptRecord* record = new C_ScriptRecord( state, parent );
     return record;
 }
 

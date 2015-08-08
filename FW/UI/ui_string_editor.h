@@ -19,8 +19,8 @@ class C_UiStringEditor : public QDialog
 
 public:
 
-    explicit                      C_UiStringEditor(C_StringRecord& record, C_Document& document, QWidget* parent = 0);
-                                  ~C_UiStringEditor();
+                                  C_UiStringEditor(C_StringRecord& record, C_Document& document, QWidget* parent = 0);
+                                  ~C_UiStringEditor() override;
 
     C_POINTER                    (Record,   C_StringRecord)
     C_POINTER                    (Document, C_Document)

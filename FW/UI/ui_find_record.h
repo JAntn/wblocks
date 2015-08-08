@@ -17,8 +17,9 @@ class C_UiFindRecord : public QDialog
     Q_OBJECT
 
 public:
-    explicit            C_UiFindRecord(C_Document& document, QWidget *parent = 0);
-                        ~C_UiFindRecord();
+
+    explicit C_UiFindRecord(C_Document& document, QWidget *parent = 0);
+    ~C_UiFindRecord() override;
 
     C_POINTER           (Document, C_Document)
     C_POINTER           (Record, C_Record)

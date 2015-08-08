@@ -149,6 +149,7 @@
      <string>Script</string>
     </property>
     <addaction name="ActionRun"/>
+    <addaction name="ActionScriptSave"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRecord"/>
@@ -198,6 +199,11 @@
   <action name="ActionRun">
    <property name="text">
     <string>Run</string>
+   </property>
+  </action>
+  <action name="ActionScriptSave">
+   <property name="text">
+    <string>Save</string>
    </property>
   </action>
  </widget>

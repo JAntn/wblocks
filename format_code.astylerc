@@ -1,0 +1,7 @@
+--style=allman
+--break-blocks
+--pad-oper
+--pad-paren-in
+--align-pointer=type
+--break-closing-brackets
+--remove-brackets

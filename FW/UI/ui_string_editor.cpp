@@ -4,15 +4,15 @@
 
 #include <FW/document.h>
 
-C_UiStringEditor::C_UiStringEditor(C_StringRecord& record, C_Document& document, QWidget* parent) :
-    QDialog(parent),
-    m_Record(&record),
-    m_Document(&document),
-    ui(new Ui::C_UiStringEditor)
+C_UiStringEditor::C_UiStringEditor( C_StringRecord& record, C_Document& document, QWidget* parent ) :
+    QDialog( parent ),
+    m_Record( &record ),
+    m_Document( &document ),
+    ui( new Ui::C_UiStringEditor )
 {
-    ui->setupUi(this);
-    ui->NameLineEdit->setText(m_Record->m_Name);
-    ui->TextEdit->setPlainText(m_Record->m_Value);
+    ui->setupUi( this );
+    ui->NameLineEdit->setText( Record().Name() );
+    ui->TextEdit->setPlainText( Record().Value() );
 }
 
 C_UiStringEditor::~C_UiStringEditor()
@@ -22,8 +22,9 @@ C_UiStringEditor::~C_UiStringEditor()
 
 void C_UiStringEditor::on_ButtonBox_accepted()
 {
-    if(!ui->NameLineEdit->text().contains(QRegExp("^\\S+$"))) {
-        Document().Message(tr("Name must not contain white spaces"));
+    if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
+    {
+        Document().Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
@@ -31,20 +32,20 @@ void C_UiStringEditor::on_ButtonBox_accepted()
     Record().m_Name = ui->NameLineEdit->text();
 
     emit Document()
-            .Signals()
-            .RecordsChanged();
+    .Signals()
+    .RecordsChanged();
 }
 
 void C_UiStringEditor::on_RemoveButton_clicked()
 {
     if( C_Document::AcceptMessage(
-            tr("Do you want to remove this record?")))
+                tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
 
         emit Document()
-                .Signals()
-                .RecordsChanged();
+        .Signals()
+        .RecordsChanged();
 
         close();
     }

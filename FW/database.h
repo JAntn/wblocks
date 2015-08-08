@@ -12,6 +12,7 @@ class C_Database : public C_Variant
 public:
 
                         C_Database(C_Variant* parent=0);
+                        ~C_Database() override;
 
     void                OpenDatabase(QString file_name);
     void                CloseDatabase();

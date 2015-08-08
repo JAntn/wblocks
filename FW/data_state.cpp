@@ -2,201 +2,234 @@
 #include <QStringList>
 #include <QDataStream>
 
-/////////////////////////////////////////////////////////////////////////////////
 
-C_DataState::C_DataState(stream_type stype, C_Variant* parent)
-: C_Variant(parent), m_StreamType(stype)
+C_DataState::C_DataState( StreamTypeEnum  stream_type, C_Variant* parent )
+    : C_Variant( parent ), m_StreamType(  stream_type )
 {
     // void
 }
 
-/////////////////////////////////////////////////////////////////////////////////
-
-C_DataStateStream::C_DataStateStream(QDataStream& stream, stream_type stype, C_Variant* parent)
-    : C_DataState(stype,parent)
+C_DataState::~C_DataState()
 {
-    m_DataStream = &stream;
-
-    QStringList val;
-    val << "ID_BEGIN";
-
-    SetData(val);
+    // void
 }
+
+C_DataStateStream::C_DataStateStream( StreamTypeEnum  stream_type, QDataStream& stream, long size, C_Variant* parent )
+    : C_DataState(  stream_type, parent )
+{
+    SetDataStream( stream );
+    SetSize( size );
+    SetCount( 0 );
+    SetByteFlag( false );
+}
+
+bool C_DataStateStream::AtEnd()
+{
+    return ByteFlag() || !( Count() < Size() || Size() < 0 );
+}
+
 
 void C_DataStateStream::Next()
 {
-    if( StreamType() == stream_type::in )
+    if( StreamType() == StreamTypeEnum::IN )
     {
+        if( !AtEnd() )
+            DataStream() >> ByteFlag();
+
         if( !AtEnd() )
         {
             DataStream() >> Data();
+            ++Count();
         }
+        else
+            Data().clear();
     }
 }
 
-void C_DataStateStream::Extract(QStringList& row)
+void C_DataStateStream::Read( QStringList& row )
 {
-    if( StreamType()== stream_type::in )
+    if( StreamType() == StreamTypeEnum::IN )
     {
         row = Data();
 
         if( !AtEnd() )
+            DataStream() >> ByteFlag();
+
+        if( !AtEnd() )
         {
             DataStream() >> Data();
+            ++Count();
+        }
+        else
+            Data().clear();
+    }
+}
+
+void C_DataStateStream::Append( QStringList& row )
+{
+    if( StreamType() == StreamTypeEnum::OUT )
+    {
+        if( !AtEnd() )
+        {
+            DataStream() << ByteFlag();
+            DataStream() << row;
+            ++Count();
         }
     }
-}
-
-void C_DataStateStream::Insert(QStringList& row)
-{
-    if( StreamType()== stream_type::out )
-    {
-        DataStream() << row;
-    }
-}
-
-
-bool C_DataStateStream::AtEnd()
-{
-    return (Data().at(0) == "ID_END");
 }
 
 void C_DataStateStream::Stop()
 {
-    if( StreamType()== stream_type::out )
+    if( StreamType() == StreamTypeEnum::OUT )
     {
-        DataStream() << (QStringList() << "ID_END");
+        SetByteFlag( true );
+        DataStream() << ByteFlag();
     }
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////
-
-C_DataStateTable::C_DataStateTable(QList<QStringList>& table, stream_type stype, C_Variant* parent)
-    : C_DataState(stype, parent)
+C_DataStateTable::C_DataStateTable( StreamTypeEnum  stream_type, QList<QStringList>& table, long size, long start, C_Variant* parent )
+    : C_DataState(  stream_type, parent )
 {
-    m_Table = &table;
-    m_Iter = m_Table->begin();
+    SetTable( table );
+    SetCount( 0 );
+    SetSize( size );
+
+    if( StreamType() == StreamTypeEnum::IN )
+    {
+        SetIter( table.begin() );
+
+        for( long n = 0; n < start; ++n )
+            ++Iter();
+
+        if( Size() < 0 )
+            SetSize( table.size() - start );
+    }
+    else
+    {
+        SetIter( table.begin() );
+
+        for( long n = 0; n < start; ++n )
+            ++Iter();
+    }
 }
 
 void C_DataStateTable::Next()
 {
-    if( StreamType() == stream_type::in )
+    if( StreamType() == StreamTypeEnum::IN )
     {
-        if( !AtEnd() ) {
-            SetData(*m_Iter);
-            ++m_Iter;
+        if( !AtEnd() )
+        {
+            SetData( *Iter() );
+            ++Iter();
+            ++Count();
         }
+        else
+            Data().clear();
     }
 }
 
-void C_DataStateTable::Extract(QStringList& row)
+void C_DataStateTable::Read( QStringList& row )
 {
-    if( StreamType() == stream_type::in )
+    if( StreamType() == StreamTypeEnum::IN )
     {
         row = Data();
 
-        if( !AtEnd() ) {
-            SetData(*m_Iter);
-            ++m_Iter;
-        }else{
-            Data().clear();
+        if( !AtEnd() )
+        {
+            SetData( *Iter() );
+            ++Iter();
+            ++Count();
         }
+        else
+            Data().clear();
     }
 }
 
 bool C_DataStateTable::AtEnd()
 {
-    return m_Iter != m_Table->end();
+    return !( Count() < Size() || Size() < 0 ) ;
 }
 
-void C_DataStateTable::Insert(QStringList& row)
+void C_DataStateTable::Append( QStringList& row )
 {
-    if( StreamType() == stream_type::out )
+    if( StreamType() == StreamTypeEnum::OUT )
     {
-        if( !AtEnd() ) {
-            *m_Iter = row;
-            ++m_Iter;
+        if( !AtEnd() )
+        {
+            Table().insert( Iter(), row );
+            ++Count();
         }
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 C_DataStateDatabase::C_DataStateDatabase(
-        C_Database& database,
-        QString table_name,
-        QString row_name,
-        long row_max,
-        C_DataState::stream_type stype,
-        C_Variant* parent):
-    C_DataState(stype,parent)
+    C_DataState::StreamTypeEnum  stream_type,
+    C_Database& database,
+    QString table_name,
+    QString field,
+    long size, long start,
+    C_Variant* parent ):
+    C_DataState(  stream_type, parent )
 {
-    SetDatabase(database);
-    SetTableName(table_name);
-    SetRowName(row_name);
-    SetRowCount(0);
-    SetRowMax(row_max);
+    SetDatabase( database );
+    SetTableName( table_name );
+    SetField( field );
+    SetCount( 0 );
+    SetSize( size );
+    SetStart( 0 );
 }
 
 void C_DataStateDatabase::Next()
 {
-    if( StreamType() == stream_type::in )
+    if( StreamType() == StreamTypeEnum::IN )
     {
         if( !AtEnd() )
         {
-            QStringList tmp =
-                    Database()
-                    .GetRecord(TableName(),RowName(),QString::number(RowCount()));
-
+            QStringList tmp = Database().GetRecord( TableName(), Field(), QString::number( Count() + Start() ) );
             tmp.pop_front();
-
-            SetData(tmp);
-            ++m_RowCount;
+            SetData( tmp );
+            ++Count();
         }
+        else
+            Data().clear();
     }
 }
 
-void C_DataStateDatabase::Insert(QStringList& row)
+void C_DataStateDatabase::Append( QStringList& row )
 {
-    if( StreamType() == stream_type::out )
+    if( StreamType() == StreamTypeEnum::OUT )
     {
         if( !AtEnd() )
         {
             QStringList tmp = row;
-            tmp.push_front(QString::number(m_RowCount));
-
-            Database().AppendRecord(TableName(),tmp);
-            ++m_RowCount;
+            tmp.push_front( QString::number( Count() + Start() ) );
+            Database().AppendRecord( TableName(), tmp );
+            ++Count();
         }
     }
 }
 
-void C_DataStateDatabase::Extract(QStringList& row)
+void C_DataStateDatabase::Read( QStringList& row )
 {
-    if( StreamType() == stream_type::in )
+    if( StreamType() == StreamTypeEnum::IN )
     {
         row = Data();
+
         if( !AtEnd() )
         {
-            QStringList tmp =
-                    Database()
-                    .GetRecord(TableName(),RowName(),QString::number(RowCount()));
-
+            QStringList tmp = Database().GetRecord( TableName(), Field(), QString::number( Count() + Start() ) );
             tmp.pop_front();
-
-            SetData(tmp);
-            ++m_RowCount;
+            SetData( tmp );
+            ++Count();
         }
+        else
+            Data().clear();
     }
 }
 
 bool C_DataStateDatabase::AtEnd()
 {
-    return RowCount() == RowMax();
-}
-
-void C_DataStateDatabase::Stop()
-{
-    SetRowMax(RowCount());
+    return !( Count() < Size() || Size() < 0 ) ;
 }

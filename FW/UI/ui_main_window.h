@@ -21,8 +21,8 @@ class C_UiMainWindow : public QMainWindow
 
 public:
 
-    explicit                      C_UiMainWindow(QWidget* parent = 0);
-                                  ~C_UiMainWindow();
+    explicit C_UiMainWindow(QWidget* parent = 0);
+    ~C_UiMainWindow() override;
 
     void                          UpdateTableView();
     void                          UpdateScriptView();

@@ -14,7 +14,9 @@ class C_Signals : public QObject
     Q_OBJECT
 
 public:
-                        C_Signals(C_Document& document,C_UiMainWindow& window, QObject* parent=0);
+
+    C_Signals(C_Document& document,C_UiMainWindow& window, QObject* parent=0);
+    ~C_Signals() override;
 
     C_POINTER           (Document,   C_Document)
     C_POINTER           (MainWindow, C_UiMainWindow)
@@ -31,6 +33,7 @@ public slots:
     void                OnActionDocumentSave();
     void                OnActionSQLDocumentLoad();
     void                OnActionSQLDocumentSave();
+    void                OnActionScriptSave();
 
 signals:
 

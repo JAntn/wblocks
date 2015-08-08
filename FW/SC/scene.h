@@ -5,7 +5,7 @@
 #include "FW/macro.h"
 
 #include <QObject>
-#include <QGraphicsScene.h>
+#include <QGraphicsScene>
 
 
 class C_SceneItem;
@@ -17,24 +17,24 @@ class C_Scene : public C_Variant
 {
 public:
 
-    explicit                      C_Scene(C_Document& document, C_Variant *parent = 0);
-                                  ~C_Scene();
+    explicit C_Scene( C_Document& document, C_Variant* parent = 0 );
+    ~C_Scene() override;
 
-    C_SceneItem*                  CreateItem(C_DataState& state);
-    C_SceneItem*                  CreateItem(C_Record& record);
-    C_SceneItem*                  CreateItem(C_Record& record, qreal x, qreal y, qreal z = -1);
+    C_SceneItem*                  CreateItem( C_DataState& state );
+    C_SceneItem*                  CreateItem( C_Record& record );
+    C_SceneItem*                  CreateItem( C_Record& record, qreal x, qreal y, qreal z = -1 );
 
-    list<C_SceneItem*>            FromRecord(C_Record& record) const;
+    list<C_SceneItem*>            FromRecord( C_Record& record ) const;
 
     void                          Clear();
     int                           Size();
-    void                          BringFront(C_SceneItem& sc);
+    void                          BringFront( C_SceneItem& sc );
 
-    C_POINTER                     (Document,      C_Document)
-    C_POINTER                     (GraphicsScene, QGraphicsScene)
+    C_POINTER                     ( Document,      C_Document )
+    C_POINTER                     ( GraphicsScene, QGraphicsScene )
 
-    C_VALUE                       (TopZ,  double)
-    C_VALUE                       (Items, list<C_SceneItem*>)
+    C_VALUE                       ( TopZ,  double )
+    C_VALUE                       ( Items, list<C_SceneItem*> )
 
     static QString                GenerateId();
     static QString                IdCount();
@@ -47,8 +47,8 @@ private:
     friend class                  C_SceneItem;
 };
 
-#include "scene_item.h"
 
 #endif // C_SCENE_H
 
+#include "scene_item.h"
 

@@ -12,10 +12,22 @@
 
 #define CLASS_NAME "Bool"
 
-C_BoolRecord::C_BoolRecord(QString name, QString value, C_Variant* parent)
-    : C_Record(name,value,parent)
+C_BoolRecord::C_BoolRecord( QString id, QString name, QString value, C_Variant* parent )
+    : C_Record( id, name, value, parent )
 {
     // void
+}
+
+C_BoolRecord::C_BoolRecord(C_DataState& state, C_Variant* parent)
+    : C_Record( "", "", "", parent )
+
+{
+    SetState(state);
+}
+
+C_BoolRecord::~C_BoolRecord()
+{
+    //void
 }
 
 QString C_BoolRecord::Script() const
@@ -44,51 +56,41 @@ QString C_BoolRecord::Class() const
     return CLASS_NAME;
 }
 
-void C_BoolRecord::ShowEditor(C_Document& document)
+void C_BoolRecord::ShowEditor( C_Document& document )
 {
-    QWidget* dialog = new C_UiBoolEditor(*this,document,&document.MainWindow());
+    QWidget* dialog = new C_UiBoolEditor( *this, document, &document.MainWindow() );
     dialog->show();
 }
 
-void C_BoolRecord::GetState(C_DataState& state)
+void C_BoolRecord::GetState( C_DataState& state )
 {
     QStringList row;
-
-    row.append(m_Id);
-    row.append(m_Name);
-    row.append(m_Value);
-    row.append(Class());
-
-    state.Insert(row);
+    row.append( Id() );
+    row.append( Name() );
+    row.append( Value() );
+    row.append( Class() );
+    state.Append( row );
 }
 
-void C_BoolRecord::SetState(C_DataState& state)
+void C_BoolRecord::SetState( C_DataState& state )
 {
     QStringList row;
-
-    state.Extract(row);
-
-    m_Id    = row.at(0);
-    m_Name  = row.at(1);
-    m_Value = row.at(2);
+    state.Read( row );
+    m_Id    = row.at( 0 );
+    m_Name  = row.at( 1 );
+    m_Value = row.at( 2 );
 }
 
 
-C_Record* C_BoolRecordFactory::CreateInstance(QString name, QString value, C_Variant* parent)
+C_Record* C_BoolRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
 {
-    C_BoolRecord* record = new C_BoolRecord(name,value,parent);
-
-    record->m_Id = C_RecordFactory::GenerateId();
-
+    C_BoolRecord* record = new C_BoolRecord( C_RecordFactory::GenerateId(), name, value, parent );
     return record;
 }
 
-C_Record* C_BoolRecordFactory::CreateInstance(C_DataState& state, C_Variant* parent)
+C_Record* C_BoolRecordFactory::CreateInstance( C_DataState& state, C_Variant* parent )
 {
-    C_BoolRecord* record = new C_BoolRecord(QString(),QString(),parent);
-
-    record->SetState(state);
-
+    C_BoolRecord* record = new C_BoolRecord( state, parent );
     return record;
 }
 

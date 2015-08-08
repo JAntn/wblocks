@@ -8,7 +8,8 @@ class C_VariantStruct : public C_Variant
 {   
 public:
 
-                                       C_VariantStruct(C_Variant* parent=0);
+     C_VariantStruct(C_Variant* parent=0);
+    ~C_VariantStruct() override;
 
     void                               Append(C_Variant& node);
     void                               Insert(int position, C_Variant& node);

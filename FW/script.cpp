@@ -8,6 +8,11 @@ C_Script::C_Script(C_Document& document, C_Variant* parent):
     // void
 }
 
+C_Script::~C_Script()
+{
+    // void
+}
+
 void C_Script::Generate(C_RecordStruct& record_container)
 {
     m_StringList.clear();

@@ -17,8 +17,8 @@ class C_UiScriptEditor : public QDialog
 
 public:
 
-    explicit                     C_UiScriptEditor(C_ScriptRecord& record, C_Document& document, QWidget* parent = 0);
-                                 ~C_UiScriptEditor();
+                                 C_UiScriptEditor(C_ScriptRecord& record, C_Document& document, QWidget* parent = 0);
+                                 ~C_UiScriptEditor() override;
 
     C_POINTER                    (Record,   C_ScriptRecord)
     C_POINTER                    (Document, C_Document)

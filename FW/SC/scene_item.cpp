@@ -77,6 +77,9 @@ QRectF C_SceneItem::boundingRect() const
 
 void C_SceneItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
+    if( !Scene().Document().PaintFlag() )
+        return;
+
     QFontMetrics fm(this->scene()->font());
     int header_width = fm.width(HeaderText());
 
@@ -106,14 +109,14 @@ void C_SceneItem::GetState(C_DataState& state)
     row << QString::number(y());
     row << QString::number(zValue());
 
-    state.Insert(row);
+    state.Append(row);
 }
 
 void C_SceneItem::SetState(C_DataState& state)
 {
     QStringList row;
 
-    state.Extract(row);
+    state.Read(row);
 
     m_Id = row.at(0);
 

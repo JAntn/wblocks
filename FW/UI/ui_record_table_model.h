@@ -14,7 +14,8 @@ class C_UiRecordTableModel : public QAbstractTableModel
 
 public:
 
-                                  C_UiRecordTableModel(C_Document& document, QObject *parent = 0);
+    explicit C_UiRecordTableModel(C_Document& document, QObject *parent = 0);
+     ~C_UiRecordTableModel() override;
 
     int                           rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int                           columnCount(const QModelIndex &parent = QModelIndex()) const override;

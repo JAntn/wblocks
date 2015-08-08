@@ -22,6 +22,7 @@ class C_Document : public C_Variant
 public:
 
                         C_Document(C_UiMainWindow& main_window, C_Variant* parent = 0);
+                        ~C_Document();
 
     void                FileSave(QFile& file);
     void                FileLoad(QFile& file);
@@ -50,6 +51,8 @@ public:
 
     static QString      LoadTextFile(QString file_name);
     static void         SaveTextFile(QString file_name, QString text);
+
+    C_VALUE             (PaintFlag, bool)
 };
 
 #include "context.h"

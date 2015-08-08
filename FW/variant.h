@@ -15,14 +15,14 @@ class C_VariantStruct;
 class C_Variant
 {
 public:
-                                       C_Variant(C_Variant* parent=0);
-    virtual                            ~C_Variant();
+
+    C_Variant(C_Variant* parent=0);
+    virtual ~C_Variant();
 
     C_VALUE                            (Childreen, list<C_Variant*>)
 
     void                               SetParent(C_Variant* parent=0);
     C_Variant*                         Parent() const;
-
 
 private:
 
@@ -30,8 +30,6 @@ private:
     friend class                       C_VariantStruct;
 };
 
-#include "FW/variant_struct.h"
-
-
 #endif // C_TREE_NODE_H
 
+#include "FW/variant_struct.h"

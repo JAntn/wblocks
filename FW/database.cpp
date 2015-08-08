@@ -17,6 +17,10 @@ C_Database::C_Database(C_Variant* parent)
     // Anyway, qt creates the file if database doesn't exist yet.
 }
 
+C_Database::~C_Database() {
+    //void
+}
+
 void C_Database::OpenDatabase(QString file_name)
 {
     QSqlDatabase::database().setDatabaseName(file_name);

@@ -13,9 +13,9 @@ class C_SceneItem : public C_Variant, public QGraphicsItem
 {
 public:
 
-                        C_SceneItem(C_Scene& scene, C_DataState& state);
-                        C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_val, qreal z_val = -1);
-                        ~C_SceneItem();
+    C_SceneItem(C_Scene& scene, C_DataState& state);
+    C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_val, qreal z_val = -1);
+    ~C_SceneItem() override;
 
     QRectF              boundingRect() const override;
     void                paint(QPainter* painter,

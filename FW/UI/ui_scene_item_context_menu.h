@@ -14,11 +14,11 @@ class C_UiSceneItemContextMenu : public QObject
 
 public:
 
-    explicit            C_UiSceneItemContextMenu(C_SceneItem& item,
+                        C_UiSceneItemContextMenu(C_SceneItem& item,
                                                QGraphicsSceneContextMenuEvent *event,
                                                QObject* parent =0);
 
-                        ~C_UiSceneItemContextMenu();
+                        ~C_UiSceneItemContextMenu() override;
 
     C_POINTER           (SceneItem, C_SceneItem)
 

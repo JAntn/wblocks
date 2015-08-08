@@ -2,7 +2,6 @@
 #define C_UIINTEGEREDITOR_H
 
 #include "FW/macro.h"
-
 #include <QDialog>
 
 class C_IntegerRecord;
@@ -18,12 +17,11 @@ class C_UiIntegerEditor : public QDialog
 
 public:
 
-    explicit            C_UiIntegerEditor(C_IntegerRecord& record, C_Document& document, QWidget * parent = 0);
-                        ~C_UiIntegerEditor();
+                        C_UiIntegerEditor(C_IntegerRecord& record, C_Document& document, QWidget * parent = 0);
+                        ~C_UiIntegerEditor() override;
 
     C_POINTER           (Record,C_IntegerRecord)
     C_POINTER           (Document,C_Document)
-
 
 private slots:
 

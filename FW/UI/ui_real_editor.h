@@ -19,8 +19,8 @@ class C_UiRealEditor : public QDialog
 
 public:
 
-    explicit            C_UiRealEditor(C_RealRecord& record, C_Document& document, QWidget* parent=0);
-                        ~C_UiRealEditor();
+                        C_UiRealEditor(C_RealRecord& record, C_Document& document, QWidget* parent=0);
+                        ~C_UiRealEditor() override;
 
     C_POINTER           (Record,   C_RealRecord)
     C_POINTER           (Document, C_Document)
