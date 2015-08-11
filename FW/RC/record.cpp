@@ -16,7 +16,7 @@ QString C_RecordFactory::IdCount()
 C_Record::C_Record( QString id, QString name, QString value, C_Variant* parent ) :
     C_Variant( parent ), m_Id( id ), m_Name( name ), m_Value( value )
 {
-    SetFlags(FLAG_ALL);
+    SetFlags(FLAG_ACTION_ALL);
 }
 
 C_Record::~C_Record()

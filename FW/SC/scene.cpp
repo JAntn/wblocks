@@ -1,7 +1,7 @@
 #include "FW/SC/scene.h"
 #include "FW/macro.h"
 
-#include <FW/data_state.h>
+#include <FW/ST/state_writer.h>
 
 ////////////////////////////////////////////////////////////////////////
 /// Static
@@ -32,7 +32,7 @@ C_Scene::~C_Scene(){
     delete m_GraphicsScene;
 }
 
-C_SceneItem* C_Scene::CreateItem(C_DataState& state)
+C_SceneItem* C_Scene::CreateItem(C_StateWriter& state)
 {
     return new C_SceneItem(*this,state);
 }

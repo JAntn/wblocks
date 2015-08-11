@@ -19,7 +19,7 @@ public:
     C_Variant(C_Variant* parent=0);
     virtual ~C_Variant();
 
-    C_VALUE                            (Childreen, list<C_Variant*>)
+    ATR_VALUE                          (Childreen, list<C_Variant*>)
 
     void                               SetParent(C_Variant* parent=0);
     C_Variant*                         Parent() const;

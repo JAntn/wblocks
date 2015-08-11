@@ -9,7 +9,8 @@
 
 class C_Document;
 class C_RecordStruct;
-class C_DataState;
+class C_StateReader;
+class C_StateWriter;
 
 class C_Record : public C_Variant
 {
@@ -22,22 +23,18 @@ public:
     virtual QString               Id() const;
     virtual QString               Name() const;
     virtual void                  SetName( QString name );
-
     virtual QString               Class()     const = 0;
     virtual QString               Script()    const = 0;
     virtual C_RecordStruct*       Struct()    const = 0;
 
-    virtual void                  GetState( C_DataState& ) = 0;
-    virtual void                  SetState( C_DataState& ) = 0;
-
+    virtual void                  GetState( C_StateReader& ) = 0;
+    virtual void                  SetState( C_StateWriter& ) = 0;
     virtual void                  ShowEditor( C_Document& ) = 0;
 
     QString                       FullName() const;
-
     virtual void                  SetValue( QString value );
     virtual QString               Value() const;
-
-    C_VALUE                       (Flags,long)
+    ATR_VALUE                     ( Flags, long )
 
 protected:
 
@@ -51,7 +48,7 @@ class C_RecordFactory
 public:
 
     virtual C_Record*             CreateInstance( QString name, QString value, C_Variant* parent = 0 ) = 0;
-    virtual C_Record*             CreateInstance( C_DataState& state, C_Variant* parent = 0 ) = 0;
+    virtual C_Record*             CreateInstance( C_StateWriter& state, C_Variant* parent = 0 ) = 0;
 
     virtual QString               RecordClass() const = 0;
 

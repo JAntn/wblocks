@@ -5,14 +5,17 @@
 #include "FW/macro.h"
 
 class C_VariantStruct : public C_Variant
-{   
+{
 public:
+
+    typedef list<C_Variant*>::const_iterator const_iterator;
 
      C_VariantStruct(C_Variant* parent=0);
     ~C_VariantStruct() override;
 
     void                               Append(C_Variant& node);
     void                               Insert(int position, C_Variant& node);
+    void                               Insert(const_iterator position, C_Variant& node);
 
     int                                Size() const;
     void                               Clear();

@@ -23,8 +23,8 @@ public:
 
     void                          Update();
 
-    C_POINTER                     (Document,         C_Document)
-    C_POINTER                     (RecordTableModel, C_UiRecordTableModel)
+    ATR_POINTER                   (Document,         C_Document)
+    ATR_POINTER                   (RecordTableModel, C_UiRecordTableModel)
 
     C_RecordStruct&            Records();
 

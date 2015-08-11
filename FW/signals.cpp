@@ -99,6 +99,7 @@ void C_Signals::OnActionScriptSave()
         return;
 
     Document().Script().Generate(Document().Records());
+    emit Document().Signals().ScriptChanged();
     C_Document::SaveTextFile( file_name, Document().Script().StringList().join("") );
 
 }

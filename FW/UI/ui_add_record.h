@@ -23,7 +23,7 @@ public:
 
     bool                CheckFormData() const;
 
-    C_POINTER           (Document, C_Document)
+    ATR_POINTER         (Document, C_Document)
 
 private slots:
 

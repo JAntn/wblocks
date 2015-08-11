@@ -20,8 +20,8 @@ public:
                                  C_UiScriptEditor(C_ScriptRecord& record, C_Document& document, QWidget* parent = 0);
                                  ~C_UiScriptEditor() override;
 
-    C_POINTER                    (Record,   C_ScriptRecord)
-    C_POINTER                    (Document, C_Document)
+    ATR_POINTER                  (Record,   C_ScriptRecord)
+    ATR_POINTER                  (Document, C_Document)
 
 public slots:
 

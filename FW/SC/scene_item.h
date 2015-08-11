@@ -7,13 +7,14 @@
 
 class C_Record;
 class C_Scene;
-class C_DataState;
+class C_StateReader;
+class C_StateWriter;
 
 class C_SceneItem : public C_Variant, public QGraphicsItem
 {
 public:
 
-    C_SceneItem(C_Scene& scene, C_DataState& state);
+    C_SceneItem(C_Scene& scene, C_StateWriter &state);
     C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_val, qreal z_val = -1);
     ~C_SceneItem() override;
 
@@ -26,12 +27,12 @@ public:
     void                mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
     QString             HeaderText() const;
-    virtual void        GetState(C_DataState& state);
-    virtual void        SetState(C_DataState& state);
+    virtual void        GetState(C_StateReader& state);
+    virtual void        SetState(C_StateWriter& state);
 
-    C_POINTER           (Record, C_Record)
-    C_POINTER           (Scene,  C_Scene)
-    C_CONST_VALUE       (Id,     QString)
+    ATR_POINTER         (Record, C_Record)
+    ATR_POINTER         (Scene,  C_Scene)
+    ATR_CONST_VALUE     (Id,     QString)
 
 private:
 

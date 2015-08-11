@@ -35,7 +35,6 @@ HEADERS += \
     FW/context.h \
     FW/script.h \
     FW/signals.h \
-    FW/data_state.h \
     FW/UI/ui_string_editor.h \
     FW/RC/string_record.h \
     FW/UI/ui_struct_editor.h \
@@ -48,7 +47,16 @@ HEADERS += \
     FW/RC/script_record.h \
     FW/RC/bool_record.h \
     FW/UI/ui_bool_editor.h \
-    FW/UI/ui_record_struct_view.h
+    FW/UI/ui_record_struct_view.h \
+    FW/clipboard.h \
+    FW/ST/state_reader_table.h \
+    FW/ST/state_reader.h \
+    FW/ST/state_writer.h \
+    FW/ST/state_writer_table.h \
+    FW/ST/state_reader_stream.h \
+    FW/ST/state_writer_stream.h \
+    FW/ST/state_reader_database.h \
+    FW/ST/state_writer_database.h
 
 
 
@@ -71,7 +79,6 @@ SOURCES += \
     FW/context.cpp \
     FW/script.cpp \
     FW/signals.cpp \
-    FW/data_state.cpp \
     FW/UI/ui_string_editor.cpp \
     FW/RC/string_record.cpp \
     FW/UI/ui_struct_editor.cpp \
@@ -84,7 +91,16 @@ SOURCES += \
     FW/RC/script_record.cpp \
     FW/RC/bool_record.cpp \
     FW/UI/ui_bool_editor.cpp \
-    FW/UI/ui_record_struct_view.cpp
+    FW/UI/ui_record_struct_view.cpp \
+    FW/clipboard.cpp \
+    FW/ST/state_reader_table.cpp \
+    FW/ST/state_reader.cpp \
+    FW/ST/state_writer.cpp \
+    FW/ST/state_writer_table.cpp \
+    FW/ST/state_reader_stream.cpp \
+    FW/ST/state_writer_stream.cpp \
+    FW/ST/state_reader_database.cpp \
+    FW/ST/state_writer_database.cpp
 
 FORMS += \
     FW/UI/addrecord.ui \

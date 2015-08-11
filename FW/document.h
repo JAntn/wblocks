@@ -16,43 +16,39 @@ class C_SceneItem;
 class C_Signals;
 class C_UiMainWindow;
 class C_Context;
+class C_Clipboard;
 
 class C_Document : public C_Variant
 {
 public:
 
-                        C_Document(C_UiMainWindow& main_window, C_Variant* parent = 0);
-                        ~C_Document();
+    C_Document( C_UiMainWindow& main_window, C_Variant* parent = 0 );
+    ~C_Document();
 
-    void                FileSave(QFile& file);
-    void                FileLoad(QFile& file);
+    void                FileSave( QFile& file );
+    void                FileLoad( QFile& file );
 
-    void                DatabaseSave(QString file_name);
-    void                DatabaseLoad(QString file_name);
+    void                DatabaseSave( QString file_name );
+    void                DatabaseLoad( QString file_name );
 
     void                UpdateScript();
     void                UpdateScene();
 
-    C_Record*           RecordAtId(QString id);
-    C_Record*           RecordAtName(QString name);
-
     void                Clear();
 
-    static bool         AcceptMessage(QString msg);
-    static void         Message(QString msg);
+    ATR_POINTER         ( MainWindow, C_UiMainWindow )
+    ATR_POINTER         ( Database,   C_Database )
+    ATR_POINTER         ( Script,     C_Script )
+    ATR_POINTER         ( Signals,    C_Signals )
+    ATR_POINTER         ( Records,    C_RecordStruct )
+    ATR_POINTER         ( Scene,      C_Scene )
+    ATR_POINTER         ( Context,    C_Context )
+    ATR_POINTER         ( Clipboard,  C_Clipboard )
 
-    C_POINTER           (MainWindow, C_UiMainWindow)
-    C_POINTER           (Database, C_Database)
-    C_POINTER           (Script,   C_Script)
-    C_POINTER           (Signals,  C_Signals)
-    C_POINTER           (Records,  C_RecordStruct)
-    C_POINTER           (Scene,    C_Scene)
-    C_POINTER           (Context,  C_Context)
-
-    static QString      LoadTextFile(QString file_name);
-    static void         SaveTextFile(QString file_name, QString text);
-
-    C_VALUE             (PaintFlag, bool)
+    static bool         AcceptMessage( QString msg );
+    static void         Message( QString msg );
+    static QString      LoadTextFile( QString file_name );
+    static void         SaveTextFile( QString file_name, QString text );
 };
 
 #include "context.h"

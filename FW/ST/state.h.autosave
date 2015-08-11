@@ -1,0 +1,27 @@
+#ifndef C_STATE_READER_H
+#define C_STATE_READER_H
+
+#include <QString>
+#include <QStringList>
+
+#include "FW/macro.h"
+#include "FW/variant.h"
+
+class C_StateReader : public C_Variant
+{
+public:
+
+    C_StateReader( long flags = 0, C_Variant* parent = 0 );
+    ~C_StateReader() override;
+
+    virtual void        Next() = 0;
+    virtual void        Read( QStringList& data, bool next);
+    virtual bool        AtEnd() = 0;
+
+    ATR_CONST_VALUE     ( Data,       QStringList )
+    ATR_CONST_VALUE     ( Flags,      long )
+    ATR_CONST_VALUE     ( Count,      long )
+
+};
+
+#endif

@@ -1,0 +1,24 @@
+#include "FW/ST/state.h"
+
+C_StateReader::C_State( long flags, C_Variant* parent )
+    : C_Variant( parent )
+{
+    m_Flags = flags;
+}
+
+
+C_StateReader::~C_StateReader()
+{
+    // void
+}
+
+void C_StateReader::Read( QStringList& data, bool next )
+{
+    if( this->AtEnd() )
+        return;
+
+    data = m_Data;
+
+    if( next )
+        this->Next();
+}

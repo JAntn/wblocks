@@ -48,8 +48,14 @@ void C_VariantStruct::Insert( int index, C_Variant& node )
     node.m_Parent = this;
 }
 
+void C_VariantStruct::Insert( const_iterator iter, C_Variant& node )
+{
+    m_Childreen.insert( iter, &node );
+    node.m_Parent = this;
+}
+
 void C_VariantStruct::Clear()
-{    
+{
     for( auto iter = m_Childreen.begin(); iter != m_Childreen.end(); )
     {
         auto value = *iter;

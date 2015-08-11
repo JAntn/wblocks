@@ -15,15 +15,16 @@ class C_UiRecordContextMenu : QObject
 public:
 
                         C_UiRecordContextMenu(C_Document& document,
-                                  const QPoint& position,
+                                  const QPoint& global_point,
+                                  long position = -1,
                                   C_Record* record = 0,
                                   QObject* parent = 0);
 
                         ~C_UiRecordContextMenu() override;
 
-    C_POINTER           (Record,   C_Record)
-    C_POINTER           (Document, C_Document)
-
+    ATR_POINTER         (Record,   C_Record)
+    ATR_POINTER         (Document, C_Document)
+    ATR_VALUE           (Position, long)
 
 public slots:
 
@@ -31,6 +32,8 @@ public slots:
     void                OnRemove();
     void                OnAdd();
     void                OnAddSceneItem();
+    void                OnCopy();
+    void                OnPaste();
 
 };
 

@@ -3,19 +3,19 @@
 #include <QDataStream>
 
 
-C_DataState::C_DataState( StreamTypeEnum  stream_type, C_Variant* parent )
-    : C_Variant( parent ), m_StreamType(  stream_type )
+C_State::C_State(EnumStreamType stream_type, C_Variant* parent )
+    : C_Variant( parent ), m_StreamType(  stream_type ), m_Flags( 0 )
 {
     // void
 }
 
-C_DataState::~C_DataState()
+C_State::~C_State()
 {
     // void
 }
 
-C_DataStateStream::C_DataStateStream( StreamTypeEnum  stream_type, QDataStream& stream, long size, C_Variant* parent )
-    : C_DataState(  stream_type, parent )
+C_StateStream::C_StateStream(EnumStreamType stream_type, QDataStream& stream, long size, C_Variant* parent )
+    : C_State(  stream_type, parent )
 {
     SetDataStream( stream );
     SetSize( size );
@@ -23,15 +23,15 @@ C_DataStateStream::C_DataStateStream( StreamTypeEnum  stream_type, QDataStream& 
     SetByteFlag( false );
 }
 
-bool C_DataStateStream::AtEnd()
+bool C_StateStream::AtEnd()
 {
     return ByteFlag() || !( Count() < Size() || Size() < 0 );
 }
 
 
-void C_DataStateStream::Next()
+void C_StateStream::Next()
 {
-    if( StreamType() == StreamTypeEnum::IN )
+    if( StreamType() == WRITE )
     {
         if( !AtEnd() )
             DataStream() >> ByteFlag();
@@ -46,28 +46,19 @@ void C_DataStateStream::Next()
     }
 }
 
-void C_DataStateStream::Read( QStringList& row )
+void C_StateStream::Write( QStringList& row )
 {
-    if( StreamType() == StreamTypeEnum::IN )
-    {
+
+    if( StreamType() == WRITE )
+    {         
         row = Data();
-
-        if( !AtEnd() )
-            DataStream() >> ByteFlag();
-
-        if( !AtEnd() )
-        {
-            DataStream() >> Data();
-            ++Count();
-        }
-        else
-            Data().clear();
+        Next();             
     }
 }
 
-void C_DataStateStream::Append( QStringList& row )
+void C_StateStream::Read( QStringList& row )
 {
-    if( StreamType() == StreamTypeEnum::OUT )
+    if( StreamType() == READ )
     {
         if( !AtEnd() )
         {
@@ -78,30 +69,30 @@ void C_DataStateStream::Append( QStringList& row )
     }
 }
 
-void C_DataStateStream::Stop()
+void C_StateStream::Stop()
 {
-    if( StreamType() == StreamTypeEnum::OUT )
+    if( StreamType() == READ )
     {
         SetByteFlag( true );
         DataStream() << ByteFlag();
     }
 }
 
-C_DataStateTable::C_DataStateTable( StreamTypeEnum  stream_type, QList<QStringList>& table, long size, long start, C_Variant* parent )
-    : C_DataState(  stream_type, parent )
+C_StateTable::C_StateTable( EnumStreamType type, list<QStringList>& table, long size, long start, C_Variant* parent )
+    : C_State(  type, parent )
 {
     SetTable( table );
     SetCount( 0 );
     SetSize( size );
 
-    if( StreamType() == StreamTypeEnum::IN )
+    if( StreamType() == WRITE )
     {
         SetIter( table.begin() );
 
         for( long n = 0; n < start; ++n )
             ++Iter();
 
-        if( Size() < 0 )
+        if( size == -1 )
             SetSize( table.size() - start );
     }
     else
@@ -113,9 +104,9 @@ C_DataStateTable::C_DataStateTable( StreamTypeEnum  stream_type, QList<QStringLi
     }
 }
 
-void C_DataStateTable::Next()
+void C_StateTable::Next()
 {
-    if( StreamType() == StreamTypeEnum::IN )
+    if( StreamType() == WRITE )
     {
         if( !AtEnd() )
         {
@@ -128,31 +119,23 @@ void C_DataStateTable::Next()
     }
 }
 
-void C_DataStateTable::Read( QStringList& row )
+void C_StateTable::Write( QStringList& row )
 {
-    if( StreamType() == StreamTypeEnum::IN )
+    if( StreamType() == WRITE )
     {
         row = Data();
-
-        if( !AtEnd() )
-        {
-            SetData( *Iter() );
-            ++Iter();
-            ++Count();
-        }
-        else
-            Data().clear();
+        Next();
     }
 }
 
-bool C_DataStateTable::AtEnd()
+bool C_StateTable::AtEnd()
 {
-    return !( Count() < Size() || Size() < 0 ) ;
+    return !(  Count() < Size()  || Size() < 0 );
 }
 
-void C_DataStateTable::Append( QStringList& row )
+void C_StateTable::Read( QStringList& row )
 {
-    if( StreamType() == StreamTypeEnum::OUT )
+    if( StreamType() == READ )
     {
         if( !AtEnd() )
         {
@@ -164,14 +147,14 @@ void C_DataStateTable::Append( QStringList& row )
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-C_DataStateDatabase::C_DataStateDatabase(
-    C_DataState::StreamTypeEnum  stream_type,
+C_StateDatabase::C_StateDatabase(
+    C_State::EnumStreamType  stream_type,
     C_Database& database,
     QString table_name,
     QString field,
     long size, long start,
     C_Variant* parent ):
-    C_DataState(  stream_type, parent )
+    C_State(  stream_type, parent )
 {
     SetDatabase( database );
     SetTableName( table_name );
@@ -181,9 +164,9 @@ C_DataStateDatabase::C_DataStateDatabase(
     SetStart( 0 );
 }
 
-void C_DataStateDatabase::Next()
+void C_StateDatabase::Next()
 {
-    if( StreamType() == StreamTypeEnum::IN )
+    if( StreamType() == WRITE )
     {
         if( !AtEnd() )
         {
@@ -197,9 +180,9 @@ void C_DataStateDatabase::Next()
     }
 }
 
-void C_DataStateDatabase::Append( QStringList& row )
+void C_StateDatabase::Read( QStringList& row )
 {
-    if( StreamType() == StreamTypeEnum::OUT )
+    if( StreamType() == READ )
     {
         if( !AtEnd() )
         {
@@ -211,9 +194,9 @@ void C_DataStateDatabase::Append( QStringList& row )
     }
 }
 
-void C_DataStateDatabase::Read( QStringList& row )
+void C_StateDatabase::Write( QStringList& row )
 {
-    if( StreamType() == StreamTypeEnum::IN )
+    if( StreamType() == WRITE )
     {
         row = Data();
 
@@ -229,7 +212,7 @@ void C_DataStateDatabase::Read( QStringList& row )
     }
 }
 
-bool C_DataStateDatabase::AtEnd()
+bool C_StateDatabase::AtEnd()
 {
     return !( Count() < Size() || Size() < 0 ) ;
 }

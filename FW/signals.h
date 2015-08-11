@@ -18,8 +18,8 @@ public:
     C_Signals(C_Document& document,C_UiMainWindow& window, QObject* parent=0);
     ~C_Signals() override;
 
-    C_POINTER           (Document,   C_Document)
-    C_POINTER           (MainWindow, C_UiMainWindow)
+    ATR_POINTER         (Document,   C_Document)
+    ATR_POINTER         (MainWindow, C_UiMainWindow)
 
     void                ConnectSignals();
 

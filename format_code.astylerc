@@ -5,3 +5,4 @@
 --align-pointer=type
 --break-closing-brackets
 --remove-brackets
+--max-instatement-indent=40

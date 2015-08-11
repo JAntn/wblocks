@@ -11,7 +11,7 @@
 class C_SceneItem;
 class C_Record;
 class C_Document;
-class C_DataState;
+class C_StateWriter;
 
 class C_Scene : public C_Variant
 {
@@ -20,7 +20,7 @@ public:
     explicit C_Scene( C_Document& document, C_Variant* parent = 0 );
     ~C_Scene() override;
 
-    C_SceneItem*                  CreateItem( C_DataState& state );
+    C_SceneItem*                  CreateItem(C_StateWriter &state );
     C_SceneItem*                  CreateItem( C_Record& record );
     C_SceneItem*                  CreateItem( C_Record& record, qreal x, qreal y, qreal z = -1 );
 
@@ -30,11 +30,10 @@ public:
     int                           Size();
     void                          BringFront( C_SceneItem& sc );
 
-    C_POINTER                     ( Document,      C_Document )
-    C_POINTER                     ( GraphicsScene, QGraphicsScene )
-
-    C_VALUE                       ( TopZ,  double )
-    C_VALUE                       ( Items, list<C_SceneItem*> )
+    ATR_POINTER                   ( Document,      C_Document )
+    ATR_POINTER                   ( GraphicsScene, QGraphicsScene )
+    ATR_CONST_VALUE               ( TopZ,  double )
+    ATR_CONST_VALUE               ( Items, list<C_SceneItem*> )
 
     static QString                GenerateId();
     static QString                IdCount();

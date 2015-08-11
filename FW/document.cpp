@@ -3,7 +3,9 @@
 #include "FW/SC/scene.h"
 #include "FW/database.h"
 #include "FW/document.h"
-#include "data_state.h"
+#include "clipboard.h"
+#include "FW/ST/state_reader.h"
+#include "FW/ST/state_writer.h"
 
 #include "FW/UI/ui_main_window.h"
 #include <QMessageBox>
@@ -46,12 +48,14 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
     m_MainWindow( &main_window )
 {
     C_RecordStruct::InitFactoryList();
+
     m_Records           = new C_RecordStruct( "root", this );
     m_Scene             = new C_Scene( *this, this );
     m_Context           = new C_Context( Records(), Scene(), this );
-    m_Script            = new C_Script( *this, this );
+    m_Script            = new C_Script( this );
     m_Database          = new C_Database( this );
     m_Signals           = new C_Signals( *this, main_window, &main_window );
+    m_Clipboard         = new C_Clipboard( this );
 
     auto record1 = Records().CreateRecord( "SampleString", "Monday", "String" );
     Scene().CreateItem( *record1 );
@@ -65,12 +69,7 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
                 "document.write(SampleString)"
                 );
 
-
-    Script().Generate( Records() );
-    SetPaintFlag( true );
     emit Signals().RecordsChanged();
-    emit Signals().SceneChanged();
-    emit Signals().ScriptChanged();
 }
 
 C_Document::~C_Document()
@@ -81,63 +80,12 @@ C_Document::~C_Document()
 void C_Document::UpdateScript()
 {
     Script().Generate( Records() );
+    emit Signals().ScriptChanged();
 }
 
 void C_Document::UpdateScene()
 {
     emit Signals().SceneChanged();
-}
-
-C_Record* RECORD_AT_ID( C_RecordStruct* record_struct, QString* id )
-{
-    for( auto val : *record_struct )
-    {
-        auto record = static_cast<C_Record*> ( val );
-
-        if( record->Id() == *id )
-            return record;
-
-        if( record->Struct() != 0 )
-        {
-            record = RECORD_AT_ID( record->Struct(), id );
-
-            if( record != 0 )
-                return record;
-        }
-    }
-
-    return 0;
-}
-
-C_Record* C_Document::RecordAtId( QString id )
-{
-    return RECORD_AT_ID( &Records(), &id );
-}
-
-C_Record* RECORD_AT_NAME( C_RecordStruct* record_struct, QString* name )
-{
-    for( auto val : *record_struct )
-    {
-        auto record = static_cast<C_Record*> ( val );
-
-        if( record->Name() == *name )
-            return record;
-
-        if( record->Struct() != 0 )
-        {
-            record = RECORD_AT_ID( record->Struct(), name );
-
-            if( record != 0 )
-                return record;
-        }
-    }
-
-    return 0;
-}
-
-C_Record* C_Document::RecordAtName( QString name )
-{
-    return RECORD_AT_NAME( &Records(), &name );
 }
 
 void C_Document::Clear()
@@ -179,8 +127,7 @@ void C_Document::FileSave( QFile& file )
 
     // GET RECORDS
 
-    C_DataStateStream record_state( C_DataState::StreamTypeEnum::OUT, out );
-    record_state.Next();
+    C_StateReaderStream record_state( out );
 
     for( C_Variant* node : Records() )
     {
@@ -192,8 +139,7 @@ void C_Document::FileSave( QFile& file )
 
     // GET SCENE ITEMS
 
-    C_DataStateStream scene_state( C_DataState::StreamTypeEnum::OUT, out );
-    scene_state.Next();
+    C_StateReaderStream scene_state( out );
 
     for( C_SceneItem* item : Scene().Items() )
         item->GetState( scene_state );
@@ -216,16 +162,14 @@ void C_Document::FileLoad( QFile& file )
 
     // SET RECORDS
 
-    C_DataStateStream record_state( C_DataState::StreamTypeEnum::IN, in );
-    record_state.Next();
+    C_StateWriterStream record_state( in );
 
     while( !record_state.AtEnd() )
         Records().CreateRecord( record_state );
 
     // SET SCENE ITEMS
 
-    C_DataStateStream scene_state( C_DataState::StreamTypeEnum::IN, in );
-    scene_state.Next();
+    C_StateWriterStream scene_state( in );
 
     while( !scene_state.AtEnd() )
         Scene().CreateItem( scene_state );
@@ -246,16 +190,16 @@ void C_Document::DatabaseSave( QString file_name )
     QStringList row;
     row << FIELD( "ROW" ) << FIELD( "VALUE" );
     Database().CreateTable( FIELD( "SETUP_TABLE" ), row );
-    row.clear();
 
     // FILL SETUP TABLE
 
+    row.clear();
     row << FIELD( "RECORD_ID_COUNT" ) << C_RecordFactory::IdCount();
     Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
     row.clear();
     row << FIELD( "SCENE_ID_COUNT" ) << C_Scene::IdCount();
     Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
-    row.clear();
+
 
     // RECORD TABLE
 
@@ -269,8 +213,7 @@ void C_Document::DatabaseSave( QString file_name )
 
     // FILL TABLE
 
-    C_DataStateDatabase record_state( C_DataState::StreamTypeEnum::OUT, Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
-    record_state.Next();
+    C_StateReaderDatabase record_state( Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
 
     for( C_Variant* node : Records() )
     {
@@ -278,9 +221,9 @@ void C_Document::DatabaseSave( QString file_name )
         record->GetState( record_state );
     }
 
-    row << FIELD( "RECORD_NUM" ) << QString::number( record_state.Size() );
-    Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
     row.clear();
+    row << FIELD( "RECORD_NUM" ) << QString::number( record_state.Count() );
+    Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
 
     // SCENE ITEMS TABLE
 
@@ -292,14 +235,13 @@ void C_Document::DatabaseSave( QString file_name )
     scene_fields.append( FIELD( "Y" ) );
     scene_fields.append( FIELD( "Z" ) );
     Database().CreateTable( FIELD( "SCENE_TABLE" ), scene_fields );
-    C_DataStateDatabase scene_state( C_DataState::StreamTypeEnum::OUT, Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ) );
-    scene_state.Next();
+    C_StateReaderDatabase scene_state( Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ) );
 
     for( C_SceneItem* item : Scene().Items() )
         item->GetState( scene_state );
 
     row.clear();
-    row << FIELD( "SCENEITEM_NUM" ) << QString::number( scene_state.Size()  );
+    row << FIELD( "SCENEITEM_NUM" ) << QString::number( scene_state.Count()  );
     Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
     Database().CloseDatabase();
 }
@@ -320,22 +262,19 @@ void C_Document::DatabaseLoad( QString file_name )
 
     // RECORDS TABLE
 
-    C_DataStateDatabase record_state( C_DataState::StreamTypeEnum::IN, Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
-    record_state.Next();
+    C_StateWriterDatabase record_state( Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
 
     while( !record_state.AtEnd() )
         Records().CreateRecord( record_state );
 
     // SCENE ITEMS TABLE
 
-    C_DataStateDatabase scene_state( C_DataState::StreamTypeEnum::IN, Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ), scene_size );
-    scene_state.Next();
+    C_StateWriterDatabase scene_state( Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ), scene_size );
 
     while( !scene_state.AtEnd() )
         Scene().CreateItem( scene_state );
 
     Database().CloseDatabase();
     emit Signals().RecordsChanged();
-    emit Signals().SceneChanged();
 }
 

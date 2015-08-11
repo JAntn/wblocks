@@ -20,8 +20,8 @@ public:
                         C_UiIntegerEditor(C_IntegerRecord& record, C_Document& document, QWidget * parent = 0);
                         ~C_UiIntegerEditor() override;
 
-    C_POINTER           (Record,C_IntegerRecord)
-    C_POINTER           (Document,C_Document)
+    ATR_POINTER         (Record,C_IntegerRecord)
+    ATR_POINTER         (Document,C_Document)
 
 private slots:
 

@@ -1,6 +1,7 @@
 #include "FW/RC/struct_record.h"
 #include "FW/document.h"
-#include "FW/data_state.h"
+#include "FW/ST/state_reader.h"
+#include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
 #include <FW/UI/ui_struct_editor.h>
 
@@ -12,7 +13,7 @@ C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Varia
     m_Records = new C_RecordStruct( name, this );
 }
 
-C_StructRecord::C_StructRecord( C_DataState& state, C_Variant* parent )
+C_StructRecord::C_StructRecord( C_StateWriter& state, C_Variant* parent )
     : C_Record( "", "", "", parent )
 {
     m_Records = new C_RecordStruct( "", this );
@@ -55,14 +56,14 @@ QString C_StructRecord::Script() const
     return script.join( "" );
 }
 
-void C_StructRecord::GetState( C_DataState& state )
+void C_StructRecord::GetState( C_StateReader& state )
 {
     QStringList row;
     row.append( Id() );
     row.append( Name() );
     row.append( Value() );
     row.append( Class() );
-    state.Append( row );
+    state.Read( row );
 
     for( C_Variant* node : Records() )
     {
@@ -71,12 +72,18 @@ void C_StructRecord::GetState( C_DataState& state )
     }
 }
 
-void C_StructRecord::SetState( C_DataState& state )
+void C_StructRecord::SetState( C_StateWriter& state )
 {
     Records().Clear();
+
     QStringList row;
-    state.Read( row );
-    m_Id    = row.at( 0 );
+    state.Write( row );
+
+    if( state.Flags() & FLAG_STATE_NEWID )
+        m_Id    = C_RecordFactory::GenerateId();
+    else
+        m_Id    = row.at( 0 );
+
     m_Name  = row.at( 1 );
     m_Value = row.at( 2 );
     Records().SetName( Name() );
@@ -98,7 +105,7 @@ C_Record* C_StructRecordFactory::CreateInstance( QString name, QString value, C_
     return record;
 }
 
-C_Record* C_StructRecordFactory::CreateInstance( C_DataState& state, C_Variant* parent )
+C_Record* C_StructRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent )
 {
     C_StructRecord* record = new C_StructRecord( state, parent );
     return record;

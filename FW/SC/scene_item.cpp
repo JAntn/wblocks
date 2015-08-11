@@ -6,8 +6,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
 #include <QPainter>
-#include <FW/data_state.h>
-
+#include "FW/ST/state_reader.h"
+#include "FW/ST/state_writer.h"
 
 #define GFX_THICK 1
 #define GFX_THIN 1
@@ -18,13 +18,13 @@
 #define GFX_VALUE_RECT(__WIDTH)             QRectF(GFX_THICK+5,GFX_THICK+5+20,__WIDTH,20)
 #define GFX_SEPARATOR_LINE(__WIDTH)         QLine(GFX_THICK,GFX_THICK+5+19,__WIDTH+10+GFX_THICK,GFX_THICK+5+19)
 
-C_SceneItem::C_SceneItem(C_Scene& scene, C_DataState& state) :
+C_SceneItem::C_SceneItem(C_Scene& scene, C_StateWriter& state) :
     C_Variant(0),
     m_Scene(&scene)
 {
     SetState(state);
 
-    Scene().Items().push_back(this);
+    Scene().m_Items.push_back(this);
     SetParent(&Record());
 
     Scene().m_GraphicsScene->addItem(this);
@@ -38,7 +38,7 @@ C_SceneItem::C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_
 
 {
     m_Id = Scene().GenerateId();
-    Scene().Items().push_back(this);
+    Scene().m_Items.push_back(this);
 
     SetParent(&Record());
 
@@ -55,7 +55,7 @@ C_SceneItem::C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_
 
 C_SceneItem::~C_SceneItem()
 {
-    Scene().Items().remove(this);
+    Scene().m_Items.remove(this);
 }
 
 
@@ -77,8 +77,6 @@ QRectF C_SceneItem::boundingRect() const
 
 void C_SceneItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    if( !Scene().Document().PaintFlag() )
-        return;
 
     QFontMetrics fm(this->scene()->font());
     int header_width = fm.width(HeaderText());
@@ -99,7 +97,7 @@ void C_SceneItem::mousePressEvent(QGraphicsSceneMouseEvent*)
     Scene().BringFront(*this);
 }
 
-void C_SceneItem::GetState(C_DataState& state)
+void C_SceneItem::GetState(C_StateReader &state)
 {
     QStringList row;
 
@@ -109,21 +107,22 @@ void C_SceneItem::GetState(C_DataState& state)
     row << QString::number(y());
     row << QString::number(zValue());
 
-    state.Append(row);
+    state.Read(row);
 }
 
-void C_SceneItem::SetState(C_DataState& state)
+void C_SceneItem::SetState(C_StateWriter& state)
 {
     QStringList row;
 
-    state.Read(row);
+    state.Write(row);
 
     m_Id = row.at(0);
 
     m_Record =
             Scene()
             .Document()
-            .RecordAtId(row.at(1));
+            .Records()
+            .FromId(row.at(1),true);
 
     setPos(row.at(2).toFloat(),
            row.at(3).toFloat());

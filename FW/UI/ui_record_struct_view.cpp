@@ -40,9 +40,6 @@ C_UiRecordStructView::~C_UiRecordStructView()
 
 void C_UiRecordStructView::Update()
 {
-    if( !Document().PaintFlag() )
-        return;
-
     m_RecordTableModel->layoutChanged();
 }
 
@@ -76,7 +73,7 @@ void C_UiRecordStructView::OnCustomContextMenuRequested( const QPoint& point )
     if( index >= 0 )
         record = Records().FromIndex( index );
 
-    C_UiRecordContextMenu context_menu( Document(), global_point, record );
+    C_UiRecordContextMenu context_menu( Document(), global_point, index, record );
 }
 
 void C_UiRecordStructView::on_RootButton_clicked()

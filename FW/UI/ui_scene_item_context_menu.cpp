@@ -16,7 +16,7 @@ C_UiSceneItemContextMenu::C_UiSceneItemContextMenu( C_SceneItem& item,
 {
     QMenu menu;
 
-    if( FLAG_EDIT & SceneItem().Record().Flags() )
+    if( FLAG_ACTION_EDIT & SceneItem().Record().Flags() )
     {
         QAction* action1 = menu.addAction( tr( "Edit" ) );
         connect( action1, SIGNAL( triggered() ), this, SLOT( OnEdit() ) );
@@ -24,13 +24,13 @@ C_UiSceneItemContextMenu::C_UiSceneItemContextMenu( C_SceneItem& item,
 
     menu.addSeparator();
 
-    if( FLAG_REMOVE_SCENE & SceneItem().Record().Flags() )
+    if( FLAG_ACTION_REMOVE_SCENE & SceneItem().Record().Flags() )
     {
         QAction* action2 = menu.addAction( tr( "Remove from scene" ) );
         connect( action2, SIGNAL( triggered() ), this, SLOT( OnRemoveFromScene() ) );
     }
 
-    if( FLAG_REMOVE & SceneItem().Record().Flags() )
+    if( FLAG_ACTION_REMOVE & SceneItem().Record().Flags() )
     {
         QAction* action3 = menu.addAction( tr( "Remove from document" ) );
         connect( action3, SIGNAL( triggered() ), this, SLOT( OnRemove() ) );
@@ -46,7 +46,12 @@ C_UiSceneItemContextMenu::~C_UiSceneItemContextMenu()
 
 void C_UiSceneItemContextMenu::OnEdit()
 {
-    SceneItem().Record().ShowEditor( SceneItem().Scene().Document() );
+    SceneItem()
+    .Record()
+    .ShowEditor(
+        SceneItem()
+        .Scene()
+        .Document() );
 }
 
 void C_UiSceneItemContextMenu::OnRemove()

@@ -30,8 +30,8 @@ public:
 
     void                          ConnectSignals();
 
-    C_POINTER                     (Document,         C_Document)
-    C_POINTER                     (RecordStructView, C_UiRecordStructView)
+    ATR_POINTER                   (Document,         C_Document)
+    ATR_POINTER                   (RecordStructView, C_UiRecordStructView)
 
 private slots:
 
