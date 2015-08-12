@@ -4,6 +4,7 @@
 #include "FW/macro.h"
 
 #include <QObject>
+#include <QStringList>
 
 class C_Record;
 class C_UiMainWindow;
@@ -20,6 +21,7 @@ public:
 
     ATR_POINTER         (Document,   C_Document)
     ATR_POINTER         (MainWindow, C_UiMainWindow)
+    ATR_VALUE           (EventData,  QStringList)
 
     void                ConnectSignals();
 
@@ -29,11 +31,19 @@ public slots:
     void                OnScriptChanged();
     void                OnSceneChanged();
 
-    void                OnActionDocumentLoad();
-    void                OnActionDocumentSave();
-    void                OnActionSQLDocumentLoad();
-    void                OnActionSQLDocumentSave();
+    void                OnActionFileLoad();
+    void                OnActionFileSave();
+    void                OnActionSQLLoad();
+    void                OnActionSQLSave();
     void                OnActionScriptSave();
+
+    void                OnActionEdit();
+    void                OnActionRemove();
+    void                OnActionAdd();
+    void                OnActionAddSceneItem();
+    void                OnActionCopy();
+    void                OnActionPaste();
+    void                OnActionCut();
 
 signals:
 

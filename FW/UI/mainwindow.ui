@@ -50,7 +50,7 @@
       </widget>
       <widget class="QTabWidget" name="TabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="Scene">
         <attribute name="title">
@@ -128,11 +128,11 @@
     </property>
     <addaction name="ActionNew"/>
     <addaction name="separator"/>
-    <addaction name="ActionDocumentLoad"/>
-    <addaction name="ActionDocumentSave"/>
+    <addaction name="ActionFileLoad"/>
+    <addaction name="ActionFileSave"/>
     <addaction name="separator"/>
-    <addaction name="ActionSQLDocumentLoad"/>
-    <addaction name="ActionSQLDocumentSave"/>
+    <addaction name="ActionSQLLoad"/>
+    <addaction name="ActionSQLSave"/>
     <addaction name="separator"/>
     <addaction name="ActionExit"/>
    </widget>
@@ -142,7 +142,14 @@
     </property>
     <addaction name="ActionFind"/>
     <addaction name="separator"/>
+    <addaction name="ActionCopy"/>
+    <addaction name="ActionCut"/>
+    <addaction name="ActionPaste"/>
+    <addaction name="separator"/>
+    <addaction name="ActionAdd_to_scene"/>
+    <addaction name="separator"/>
     <addaction name="ActionAdd"/>
+    <addaction name="ActionRemove"/>
    </widget>
    <widget class="QMenu" name="menuScript">
     <property name="title">
@@ -156,12 +163,12 @@
    <addaction name="menuScript"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="ActionDocumentLoad">
+  <action name="ActionFileLoad">
    <property name="text">
     <string>Load</string>
    </property>
   </action>
-  <action name="ActionDocumentSave">
+  <action name="ActionFileSave">
    <property name="text">
     <string>Save</string>
    </property>
@@ -186,12 +193,12 @@
     <string>Find</string>
    </property>
   </action>
-  <action name="ActionSQLDocumentLoad">
+  <action name="ActionSQLLoad">
    <property name="text">
     <string>SQLite Load</string>
    </property>
   </action>
-  <action name="ActionSQLDocumentSave">
+  <action name="ActionSQLSave">
    <property name="text">
     <string>SQLite Save</string>
    </property>
@@ -204,6 +211,36 @@
   <action name="ActionScriptSave">
    <property name="text">
     <string>Save</string>
+   </property>
+  </action>
+  <action name="ActionRemove">
+   <property name="text">
+    <string>Remove</string>
+   </property>
+  </action>
+  <action name="ActionCopy">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="ActionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="ActionEdit">
+   <property name="text">
+    <string>Edit</string>
+   </property>
+  </action>
+  <action name="ActionAdd_to_scene">
+   <property name="text">
+    <string>Add to scene</string>
+   </property>
+  </action>
+  <action name="ActionCut">
+   <property name="text">
+    <string>Cut</string>
    </property>
   </action>
  </widget>

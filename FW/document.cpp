@@ -69,7 +69,11 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
                 "document.write(SampleString)"
                 );
 
-    emit Signals().RecordsChanged();
+    emit Signals()
+    .RecordsChanged();
+
+    emit Signals()
+    .ScriptChanged();
 }
 
 C_Document::~C_Document()

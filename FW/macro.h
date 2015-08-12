@@ -46,6 +46,7 @@ using std::list;
 #define FLAG_ACTION_REMOVE_SCENE 0x10
 #define FLAG_ACTION_COPY         0x20
 #define FLAG_ACTION_PASTE        0x40
+#define FLAG_ACTION_CUT          0x40
 
 #define FLAG_STATE_ALL           0xFF
 #define FLAG_STATE_NEWID         0x01
@@ -54,6 +55,7 @@ using std::list;
 #define FLAG_STATE_ATEND         0x08
 #define FLAG_STATE_READ          0x10
 #define FLAG_STATE_WRITE         0x20
+
 
 #endif // MACRO
 

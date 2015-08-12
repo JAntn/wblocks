@@ -1,42 +1,40 @@
 #include "clipboard.h"
+#include "document.h"
+#include "FW/SC/scene.h"
+#include "FW/SC/scene_item.h"
 #include "FW/RC/record_struct.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 
 C_Clipboard::C_Clipboard( C_Variant* parent ):
-    C_Variant( parent ), m_Records( 0 )
+    C_Variant( parent )
 {
     // void
 }
 
 void C_Clipboard::Clear()
 {
-    m_Records = 0;
-    m_IdList.clear();
+    m_CopyList.clear();
+    m_PasteFlags = 0;
 }
 
-void C_Clipboard::Copy( C_RecordStruct& record_struct, QStringList& id_list )
+void C_Clipboard::Copy( list<C_Record*>& records )
 {
     Clear();
-    m_Records = &record_struct;
-    m_IdList = id_list;
+    m_CopyList = records;
+    m_PasteFlags = FLAG_STATE_NEWID;
+}
+
+void C_Clipboard::Cut( list<C_Record*>& records )
+{
+    Clear();
+    m_CopyList = records;
+    m_PasteFlags = 0;
 }
 
 void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
 {
     list<QStringList> table;
-    C_StateReaderTable reader( table );
-
-    for( QString id : IdList() )
-    {
-        auto record = Records().FromId( id, true );
-
-        if( record == 0 )
-            return;
-
-        record->GetState( reader );
-    }
-
     C_RecordStruct::const_iterator iter;
 
     if ( position < 0 )
@@ -49,7 +47,12 @@ void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
             ++iter;
     }
 
-    C_StateWriterTable writer( table, FLAG_STATE_NEWID);
+    C_StateReaderTable reader( table );
+
+    for( auto record : CopyList() )
+        record->GetState( reader );
+
+    C_StateWriterTable writer( table, m_PasteFlags );
 
     while( !writer.AtEnd() )
         record_struct.CreateRecord( writer, iter );

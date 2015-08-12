@@ -17,23 +17,11 @@ public:
                         C_UiRecordContextMenu(C_Document& document,
                                   const QPoint& global_point,
                                   long position = -1,
-                                  C_Record* record = 0,
                                   QObject* parent = 0);
 
                         ~C_UiRecordContextMenu() override;
 
-    ATR_POINTER         (Record,   C_Record)
     ATR_POINTER         (Document, C_Document)
-    ATR_VALUE           (Position, long)
-
-public slots:
-
-    void                OnEdit();
-    void                OnRemove();
-    void                OnAdd();
-    void                OnAddSceneItem();
-    void                OnCopy();
-    void                OnPaste();
 
 };
 

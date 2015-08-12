@@ -2,7 +2,6 @@
 #define C_UIMAINWINDOW_H
 
 #include "FW/macro.h"
-
 #include <QMainWindow>
 
 
@@ -40,6 +39,11 @@ private slots:
     void                          on_ActionFind_triggered();
     void                          on_ActionExit_triggered();
     void                          on_ActionRun_triggered();
+    void                          on_ActionCopy_triggered();
+    void                          on_ActionPaste_triggered();
+    void                          on_ActionRemove_triggered();
+    void                          on_ActionAdd_to_scene_triggered();
+    void                          on_ActionCut_triggered();
 
 private:
 

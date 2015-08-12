@@ -10,15 +10,15 @@ class C_Clipboard : public C_Variant
 {
 public:
 
-    explicit C_Clipboard(C_Variant* parent=0);
+    explicit C_Clipboard( C_Variant* parent = 0 );
 
     void                Clear();
-    void                Copy(C_RecordStruct& from, QStringList& id_list);
-    void                Paste(C_RecordStruct& into, int position);
+    void                Paste( C_RecordStruct& record_struct, int position );
+    void                Cut( list<C_Record*>& records );
+    void                Copy( list<C_Record*>& records );
 
-
-    ATR_POINTER         (Records, C_RecordStruct)
-    ATR_VALUE           (IdList,  QStringList)
+    ATR_CONST_VALUE     ( CopyList, list<C_Record*> )
+    ATR_CONST_VALUE     ( PasteFlags, long )
 };
 
 #endif // C_CLIPBOARD_H

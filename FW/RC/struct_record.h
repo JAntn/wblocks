@@ -15,7 +15,6 @@ public:
 
     explicit C_StructRecord( C_StateWriter& state, C_Variant* parent = 0 );
     C_StructRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
-
     ~C_StructRecord() override;
 
     QString             Class()  const override;
@@ -24,7 +23,6 @@ public:
 
     void                GetState( C_StateReader& state ) override;
     void                SetState( C_StateWriter& state ) override;
-
     void                ShowEditor( C_Document& document ) override;
 
     ATR_POINTER         ( Records, C_RecordStruct )

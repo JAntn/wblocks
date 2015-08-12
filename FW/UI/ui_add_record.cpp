@@ -28,7 +28,7 @@ C_UiAddRecord::C_UiAddRecord( C_Document& document, int index, QWidget* parent )
     ui->ComboBox->setCurrentIndex( 0 );
     ui->SpinBox->setMaximum( index_max );
     ui->SpinBox->setMinimum( 0 );
-    ui->SpinBox->setValue( index + 1 );
+    ui->SpinBox->setValue( index  );
     ui->LineEdit->setText( "" );
 }
 
