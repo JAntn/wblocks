@@ -14,13 +14,13 @@ class C_UiSceneItemContextMenu : public QObject
 
 public:
 
-                        C_UiSceneItemContextMenu(C_SceneItem& item,
-                                               QGraphicsSceneContextMenuEvent *event,
-                                               QObject* parent =0);
+    C_UiSceneItemContextMenu( C_SceneItem& item,
+                              QGraphicsSceneContextMenuEvent* event,
+                              QObject* parent = 0 );
 
-                        ~C_UiSceneItemContextMenu() override;
+    ~C_UiSceneItemContextMenu() override;
 
-    ATR_POINTER         (SceneItem, C_SceneItem)
+    ATR_POINTER         ( SceneItem, C_SceneItem )
 
 public slots:
 

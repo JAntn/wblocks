@@ -25,12 +25,11 @@ public:
 
     ATR_POINTER         (Document, C_Document)
 
-private slots:
+public slots:
 
-    void                on_ButtonBox_accepted();
-    void                on_EditButton_clicked();
-
-    void on_ButtonBox_rejected();
+    void                OnButtonBoxAccepted();
+    void                OnButtonBoxRejected();
+    void                OnEditButtonClicked();
 
 private:
 

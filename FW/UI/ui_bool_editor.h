@@ -9,7 +9,8 @@ class C_Record;
 class C_BoolRecord;
 class C_Document;
 
-namespace Ui {
+namespace Ui
+{
 class C_UiBoolEditor;
 }
 
@@ -19,17 +20,17 @@ class C_UiBoolEditor : public QDialog
 
 public:
 
-                        C_UiBoolEditor(C_BoolRecord& record, C_Document& document, QWidget* parent=0);
-                        ~C_UiBoolEditor() override;
+    C_UiBoolEditor( C_BoolRecord& record, C_Document& document, QWidget* parent = 0 );
+    ~C_UiBoolEditor() override;
 
-    ATR_POINTER         (Record,   C_BoolRecord)
-    ATR_POINTER         (Document, C_Document)
+    ATR_POINTER         ( Record,   C_BoolRecord )
+    ATR_POINTER         ( Document, C_Document )
 
 
-private slots:
+public slots:
 
-    void                on_ButtonBox_accepted();
-    void                on_RemoveButton_clicked();
+    void                OnButtonBoxAccepted();
+    void                OnRemoveButtonClicked();
 
 private:
 

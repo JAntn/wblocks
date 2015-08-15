@@ -9,7 +9,6 @@ class C_StateReader;
 
 class C_BoolRecord : public C_Record
 {
-
 public:
 
     explicit C_BoolRecord( C_StateWriter& state, C_Variant* parent = 0 );

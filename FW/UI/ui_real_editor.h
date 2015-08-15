@@ -9,7 +9,8 @@ class C_Record;
 class C_RealRecord;
 class C_Document;
 
-namespace Ui {
+namespace Ui
+{
 class C_UiRealEditor;
 }
 
@@ -19,17 +20,16 @@ class C_UiRealEditor : public QDialog
 
 public:
 
-                        C_UiRealEditor(C_RealRecord& record, C_Document& document, QWidget* parent=0);
-                        ~C_UiRealEditor() override;
+    C_UiRealEditor( C_RealRecord& record, C_Document& document, QWidget* parent = 0 );
+    ~C_UiRealEditor() override;
 
-    ATR_POINTER         (Record,   C_RealRecord)
-    ATR_POINTER         (Document, C_Document)
-
+    ATR_POINTER         ( Record,   C_RealRecord )
+    ATR_POINTER         ( Document, C_Document )
 
 private slots:
 
-    void                on_ButtonBox_accepted();
-    void                on_RemoveButton_clicked();
+    void                OnButtonBoxAccepted();
+    void                OnRemoveButtonClicked();
 
 private:
 

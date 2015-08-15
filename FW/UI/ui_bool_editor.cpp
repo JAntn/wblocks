@@ -23,6 +23,21 @@ C_UiBoolEditor::C_UiBoolEditor( C_BoolRecord& record, C_Document& document, QWid
         index = 1;
 
     ui->ComboBox->setCurrentIndex( index );
+
+    connect(
+        ui->ButtonBox,
+        QDialogButtonBox::accepted,
+        this,
+        C_UiBoolEditor::OnButtonBoxAccepted
+    );
+
+    connect(
+        ui->RemoveButton,
+        QPushButton::clicked,
+        this,
+        C_UiBoolEditor::OnRemoveButtonClicked
+    );
+
 }
 
 C_UiBoolEditor::~C_UiBoolEditor()
@@ -30,7 +45,7 @@ C_UiBoolEditor::~C_UiBoolEditor()
     delete ui;
 }
 
-void C_UiBoolEditor::on_ButtonBox_accepted()
+void C_UiBoolEditor::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
@@ -43,11 +58,11 @@ void C_UiBoolEditor::on_ButtonBox_accepted()
 
 
     emit Document()
-    .Signals()
+    .Events()
     .RecordsChanged();
 }
 
-void C_UiBoolEditor::on_RemoveButton_clicked()
+void C_UiBoolEditor::OnRemoveButtonClicked()
 {
     if(  Document().AcceptMessage(
                 tr( "Do you want to remove this record?" ) ) )
@@ -55,7 +70,7 @@ void C_UiBoolEditor::on_RemoveButton_clicked()
         delete & Record();
 
         emit Document()
-        .Signals()
+        .Events()
         .RecordsChanged();
 
         close();

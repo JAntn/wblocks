@@ -13,6 +13,20 @@ C_UiStringEditor::C_UiStringEditor( C_StringRecord& record, C_Document& document
     ui->setupUi( this );
     ui->NameLineEdit->setText( Record().Name() );
     ui->TextEdit->setPlainText( Record().Value() );
+
+    connect(
+        ui->ButtonBox,
+        QDialogButtonBox::accepted,
+        this,
+        C_UiStringEditor::OnButtonBoxAccepted
+    );
+
+    connect(
+        ui->RemoveButton,
+        QPushButton::clicked,
+        this,
+        C_UiStringEditor::OnRemoveButtonClicked
+    );
 }
 
 C_UiStringEditor::~C_UiStringEditor()
@@ -20,7 +34,7 @@ C_UiStringEditor::~C_UiStringEditor()
     delete ui;
 }
 
-void C_UiStringEditor::on_ButtonBox_accepted()
+void C_UiStringEditor::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
@@ -32,11 +46,11 @@ void C_UiStringEditor::on_ButtonBox_accepted()
     Record().m_Name = ui->NameLineEdit->text();
 
     emit Document()
-    .Signals()
+    .Events()
     .RecordsChanged();
 }
 
-void C_UiStringEditor::on_RemoveButton_clicked()
+void C_UiStringEditor::OnRemoveButtonClicked()
 {
     if( C_Document::AcceptMessage(
                 tr( "Do you want to remove this record?" ) ) )
@@ -44,7 +58,7 @@ void C_UiStringEditor::on_RemoveButton_clicked()
         delete & Record();
 
         emit Document()
-        .Signals()
+        .Events()
         .RecordsChanged();
 
         close();

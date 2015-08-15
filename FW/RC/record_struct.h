@@ -24,7 +24,7 @@ public:
     C_Record*                          CreateRecord( QString name, QString value, QString class_name, const_iterator position );
 
     C_Record*                          FromIndex( int row ) const;
-    C_Record*                          FromName(QString name , bool deep = false ) const;
+    C_Record*                          FromName( QString name , bool deep = false ) const;
     C_Record*                          FromId( QString record_id, bool deep = false ) const;
     int                                GetIndex( C_Record* record ) const;
 

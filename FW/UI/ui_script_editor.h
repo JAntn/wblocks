@@ -4,7 +4,8 @@
 #include "FW/macro.h"
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class C_UiScriptEditor;
 }
 
@@ -17,22 +18,22 @@ class C_UiScriptEditor : public QDialog
 
 public:
 
-                                 C_UiScriptEditor(C_ScriptRecord& record, C_Document& document, QWidget* parent = 0);
-                                 ~C_UiScriptEditor() override;
+    C_UiScriptEditor( C_ScriptRecord& record, C_Document& document, QWidget* parent = 0 );
+    ~C_UiScriptEditor() override;
 
-    ATR_POINTER                  (Record,   C_ScriptRecord)
-    ATR_POINTER                  (Document, C_Document)
+    ATR_POINTER                  ( Record,   C_ScriptRecord )
+    ATR_POINTER                  ( Document, C_Document )
 
 public slots:
 
-    void                         on_ButtonBox_accepted();
-    void                         on_RemoveButton_clicked();
-    void                         on_LoadButton_clicked();
-    void                         on_SaveButton_clicked();
-    void                         on_FileCheckBox_stateChanged(int arg1);
+    void                         OnButtonBoxAccepted();
+    void                         OnRemoveButtonClicked();
+    void                         OnLoadButtonClicked();
+    void                         OnSaveButtonClicked();
+    void                         OnFileCheckBoxStateChanged( int arg1 );
 
 private:
-    Ui::C_UiScriptEditor *ui;
+    Ui::C_UiScriptEditor* ui;
 };
 
 #endif // UI_SCRIPT_EDITOR_H

@@ -65,7 +65,7 @@ void C_UiSceneItemContextMenu::OnRemove()
         emit SceneItem()
         .Scene()
         .Document()
-        .Signals()
+        .Events()
         .RecordsChanged();
     }
 }

@@ -26,7 +26,7 @@ C_UiRecordTableModel::C_UiRecordTableModel( C_Document& document, QObject* paren
 
 C_UiRecordTableModel::~C_UiRecordTableModel()
 {
-    ///void
+    // void
 }
 
 int C_UiRecordTableModel::rowCount( const QModelIndex& ) const

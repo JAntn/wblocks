@@ -45,7 +45,40 @@ C_UiScriptEditor::C_UiScriptEditor( C_ScriptRecord& record, C_Document& document
         ui->PlainTextEdit->setPlainText( text );
     }
 
+    connect(
+        ui->ButtonBox,
+        QDialogButtonBox::accepted,
+        this,
+        C_UiScriptEditor::OnButtonBoxAccepted
+    );
 
+    connect(
+        ui->RemoveButton,
+        QPushButton::clicked,
+        this,
+        C_UiScriptEditor::OnRemoveButtonClicked
+    );
+
+    connect(
+        ui->LoadButton,
+        QPushButton::clicked,
+        this,
+        C_UiScriptEditor::OnLoadButtonClicked
+    );
+
+    connect(
+        ui->SaveButton,
+        QPushButton::clicked,
+        this,
+        C_UiScriptEditor::OnSaveButtonClicked
+    );
+
+    connect(
+        ui->FileCheckBox,
+        QCheckBox::stateChanged,
+        this,
+        C_UiScriptEditor::OnFileCheckBoxStateChanged
+    );
 }
 
 C_UiScriptEditor::~C_UiScriptEditor()
@@ -53,7 +86,7 @@ C_UiScriptEditor::~C_UiScriptEditor()
     delete ui;
 }
 
-void C_UiScriptEditor::on_ButtonBox_accepted()
+void C_UiScriptEditor::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
@@ -79,11 +112,11 @@ void C_UiScriptEditor::on_ButtonBox_accepted()
     }
 
     emit Document()
-    .Signals()
+    .Events()
     .RecordsChanged();
 }
 
-void C_UiScriptEditor::on_RemoveButton_clicked()
+void C_UiScriptEditor::OnRemoveButtonClicked()
 {
     if(  Document().AcceptMessage(
                 tr( "Do you want to remove this record?" ) ) )
@@ -91,7 +124,7 @@ void C_UiScriptEditor::on_RemoveButton_clicked()
         delete & Record();
 
         emit Document()
-        .Signals()
+        .Events()
         .RecordsChanged();
 
         close();
@@ -100,7 +133,7 @@ void C_UiScriptEditor::on_RemoveButton_clicked()
 
 #include <QDebug>
 
-void C_UiScriptEditor::on_LoadButton_clicked()
+void C_UiScriptEditor::OnLoadButtonClicked()
 {
     QString file_name = QFileDialog::getOpenFileName( &Document().MainWindow(),
                         tr( "Load File" ),
@@ -116,7 +149,7 @@ void C_UiScriptEditor::on_LoadButton_clicked()
     ui->PlainTextEdit->setPlainText( text );
 }
 
-void C_UiScriptEditor::on_SaveButton_clicked()
+void C_UiScriptEditor::OnSaveButtonClicked()
 {
     QString file_name = QFileDialog::getSaveFileName( &Document().MainWindow(),
                         tr( "Save File" ),
@@ -133,7 +166,7 @@ void C_UiScriptEditor::on_SaveButton_clicked()
 
 }
 
-void C_UiScriptEditor::on_FileCheckBox_stateChanged( int arg1 )
+void C_UiScriptEditor::OnFileCheckBoxStateChanged( int arg1 )
 {
     if( ui->FileCheckBox->isChecked() )
     {

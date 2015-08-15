@@ -1,10 +1,9 @@
 #include "FW/RC/record.h"
 #include "FW/document.h"
 #include "FW/SC/scene.h"
-
 #include "FW/UI/ui_add_record.h"
 #include "ui_addrecord.h"
-
+#include "FW/RC/reference_record.h"
 #include <QMessageBox>
 
 C_UiAddRecord::C_UiAddRecord( C_Document& document, int index, QWidget* parent ) :
@@ -30,6 +29,24 @@ C_UiAddRecord::C_UiAddRecord( C_Document& document, int index, QWidget* parent )
     ui->SpinBox->setMinimum( 0 );
     ui->SpinBox->setValue( index  );
     ui->LineEdit->setText( "" );
+
+    connect(
+        ui->ButtonBox,
+        QDialogButtonBox::accepted,
+        this,
+        C_UiAddRecord::OnButtonBoxAccepted );
+
+    connect(
+        ui->EditButton,
+        QPushButton::clicked,
+        this,
+        C_UiAddRecord::OnEditButtonClicked );
+
+    connect(
+        ui->ButtonBox,
+        QDialogButtonBox::rejected,
+        this,
+        C_UiAddRecord::OnButtonBoxRejected );
 }
 
 C_UiAddRecord::~C_UiAddRecord()
@@ -93,7 +110,7 @@ bool C_UiAddRecord::CheckFormData() const
     return true;
 }
 
-void C_UiAddRecord::on_ButtonBox_accepted()
+void C_UiAddRecord::OnButtonBoxAccepted()
 {
     if( CheckFormData() )
     {
@@ -106,8 +123,11 @@ void C_UiAddRecord::on_ButtonBox_accepted()
                            .Records()
                            .CreateRecord( name, "", class_name, index );
 
+        if( class_name == "Reference" )
+            static_cast<C_ReferenceRecord*>(record)->SetDocument(Document());
+
         emit Document()
-        .Signals()
+        .Events()
         .RecordsChanged();
 
         if( ui->CheckBox->isChecked() )
@@ -118,7 +138,7 @@ void C_UiAddRecord::on_ButtonBox_accepted()
             .CreateItem( *record );
 
             emit Document()
-            .Signals()
+            .Events()
             .SceneChanged();
         }
 
@@ -126,10 +146,8 @@ void C_UiAddRecord::on_ButtonBox_accepted()
     }
 }
 
-void C_UiAddRecord::on_EditButton_clicked()
+void C_UiAddRecord::OnEditButtonClicked()
 {
-
-    // Create again but then go to editor dialog
 
     if( CheckFormData() )
     {
@@ -143,7 +161,7 @@ void C_UiAddRecord::on_EditButton_clicked()
                            .CreateRecord( name, "", class_name, index );
 
         emit Document()
-        .Signals()
+        .Events()
         .RecordsChanged();
 
         if( ui->CheckBox->isChecked() )
@@ -155,7 +173,7 @@ void C_UiAddRecord::on_EditButton_clicked()
             .CreateItem( *record );
 
             emit Document()
-            .Signals()
+            .Events()
             .SceneChanged();
         }
 
@@ -164,7 +182,7 @@ void C_UiAddRecord::on_EditButton_clicked()
     }
 }
 
-void C_UiAddRecord::on_ButtonBox_rejected()
+void C_UiAddRecord::OnButtonBoxRejected()
 {
     close();
 }

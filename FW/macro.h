@@ -34,9 +34,13 @@
                                            public:\
                                            const __VAR_TYPE& __VAR_NAME() const {return m_##__VAR_NAME;}
 
+
+
 #include <QDebug>
 #include <list>
+#include <vector>
 using std::list;
+using std::vector;
 
 #define FLAG_ACTION_ALL          0xFF
 #define FLAG_ACTION_ADD          0x01

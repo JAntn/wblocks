@@ -14,6 +14,20 @@ C_UiRealEditor::C_UiRealEditor(C_RealRecord& record, C_Document& document, QWidg
     ui->setupUi(this);
     ui->NameLineEdit->setText(Record().Name());
     ui->ValueLineEdit->setText(Record().Value());
+
+    connect(
+        ui->ButtonBox,
+        QDialogButtonBox::accepted,
+        this,
+        C_UiRealEditor::OnButtonBoxAccepted
+    );
+
+    connect(
+        ui->RemoveButton,
+        QPushButton::clicked,
+        this,
+        C_UiRealEditor::OnRemoveButtonClicked
+    );
 }
 
 C_UiRealEditor::~C_UiRealEditor()
@@ -22,7 +36,7 @@ C_UiRealEditor::~C_UiRealEditor()
 }
 #include<QMessageBox>
 
-void C_UiRealEditor::on_ButtonBox_accepted()
+void C_UiRealEditor::OnButtonBoxAccepted()
 {
     if(!ui->NameLineEdit->text().contains(QRegExp("^\\S+$"))) {
         Document().Message(tr("Name must not contain white spaces"));
@@ -38,11 +52,11 @@ void C_UiRealEditor::on_ButtonBox_accepted()
     m_Record->m_Name = ui->NameLineEdit->text();
 
     emit Document()
-            .Signals()
+            .Events()
             .RecordsChanged();
 }
 
-void C_UiRealEditor::on_RemoveButton_clicked()
+void C_UiRealEditor::OnRemoveButtonClicked()
 {
     if(  Document().AcceptMessage(
                 tr("Do you want to remove this record?")))
@@ -50,7 +64,7 @@ void C_UiRealEditor::on_RemoveButton_clicked()
         delete & Record();
 
         emit Document()
-                .Signals()
+                .Events()
                 .RecordsChanged();
 
         close();

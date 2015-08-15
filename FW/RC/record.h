@@ -17,7 +17,6 @@ class C_Record : public C_Variant
 public:
 
     C_Record( QString id, QString name, QString value, C_Variant* parent = 0 );
-
     ~C_Record() override;
 
     virtual QString               Id() const;
@@ -34,7 +33,7 @@ public:
     QString                       FullName() const;
     virtual void                  SetValue( QString value );
     virtual QString               Value() const;
-    ATR_VALUE                     ( Flags, long )
+    ATR_VALUE                                 ( Flags, long )
 
 protected:
 

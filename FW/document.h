@@ -13,7 +13,7 @@ class C_Script;
 class C_Database;
 class C_Record;
 class C_SceneItem;
-class C_Signals;
+class C_Events;
 class C_UiMainWindow;
 class C_Context;
 class C_Clipboard;
@@ -39,7 +39,7 @@ public:
     ATR_POINTER         ( MainWindow, C_UiMainWindow )
     ATR_POINTER         ( Database,   C_Database )
     ATR_POINTER         ( Script,     C_Script )
-    ATR_POINTER         ( Signals,    C_Signals )
+    ATR_POINTER         ( Events,     C_Events )
     ATR_POINTER         ( Records,    C_RecordStruct )
     ATR_POINTER         ( Scene,      C_Scene )
     ATR_POINTER         ( Context,    C_Context )
@@ -53,6 +53,6 @@ public:
 
 #include "context.h"
 #include "script.h"
-#include "signals.h"
+#include "events.h"
 
 #endif // C_APPMANAGER_H

@@ -1,10 +1,8 @@
 #include "FW/document.h"
 #include "FW/RC/record.h"
-
 #include "FW/UI/ui_find_record.h"
 #include "ui_findrecord.h"
 
-#include <QMessageBox>
 
 C_UiFindRecord::C_UiFindRecord( C_Document& document, QWidget* parent ) :
     QDialog( parent ),
@@ -24,6 +22,41 @@ C_UiFindRecord::C_UiFindRecord( C_Document& document, QWidget* parent ) :
     ui->LineEdit->setText( "" );
     ui->RemoveButton->setEnabled( false );
     ui->EditButton->setEnabled( false );
+
+    connect(
+        ui->LineEdit,
+        QLineEdit::returnPressed,
+        this,
+        C_UiFindRecord::OnLineEditReturnPressed
+    );
+
+    connect(
+        ui->RemoveButton,
+        QPushButton::clicked,
+        this,
+        C_UiFindRecord::OnRemoveButtonClicked
+    );
+
+    connect(
+        ui->CloseButton,
+        QPushButton::clicked,
+        this,
+        C_UiFindRecord::OnCloseButtonClicked
+    );
+
+    connect(
+        ui->EditButton,
+        QPushButton::clicked,
+        this,
+        C_UiFindRecord::OnEditButtonClicked
+    );
+
+    connect(
+        ui->SpinBox,
+        SIGNAL(QSpinBox::valueChanged(int)),
+        this,
+        SLOT(C_UiFindRecord::OnSpinBoxValueChanged(int))
+    );
 }
 
 C_UiFindRecord::~C_UiFindRecord()
@@ -31,7 +64,7 @@ C_UiFindRecord::~C_UiFindRecord()
     delete ui;
 }
 
-void C_UiFindRecord::on_LineEdit_returnPressed()
+void C_UiFindRecord::OnLineEditReturnPressed()
 {
     QString name = ui->LineEdit->text();
 
@@ -69,7 +102,7 @@ void C_UiFindRecord::on_LineEdit_returnPressed()
     }
 }
 
-void C_UiFindRecord::on_SpinBox_valueChanged( int index )
+void C_UiFindRecord::OnSpinBoxValueChanged( int index )
 {
     int index_max = Document()
                     .Context()
@@ -110,12 +143,12 @@ void C_UiFindRecord::on_SpinBox_valueChanged( int index )
     }
 }
 
-void C_UiFindRecord::on_CloseButton_clicked()
+void C_UiFindRecord::OnCloseButtonClicked()
 {
     close();
 }
 
-void C_UiFindRecord::on_EditButton_clicked()
+void C_UiFindRecord::OnEditButtonClicked()
 {
     if( m_Record != 0 )
     {
@@ -130,7 +163,7 @@ void C_UiFindRecord::on_EditButton_clicked()
     }
 }
 
-void C_UiFindRecord::on_RemoveButton_clicked()
+void C_UiFindRecord::OnRemoveButtonClicked()
 {
     if( C_Document::AcceptMessage(
                 tr( "Do you want to remove this record?" ) ) )
@@ -138,7 +171,7 @@ void C_UiFindRecord::on_RemoveButton_clicked()
         delete & Record();
 
         emit Document()
-        .Signals()
+        .Events()
         .RecordsChanged();
 
         m_Record = 0;

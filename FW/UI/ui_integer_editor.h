@@ -7,7 +7,8 @@
 class C_IntegerRecord;
 class C_Document;
 
-namespace Ui {
+namespace Ui
+{
 class C_UiIntegerEditor;
 }
 
@@ -17,20 +18,20 @@ class C_UiIntegerEditor : public QDialog
 
 public:
 
-                        C_UiIntegerEditor(C_IntegerRecord& record, C_Document& document, QWidget * parent = 0);
-                        ~C_UiIntegerEditor() override;
+    C_UiIntegerEditor( C_IntegerRecord& record, C_Document& document, QWidget* parent = 0 );
+    ~C_UiIntegerEditor() override;
 
-    ATR_POINTER         (Record,C_IntegerRecord)
-    ATR_POINTER         (Document,C_Document)
+    ATR_POINTER         ( Record, C_IntegerRecord )
+    ATR_POINTER         ( Document, C_Document )
 
-private slots:
+public slots:
 
-    void                on_ButtonBox_accepted();
-    void                on_RemoveButton_clicked();
+    void                OnButtonBoxAccepted();
+    void                OnRemoveButtonClicked();
 
 private:
 
-    Ui::C_UiIntegerEditor *ui;    
+    Ui::C_UiIntegerEditor* ui;
 };
 
 #endif // C_UIINTEGEREDITOR_H

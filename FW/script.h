@@ -18,7 +18,7 @@ public:
 
     void                Generate( C_RecordStruct& record_container );
 
-    ATR_VALUE           ( StringList, QStringList )
+    ATR_VALUE                 ( StringList, QStringList )
 };
 
 #endif // C_SCRIPT_H

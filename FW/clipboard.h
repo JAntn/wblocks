@@ -14,11 +14,12 @@ public:
 
     void                Clear();
     void                Paste( C_RecordStruct& record_struct, int position );
-    void                Cut( list<C_Record*>& records );
-    void                Copy( list<C_Record*>& records );
+    void                Cut( const list<C_Record*>& records );
+    void                Copy( const list<C_Record*>& records );
+    bool                Empty();
 
-    ATR_CONST_VALUE     ( CopyList, list<C_Record*> )
-    ATR_CONST_VALUE     ( PasteFlags, long )
+    ATR_CONST_VALUE     ( Data, list<C_Record*> )
+    ATR_CONST_VALUE     ( Flags, long )
 };
 
 #endif // C_CLIPBOARD_H

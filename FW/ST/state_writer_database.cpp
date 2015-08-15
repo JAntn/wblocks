@@ -28,7 +28,7 @@ void C_StateWriterDatabase::Next()
 
     ++m_Count;
 
-    if( m_Size < m_Count )
+    if( m_Size <= m_Count )
     {
         Stop();
         return;

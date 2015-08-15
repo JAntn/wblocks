@@ -1,9 +1,10 @@
 #include "FW/RC/struct_record.h"
 #include "FW/RC/integer_record.h"
 #include "FW/RC/record_struct.h"
+#include "FW/RC/reference_record.h"
+#include "FW/RC/real_record.h"
 #include "FW/RC/script_record.h"
 #include "FW/RC/string_record.h"
-#include "FW/RC/real_record.h"
 #include "FW/RC/bool_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -23,6 +24,7 @@ void C_RecordStruct::InitFactoryList()
         m_FactoryList.push_back( &C_StringRecordFactory::Instance() );
         m_FactoryList.push_back( &C_ScriptRecordFactory::Instance() );
         m_FactoryList.push_back( &C_StructRecordFactory::Instance() );
+        m_FactoryList.push_back( &C_ReferenceRecordFactory::Instance() );
         // Add more classes here or later
     }
 }
@@ -109,7 +111,6 @@ C_Record* C_RecordStruct::CreateRecord(
             Insert( position, *record );
         else
             Append( *record );
-
     }
 
     return record;

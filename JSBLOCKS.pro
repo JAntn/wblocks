@@ -34,7 +34,6 @@ HEADERS += \
     FW/UI/ui_record_context_menu.h \
     FW/context.h \
     FW/script.h \
-    FW/signals.h \
     FW/UI/ui_string_editor.h \
     FW/RC/string_record.h \
     FW/UI/ui_struct_editor.h \
@@ -56,7 +55,10 @@ HEADERS += \
     FW/ST/state_reader_stream.h \
     FW/ST/state_writer_stream.h \
     FW/ST/state_reader_database.h \
-    FW/ST/state_writer_database.h
+    FW/ST/state_writer_database.h \
+    FW/RC/reference_record.h \
+    FW/UI/ui_reference_editor.h \
+    FW/events.h
 
 
 
@@ -78,7 +80,6 @@ SOURCES += \
     FW/UI/ui_record_context_menu.cpp \
     FW/context.cpp \
     FW/script.cpp \
-    FW/signals.cpp \
     FW/UI/ui_string_editor.cpp \
     FW/RC/string_record.cpp \
     FW/UI/ui_struct_editor.cpp \
@@ -100,7 +101,10 @@ SOURCES += \
     FW/ST/state_reader_stream.cpp \
     FW/ST/state_writer_stream.cpp \
     FW/ST/state_reader_database.cpp \
-    FW/ST/state_writer_database.cpp
+    FW/ST/state_writer_database.cpp \
+    FW/RC/reference_record.cpp \
+    FW/UI/ui_reference_editor.cpp \
+    FW/events.cpp
 
 FORMS += \
     FW/UI/addrecord.ui \
@@ -112,7 +116,8 @@ FORMS += \
     FW/UI/realeditor.ui \
     FW/UI/booleditor.ui \
     FW/UI/scripteditor.ui \
-    FW/UI/recordstructview.ui
+    FW/UI/recordstructview.ui \
+    FW/UI/referenceeditor.ui
 
 DISTFILES += \
     format_code.astylerc

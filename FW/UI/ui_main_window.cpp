@@ -7,6 +7,7 @@
 #include "FW/UI/ui_record_struct_view.h"
 #include "FW/UI/ui_find_record.h"
 #include "ui_findrecord.h"
+#include "ui_record_context_menu.h"
 #include "FW/clipboard.h"
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
@@ -21,9 +22,13 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ) :
     m_Document = new C_Document( *this );
     m_RecordStructView = new C_UiRecordStructView( Document(), this );
     ui->TableViewLayout->addWidget( m_RecordStructView );
-    ui->GraphicsView->setScene( &Document().Context().Scene().GraphicsScene() );
+    ui->GraphicsView->setScene(
+        &Document()
+        .Context()
+        .Scene()
+        .GraphicsScene() );
     UpdateScriptView();
-    ConnectSignals();
+    ConnectEvents();
 }
 
 C_UiMainWindow::~C_UiMainWindow()
@@ -48,186 +53,66 @@ void C_UiMainWindow::UpdateScriptView()
 
 void C_UiMainWindow::UpdateSceneView()
 {
-    // ...
+    // void
 }
 
-void C_UiMainWindow::ConnectSignals()
+void C_UiMainWindow::UpdateMenubar()
 {
-    Document().Signals().ConnectSignals();
-
-    connect(
-        ui->ActionFileLoad,
-        QAction::triggered,
-        &Document().Signals(),
-        C_Signals::OnActionFileLoad );
-
-    connect(
-        ui->ActionFileSave,
-        QAction::triggered,
-        &Document().Signals(),
-        C_Signals::OnActionFileSave );
-
-    connect(
-        ui->ActionSQLLoad,
-        QAction::triggered,
-        &Document().Signals(),
-        C_Signals::OnActionSQLLoad );
-
-    connect(
-        ui->ActionSQLSave,
-        QAction::triggered,
-        &Document().Signals(),
-        C_Signals::OnActionSQLSave );
-
-    connect(
-        ui->ActionScriptSave,
-        QAction::triggered,
-        &Document().Signals(),
-        C_Signals::OnActionScriptSave );
-}
-
-void C_UiMainWindow::on_ActionNew_triggered()
-{
-    Document().Clear();
-}
-
-void C_UiMainWindow::on_ActionCopy_triggered()
-{
-    if( ! ( Document().Context().Records().Flags() & FLAG_ACTION_COPY ) )
-        return;
-
-    bool empty = Document()
-                 .MainWindow()
-                 .RecordStructView()
-                 .Selection()
-                 .empty();
-
-    if( empty )
-        return;
-
-    Document().Signals().OnActionCopy();
-}
-
-void C_UiMainWindow::on_ActionCut_triggered()
-{
-    if( ! ( Document().Context().Records().Flags() & FLAG_ACTION_CUT ) )
-        return;
-
-    bool empty = Document()
-                 .MainWindow()
-                 .RecordStructView()
-                 .Selection()
-                 .empty();
-
-    if( empty )
-        return;
-
-    Document().Signals().OnActionCut();
-}
-
-void C_UiMainWindow::on_ActionPaste_triggered()
-{
-    if( !( Document().Context().Records().Flags() & FLAG_ACTION_PASTE ) )
-        return;
-
-
-    if( Document().Clipboard().CopyList().empty() )
-        return;
-
-    int position = -1;
-
-    if ( !Document().MainWindow().RecordStructView().Selection().empty() )
+    vector<QAction*> actions =
     {
-        auto front = Document().MainWindow().RecordStructView().Selection().front();
-        int count = 0;
+        ui->ActionCut,
+        ui->ActionCopy,
+        ui->ActionPaste,
+        ui->ActionAdd,
+        ui->ActionAdd_to_scene,
+        ui->ActionEdit,
+        ui->ActionRemove
+    };
 
-        for( auto record : Document().Context().Records() )
-        {
-            if( record == front )
-            {
-                position = count;
-                break;
-            }
+    vector<long> action_flags =
+    {
+        FLAG_ACTION_CUT,
+        FLAG_ACTION_COPY,
+        FLAG_ACTION_PASTE,
+        FLAG_ACTION_ADD,
+        FLAG_ACTION_ADD_SCENE,
+        FLAG_ACTION_EDIT,
+        FLAG_ACTION_REMOVE
+    };
 
-            ++count;
-        }
+    auto iter = action_flags.begin();
+
+    for( auto action : actions )
+    {
+        if( Document().Context().Records().Flags() & (*iter) )
+            action->setEnabled( true );
+        else
+            action->setEnabled( false );
+
+        ++iter;
     }
 
-    Document().Signals().EventData().clear();
-    Document().Signals().EventData() << QString::number( position );
-    Document().Signals().OnActionPaste();
-}
-
-void C_UiMainWindow::on_ActionRemove_triggered()
-{
-    if( !( Document().Context().Records().Flags() & FLAG_ACTION_REMOVE ) )
-        return;
-
-    list<C_Record*> selection_list = Document()
-                                     .MainWindow()
-                                     .RecordStructView()
-                                     .Selection();
-
-    if( selection_list.empty() )
-        return;
-
-    Document().Signals().OnActionRemove();
-}
-
-void C_UiMainWindow::on_ActionAdd_to_scene_triggered()
-{
-    if( !( Document().Context().Records().Flags() & FLAG_ACTION_ADD_SCENE ) )
-        return;
-
-    list<C_Record*> selection_list = Document()
-                                     .MainWindow()
-                                     .RecordStructView()
-                                     .Selection();
-
-    if( selection_list.empty() )
-        return;
-
-    Document().Signals().OnActionAddSceneItem();
-}
-
-void C_UiMainWindow::on_ActionAdd_triggered()
-{
-    int position = -1;
-
-    if ( !Document().MainWindow().RecordStructView().Selection().empty() )
+    if( !Document()
+            .MainWindow()
+            .RecordStructView()
+            .HasSelection() )
     {
-        auto front = Document().MainWindow().RecordStructView().Selection().front();
-        int count = 0;
-
-        for( auto record : Document().Context().Records() )
-        {
-            if( record == front )
-            {
-                position = count;
-                break;
-            }
-
-            ++count;
-        }
+        ui->ActionCopy->setEnabled( false );
+        ui->ActionCut->setEnabled( false );
+        ui->ActionAdd_to_scene->setEnabled( false );
+        ui->ActionRemove->setEnabled( false );
     }
 
-    Document().Signals().EventData().clear();
-    Document().Signals().EventData() << QString::number( position );
-    Document().Signals().OnActionAdd();
+    bool is_empty =
+        Document()
+        .Clipboard()
+        .Empty();
+
+    if( is_empty )
+        ui->ActionPaste->setEnabled( false );
 }
 
-void C_UiMainWindow::on_ActionFind_triggered()
-{
-    QWidget* dialog = new C_UiFindRecord( Document(), this );
-    dialog->show();
-}
-
-void C_UiMainWindow::on_ActionExit_triggered()
-{
-    close();
-}
-
-void C_UiMainWindow::on_ActionRun_triggered()
+void C_UiMainWindow::UpdateWebView()
 {
     ui->WebView->setHtml( "<html><body></body></html>" );
     ui->WebView->page()->mainFrame()->evaluateJavaScript(
@@ -235,7 +120,91 @@ void C_UiMainWindow::on_ActionRun_triggered()
     ui->WebView->show();
 }
 
+void C_UiMainWindow::ConnectEvents()
+{
+    Document().Events().ConnectEvents();
 
+    connect(
+        ui->ActionFileLoad,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionFileLoad );
 
+    connect(
+        ui->ActionFileSave,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionFileSave );
 
+    connect(
+        ui->ActionSQLLoad,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionSQLLoad );
 
+    connect(
+        ui->ActionSQLSave,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionSQLSave );
+
+    connect(
+        ui->ActionScriptSave,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionScriptSave );
+
+    connect(
+        ui->ActionAdd,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionAdd );
+
+    connect(
+        ui->ActionAdd_to_scene,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionAddSceneItem );
+
+    connect(
+        ui->ActionRemove,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionRemove );
+
+    connect(
+        ui->ActionCopy,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionCopy );
+
+    connect(
+        ui->ActionCut,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionCut );
+
+    connect(
+        ui->ActionPaste,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionPaste );
+
+    connect(
+        ui->ActionRun,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionRunScript );
+
+    connect(
+        ui->ActionFind,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionFind );
+
+    connect(
+        ui->ActionNew,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionNewDocument );
+}

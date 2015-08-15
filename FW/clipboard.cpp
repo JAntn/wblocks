@@ -14,22 +14,27 @@ C_Clipboard::C_Clipboard( C_Variant* parent ):
 
 void C_Clipboard::Clear()
 {
-    m_CopyList.clear();
-    m_PasteFlags = 0;
+    m_Data.clear();
+    m_Flags = 0;
 }
 
-void C_Clipboard::Copy( list<C_Record*>& records )
+void C_Clipboard::Copy( const list<C_Record*>& records )
 {
     Clear();
-    m_CopyList = records;
-    m_PasteFlags = FLAG_STATE_NEWID;
+    m_Data = records;
+    m_Flags = FLAG_STATE_NEWID;
 }
 
-void C_Clipboard::Cut( list<C_Record*>& records )
+bool C_Clipboard::Empty()
+{
+    return m_Data.empty();
+}
+
+void C_Clipboard::Cut( const list<C_Record*>& records )
 {
     Clear();
-    m_CopyList = records;
-    m_PasteFlags = 0;
+    m_Data = records;
+    m_Flags = 0;
 }
 
 void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
@@ -49,10 +54,10 @@ void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
 
     C_StateReaderTable reader( table );
 
-    for( auto record : CopyList() )
+    for( auto record : Data() )
         record->GetState( reader );
 
-    C_StateWriterTable writer( table, m_PasteFlags );
+    C_StateWriterTable writer( table, m_Flags );
 
     while( !writer.AtEnd() )
         record_struct.CreateRecord( writer, iter );

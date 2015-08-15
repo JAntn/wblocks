@@ -54,7 +54,7 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
     m_Context           = new C_Context( Records(), Scene(), this );
     m_Script            = new C_Script( this );
     m_Database          = new C_Database( this );
-    m_Signals           = new C_Signals( *this, main_window, &main_window );
+    m_Events            = new C_Events( *this, main_window, &main_window );
     m_Clipboard         = new C_Clipboard( this );
 
     auto record1 = Records().CreateRecord( "SampleString", "Monday", "String" );
@@ -69,10 +69,10 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
                 "document.write(SampleString)"
                 );
 
-    emit Signals()
+    emit Events()
     .RecordsChanged();
 
-    emit Signals()
+    emit Events()
     .ScriptChanged();
 }
 
@@ -84,12 +84,12 @@ C_Document::~C_Document()
 void C_Document::UpdateScript()
 {
     Script().Generate( Records() );
-    emit Signals().ScriptChanged();
+    emit Events().ScriptChanged();
 }
 
 void C_Document::UpdateScene()
 {
-    emit Signals().SceneChanged();
+    emit Events().SceneChanged();
 }
 
 void C_Document::Clear()
@@ -97,8 +97,9 @@ void C_Document::Clear()
     Context().SetRecords( Records() );
     Records().Clear();
     Scene().Clear();
+    Clipboard().Clear();
 
-    emit Signals().RecordsChanged();
+    emit Events().RecordsChanged();
 }
 
 bool C_Document::AcceptMessage( QString msg )
@@ -178,7 +179,7 @@ void C_Document::FileLoad( QFile& file )
     while( !scene_state.AtEnd() )
         Scene().CreateItem( scene_state );
 
-    emit Signals().RecordsChanged();
+    emit Events().RecordsChanged();
     file.close();
 }
 
@@ -279,6 +280,6 @@ void C_Document::DatabaseLoad( QString file_name )
         Scene().CreateItem( scene_state );
 
     Database().CloseDatabase();
-    emit Signals().RecordsChanged();
+    emit Events().RecordsChanged();
 }
 

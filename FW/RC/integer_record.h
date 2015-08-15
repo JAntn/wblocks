@@ -15,7 +15,6 @@ public:
     C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
     ~C_IntegerRecord() override;
 
-
     QString             Class()     const override;
     QString             Script()    const override;
     C_RecordStruct*     Struct()    const override;

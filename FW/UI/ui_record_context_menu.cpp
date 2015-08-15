@@ -13,91 +13,71 @@
 C_UiRecordContextMenu::C_UiRecordContextMenu(
     C_Document& document,
     const QPoint& global_point,
-    long position,
     QObject* parent ):
     QObject( parent ),
     m_Document( &document )
 {
     QMenu menu;
 
-    list<C_Record*> selection_list = Document()
-                                     .MainWindow()
-                                     .RecordStructView()
-                                     .Selection();
+    bool has_selection =
+        Document()
+        .MainWindow()
+        .RecordStructView()
+        .HasSelection();
 
-    if( document.Context().Records().Flags() & FLAG_ACTION_COPY )
+    long action_flags = document
+                 .Context()
+                 .Records()
+                 .Flags();
+
+    if( ( action_flags & FLAG_ACTION_COPY ) && has_selection )
     {
-        if( !selection_list.empty() )
-        {
-            QAction* action_copy = menu.addAction( tr( "Copy" ) );
-            connect( action_copy, SIGNAL( triggered() ), &document.Signals(), SLOT( OnActionCopy() ) );
-        }
+        QAction* action_copy = menu.addAction( tr( "Copy" ) );
+        connect( action_copy, QAction::triggered, &document.Events(), C_Events::OnActionCopy );
+
     }
 
-    if( document.Context().Records().Flags() & FLAG_ACTION_CUT )
+    if( ( action_flags & FLAG_ACTION_CUT ) && has_selection )
     {
-        if( !selection_list.empty() )
-        {
-            QAction* action_copy = menu.addAction( tr( "Cut" ) );
-            connect( action_copy, SIGNAL( triggered() ), &document.Signals(), SLOT( OnActionCut() ) );
-        }
+
+        QAction* action_copy = menu.addAction( tr( "Cut" ) );
+        connect( action_copy, QAction::triggered, &document.Events(), C_Events::OnActionCut );
     }
 
-    if( document.Context().Records().Flags() & FLAG_ACTION_PASTE )
+    if( ( action_flags & FLAG_ACTION_PASTE ) && !document.Clipboard().Empty() )
     {
-        if( !document.Clipboard().CopyList().empty() )
-        {
-            document.Signals().EventData().clear();
-            document.Signals().EventData() << QString::number(position);
-
-            QAction* action_paste = menu.addAction( tr( "Paste" ) );
-            connect( action_paste, SIGNAL( triggered() ), &document.Signals(), SLOT( OnActionPaste() ) );
-        }
+        QAction* action_paste = menu.addAction( tr( "Paste" ) );
+        connect( action_paste, QAction::triggered, &document.Events(), C_Events::OnActionPaste );
     }
 
     if( !menu.isEmpty() )
         menu.addSeparator();
 
-    if( document.Context().Records().Flags() & FLAG_ACTION_EDIT )
+    if( ( action_flags & FLAG_ACTION_EDIT ) && has_selection )
     {
-        if( position >= 0)
-        {
-            document.Signals().EventData().clear();
-            document.Signals().EventData() << QString::number(position);
-
-            QAction* action_1 = menu.addAction( tr( "Edit" ) );
-            connect( action_1, SIGNAL( triggered() ), &document.Signals(), SLOT( OnActionEdit() ) );
-        }
+        QAction* action_1 = menu.addAction( tr( "Edit" ) );
+        connect( action_1, QAction::triggered, &document.Events(), C_Events::OnActionEdit );
     }
 
-    if( document.Context().Records().Flags() & FLAG_ACTION_ADD_SCENE )
+    if( ( action_flags & FLAG_ACTION_ADD_SCENE ) && has_selection )
     {
-        if( !selection_list.empty() )
-        {
-            QAction* action_3 = menu.addAction( tr( "Add to scene" ) );
-            connect( action_3, SIGNAL( triggered() ), &document.Signals(), SLOT( OnActionAddSceneItem() ) );
-        }
+        QAction* action_3 = menu.addAction( tr( "Add to scene" ) );
+        connect( action_3, QAction::triggered, &document.Events(), C_Events::OnActionAddSceneItem );
     }
 
     if( !menu.isEmpty() )
         menu.addSeparator();
 
-    if( document.Context().Records().Flags() & FLAG_ACTION_ADD )
+    if( action_flags & FLAG_ACTION_ADD )
     {
-        document.Signals().EventData().clear();
-        document.Signals().EventData() << QString::number(position);
-
         QAction* action_2 = menu.addAction( tr( "Add" ) );
-        connect( action_2, SIGNAL( triggered() ), &document.Signals(), SLOT( OnActionAdd() ) );
+        connect( action_2, QAction::triggered, &document.Events(), C_Events::OnActionAdd );
     }
 
-    if( document.Context().Records().Flags() & FLAG_ACTION_REMOVE )
+    if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection )
     {
-        if( !selection_list.empty() )
-        {
-            QAction* action_4 = menu.addAction( tr( "Remove" ) );
-            connect( action_4, SIGNAL( triggered() ), &document.Signals(), SLOT( OnActionRemove() ) );
-        }
+        QAction* action_4 = menu.addAction( tr( "Remove" ) );
+        connect( action_4, QAction::triggered, &document.Events(), C_Events::OnActionRemove );
     }
 
     if( !menu.isEmpty() )
