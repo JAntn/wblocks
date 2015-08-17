@@ -52,6 +52,13 @@ C_UiRecordStructView::C_UiRecordStructView( C_Document& document, QWidget* paren
         this,
         C_UiRecordStructView::OnSelectionChanged
     );
+
+    connect(
+        ui->LineEdit,
+        QLineEdit::returnPressed,
+        this,
+        C_UiRecordStructView::OnLineEditReturnPressed
+    );
 }
 
 C_UiRecordStructView::~C_UiRecordStructView()
@@ -61,6 +68,7 @@ C_UiRecordStructView::~C_UiRecordStructView()
 
 void C_UiRecordStructView::Update()
 {
+    ui->LineEdit->setText(Document().Context().Records().FullName());
     m_RecordTableModel->layoutChanged();
 }
 
@@ -143,10 +151,70 @@ void C_UiRecordStructView::OnUpButtonClicked()
     }
 }
 
-void C_UiRecordStructView::OnSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected )
+void C_UiRecordStructView::OnSelectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
 {
     Document()
     .MainWindow()
     .UpdateMenubar();
 }
 
+
+void C_UiRecordStructView::OnLineEditReturnPressed()
+{
+
+    QString full_name = ui->LineEdit->text();
+    QStringList string_list = full_name.split( "." );
+    auto* parent = &Document().Records();
+
+    if( *string_list.begin() == "")
+    {
+
+        Document()
+        .Context()
+        .SetRecords(*parent);
+        emit Document()
+        .Events()
+        .RecordsChanged();
+        return;
+    }
+
+    auto iter = string_list.begin();
+    auto record = parent->FromName( *iter );
+
+    if( record == 0 )
+        return;
+
+    parent = record->Struct();
+
+    if( parent == 0 )
+        return;
+
+    for( ; iter != string_list.end(); )
+    {
+        auto tmp = iter;
+        ++tmp;
+
+        if( tmp == string_list.end() )
+        {
+            Document()
+            .Context()
+            .SetRecords( *parent );
+            emit Document()
+            .Events()
+            .RecordsChanged();
+            return;
+        }
+
+        ++iter;
+        auto record = parent->FromName( *iter );
+
+        if( record == 0 )
+            return;
+
+        parent = record->Struct();
+
+        if( parent == 0 )
+            return;
+    }
+
+}

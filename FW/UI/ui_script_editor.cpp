@@ -144,7 +144,6 @@ void C_UiScriptEditor::OnLoadButtonClicked()
         return;
 
     ui->FileLineEdit->setText( file_name );
-
     QString text = C_Document::LoadTextFile( file_name );
     ui->PlainTextEdit->setPlainText( text );
 }
@@ -160,10 +159,7 @@ void C_UiScriptEditor::OnSaveButtonClicked()
         return;
 
     ui->FileLineEdit->setText( file_name );
-
     C_Document::SaveTextFile( file_name, ui->PlainTextEdit->toPlainText() );
-
-
 }
 
 void C_UiScriptEditor::OnFileCheckBoxStateChanged( int arg1 )
@@ -173,7 +169,6 @@ void C_UiScriptEditor::OnFileCheckBoxStateChanged( int arg1 )
         ui->FileLineEdit->setEnabled( true );
         ui->SaveButton->setEnabled( true );
         ui->LoadButton->setEnabled( true );
-
         return;
     }
 

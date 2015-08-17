@@ -16,7 +16,7 @@ void C_Script::Generate( C_RecordStruct& record_container )
 {
     m_StringList.clear();
 
-    for( C_Variant* node : record_container )
+    for( auto node : record_container )
     {
         auto record = static_cast<C_Record*>( node );
         m_StringList.push_back( record->Script() );

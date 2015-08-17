@@ -18,7 +18,6 @@ public:
 
     explicit C_ScriptRecord( C_StateWriter& state, C_Variant* parent = 0 );
     C_ScriptRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
-
     ~C_ScriptRecord() override;
 
 

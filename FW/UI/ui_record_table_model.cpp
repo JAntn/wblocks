@@ -60,7 +60,6 @@ QVariant C_UiRecordTableModel::data( const QModelIndex& index, int role ) const
                 return "{" + record->Value() + "}";
 
             return record->Value();
-
         }
     }
 

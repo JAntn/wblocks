@@ -40,7 +40,7 @@ public slots:
     void                          OnRootButtonClicked();
     void                          OnUpButtonClicked();
     void                          OnSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-
+    void                          OnLineEditReturnPressed();
 private:
 
     Ui::C_UiRecordStructView*  ui;

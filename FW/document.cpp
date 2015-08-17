@@ -54,8 +54,8 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
     m_Context           = new C_Context( Records(), Scene(), this );
     m_Script            = new C_Script( this );
     m_Database          = new C_Database( this );
-    m_Events            = new C_Events( *this, main_window, &main_window );
     m_Clipboard         = new C_Clipboard( this );
+    m_Events            = new C_Events( *this, main_window, &main_window );
 
     auto record1 = Records().CreateRecord( "SampleString", "Monday", "String" );
     Scene().CreateItem( *record1 );
@@ -69,11 +69,6 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
                 "document.write(SampleString)"
                 );
 
-    emit Events()
-    .RecordsChanged();
-
-    emit Events()
-    .ScriptChanged();
 }
 
 C_Document::~C_Document()
@@ -84,12 +79,12 @@ C_Document::~C_Document()
 void C_Document::UpdateScript()
 {
     Script().Generate( Records() );
-    emit Events().ScriptChanged();
+    MainWindow().UpdateScriptView();
 }
 
 void C_Document::UpdateScene()
 {
-    emit Events().SceneChanged();
+    MainWindow().UpdateSceneView();
 }
 
 void C_Document::Clear()

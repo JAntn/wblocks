@@ -56,7 +56,6 @@ void C_UiSceneItemContextMenu::OnEdit()
 
 void C_UiSceneItemContextMenu::OnRemove()
 {
-
     if( C_Document::AcceptMessage(
                 tr( "Do you want to remove this record?" ) ) )
     {

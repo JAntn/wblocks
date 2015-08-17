@@ -26,8 +26,10 @@ public:
 
 private slots:
 
-    void OnButtonBoxAccepted();
-    void OnRemoveButtonClicked();
+    void                         OnButtonBoxAccepted();
+    void                         OnRemoveButtonClicked();
+    void                         OnEditButtonClicked();
+    void                         OnReferenceLineEditReturnPressed();
 
 private:
     Ui::C_UiReferenceEditor *ui;

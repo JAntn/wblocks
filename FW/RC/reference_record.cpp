@@ -99,6 +99,13 @@ void C_ReferenceRecord::SetValue( QString full_name )
     m_Value = "";
 }
 
+C_Record* C_ReferenceRecord::Referencee()
+{
+    return Document()
+                  .Records()
+                  .FromId( m_Value, true );
+}
+
 void C_ReferenceRecord::GetState( C_StateReader& state )
 {
     QStringList row;

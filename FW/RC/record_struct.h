@@ -37,7 +37,7 @@ public:
 
     static
     void                               InitFactoryList();
-
+    QString                            FullName();
     ATR_VALUE                          ( Name, QString )
     ATR_VALUE                          ( Flags, long )
 

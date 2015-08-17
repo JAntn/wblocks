@@ -26,6 +26,20 @@ C_UiReferenceEditor::C_UiReferenceEditor( C_ReferenceRecord& record, C_Document&
         this,
         C_UiReferenceEditor::OnRemoveButtonClicked
     );
+
+    connect(
+        ui->EditButton,
+        QPushButton::clicked,
+        this,
+        C_UiReferenceEditor::OnEditButtonClicked
+    );
+
+    connect(
+        ui->ReferenceLineEdit,
+        QLineEdit::returnPressed,
+        this,
+        C_UiReferenceEditor::OnReferenceLineEditReturnPressed
+    );
 }
 
 C_UiReferenceEditor::~C_UiReferenceEditor()
@@ -69,4 +83,24 @@ void C_UiReferenceEditor::OnRemoveButtonClicked()
 
         close();
     }
+}
+
+void C_UiReferenceEditor::OnEditButtonClicked()
+{
+    auto record = Document().Records().FromId( m_Record->m_Value );
+
+    if( record != 0 )
+        record->ShowEditor( Document() );
+}
+
+void C_UiReferenceEditor::OnReferenceLineEditReturnPressed()
+{
+
+    if( !ui->ReferenceLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
+    {
+        Document().Message( tr( "Reference must not contain white spaces" ) );
+        return;
+    }
+
+    m_Record->SetValue( ui->ReferenceLineEdit->text() );
 }

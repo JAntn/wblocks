@@ -27,8 +27,10 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ) :
         .Context()
         .Scene()
         .GraphicsScene() );
-    UpdateScriptView();
+
     ConnectEvents();
+
+    emit Document().Events().RecordsChanged();
 }
 
 C_UiMainWindow::~C_UiMainWindow()
@@ -53,7 +55,9 @@ void C_UiMainWindow::UpdateScriptView()
 
 void C_UiMainWindow::UpdateSceneView()
 {
-    // void
+    Document()
+    .Scene()
+    .UpdateLines();
 }
 
 void C_UiMainWindow::UpdateMenubar()
@@ -84,7 +88,7 @@ void C_UiMainWindow::UpdateMenubar()
 
     for( auto action : actions )
     {
-        if( Document().Context().Records().Flags() & (*iter) )
+        if( Document().Context().Records().Flags() & ( *iter ) )
             action->setEnabled( true );
         else
             action->setEnabled( false );

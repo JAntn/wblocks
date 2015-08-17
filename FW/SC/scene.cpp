@@ -1,7 +1,9 @@
 #include "FW/SC/scene.h"
 #include "FW/macro.h"
-
-#include <FW/ST/state_writer.h>
+#include "FW/ST/state_writer.h"
+#include "FW/RC/record.h"
+#include "FW/SC/scene_line.h"
+#include <FW/RC/reference_record.h>
 
 ////////////////////////////////////////////////////////////////////////
 /// Static
@@ -10,54 +12,54 @@ long C_Scene::m_IdCount = 0;
 
 QString C_Scene::GenerateId()
 {
-    return QString().setNum(m_IdCount++);
+    return QString().setNum( m_IdCount++ );
 }
 
 QString C_Scene::IdCount()
 {
-    return QString().setNum(m_IdCount);
+    return QString().setNum( m_IdCount );
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-C_Scene::C_Scene(C_Document& document, C_Variant* parent) :
-    C_Variant(parent),
-    m_Document(&document),
-    m_TopZ(0)
+C_Scene::C_Scene( C_Document& document, C_Variant* parent ) :
+    C_Variant( parent ),
+    m_Document( &document ),
+    m_TopZ( 0 )
 {
     m_GraphicsScene = new QGraphicsScene();
 }
 
-C_Scene::~C_Scene(){
+C_Scene::~C_Scene()
+{
     delete m_GraphicsScene;
 }
 
-C_SceneItem* C_Scene::CreateItem(C_StateWriter& state)
+C_SceneItem* C_Scene::CreateItem( C_StateWriter& state )
 {
-    return new C_SceneItem(*this,state);
+    return new C_SceneItem( *this, state );
 }
 
-C_SceneItem* C_Scene::CreateItem(C_Record& record)
+C_SceneItem* C_Scene::CreateItem( C_Record& record )
 {
-    return new C_SceneItem(*this,record,100 + (qrand()%40-80),100 + (qrand()%40-80));
+    return new C_SceneItem( *this, record, 100 + ( qrand() % 40 - 80 ), 100 + ( qrand() % 40 - 80 ) );
 }
 
-C_SceneItem* C_Scene::CreateItem(C_Record& record, qreal x, qreal y, qreal z)
+C_SceneItem* C_Scene::CreateItem( C_Record& record, qreal x, qreal y, qreal z )
 {
-    return new C_SceneItem(*this,record,x,y,z);
+    return new C_SceneItem( *this, record, x, y, z );
 }
 
-list<C_SceneItem*> C_Scene::FromRecord(C_Record& record) const
+list<C_SceneItem*> C_Scene::FromRecord( C_Record& record ) const
 {
     list<C_SceneItem*> result;
 
-    for(C_SceneItem* item : Items())
+    for( C_SceneItem* item : Items() )
     {
         if( & item->Record() == & record )
-        {
-            result.push_back(item);
-        }
+            result.push_back( item );
     }
+
     return result;
 }
 
@@ -71,9 +73,35 @@ int C_Scene::Size()
     return Items().size();
 }
 
-void C_Scene::BringFront(C_SceneItem& item)
+void C_Scene::BringFront( C_SceneItem& item )
 {
     m_TopZ += 0.01;
-    item.setZValue(m_TopZ);
+    item.setZValue( m_TopZ );
 }
 
+void C_Scene::UpdateLines()
+{
+    ClearLines();
+
+    for( auto from : Items() )
+    {
+        if( from->Record().Class() == "Reference" )
+        {
+            auto record_from = static_cast<C_ReferenceRecord*>( &from->Record() );
+
+            for( auto target : Items() )
+            {
+                auto record_target = &target->Record();
+
+                if( record_from->Referencee() == record_target )
+                    m_Lines.push_back( new C_SceneLine( *from, *target ) );
+            }
+        }
+    }
+}
+
+void C_Scene::ClearLines()
+{
+    for( C_SceneLine* line : Lines() )
+        delete line;
+}

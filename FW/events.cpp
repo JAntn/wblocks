@@ -150,9 +150,9 @@ void C_Events::OnActionEdit()
     {
         auto record =
             static_cast<C_Record*>(
-                *Document()
-                .Context()
-                .Records()
+                *MainWindow()
+                .RecordStructView()
+                .Selection()
                 .begin()
             );
 
@@ -200,8 +200,6 @@ void C_Events::OnActionRemove()
         .Events()
         .RecordsChanged();
     }
-
-
 }
 
 void C_Events::OnActionAdd()

@@ -58,7 +58,8 @@ HEADERS += \
     FW/ST/state_writer_database.h \
     FW/RC/reference_record.h \
     FW/UI/ui_reference_editor.h \
-    FW/events.h
+    FW/events.h \
+    FW/SC/scene_line.h
 
 
 
@@ -104,7 +105,8 @@ SOURCES += \
     FW/ST/state_writer_database.cpp \
     FW/RC/reference_record.cpp \
     FW/UI/ui_reference_editor.cpp \
-    FW/events.cpp
+    FW/events.cpp \
+    FW/SC/scene_line.cpp
 
 FORMS += \
     FW/UI/addrecord.ui \

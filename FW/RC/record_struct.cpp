@@ -29,6 +29,15 @@ void C_RecordStruct::InitFactoryList()
     }
 }
 
+QString C_RecordStruct::FullName()
+{
+    if( Name() == "root" )
+        return "";
+
+    auto parent = this->Parent() ;
+    return static_cast<C_Record*>( parent )->FullName();
+}
+
 const list<C_RecordFactory*>& C_RecordStruct::FactoryList()
 {
     return m_FactoryList;
@@ -60,7 +69,7 @@ C_RecordStruct::~C_RecordStruct()
     Clear();
 }
 
-C_Record* C_RecordStruct::CreateRecord(C_StateWriter &state, const_iterator position )
+C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, const_iterator position )
 {
     C_Record*           record = 0;
     QString             class_name = state.Data().at( 3 );

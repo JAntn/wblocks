@@ -12,6 +12,7 @@ class C_SceneItem;
 class C_Record;
 class C_Document;
 class C_StateWriter;
+class C_SceneLine;
 
 class C_Scene : public C_Variant
 {
@@ -34,9 +35,13 @@ public:
     ATR_POINTER                   ( GraphicsScene, QGraphicsScene )
     ATR_CONST_VALUE               ( TopZ,  double )
     ATR_CONST_VALUE               ( Items, list<C_SceneItem*> )
+    ATR_CONST_VALUE               ( Lines, list<C_SceneLine*>)
 
     static QString                GenerateId();
     static QString                IdCount();
+
+    void                          UpdateLines();
+    void                          ClearLines();
 
 private:
 
@@ -44,7 +49,10 @@ private:
 
     friend class                  C_Document;
     friend class                  C_SceneItem;
+    friend class                  C_SceneLine;
+
 };
+
 
 
 #endif // C_SCENE_H

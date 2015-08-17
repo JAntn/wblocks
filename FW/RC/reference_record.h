@@ -32,6 +32,8 @@ public:
 
     ATR_POINTER         ( Document,  C_Document )
 
+    C_Record*           Referencee();
+
 private:
 
     friend class        C_UiReferenceEditor;
