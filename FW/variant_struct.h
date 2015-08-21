@@ -8,22 +8,23 @@ class C_VariantStruct : public C_Variant
 {
 public:
 
-    typedef list<C_Variant*>::const_iterator const_iterator;
+    typedef QList<C_Variant*>::const_iterator const_iterator;
+    typedef QList<C_Variant*>::iterator iterator;
 
      C_VariantStruct(C_Variant* parent=0);
     ~C_VariantStruct() override;
 
     void                               Append(C_Variant& node);
     void                               Insert(int position, C_Variant& node);
-    void                               Insert(const_iterator position, C_Variant& node);
+    void                               Insert(iterator position, C_Variant& node);
 
     int                                Size() const;
     void                               Clear();
 
-    list<C_Variant*>::const_iterator   begin();
-    list<C_Variant*>::const_iterator   end();
-    list<C_Variant*>::const_iterator   begin() const;
-    list<C_Variant*>::const_iterator   end() const;
+    QList<C_Variant*>::iterator         begin();
+    QList<C_Variant*>::iterator         end();
+    QList<C_Variant*>::const_iterator   begin() const;
+    QList<C_Variant*>::const_iterator   end() const;
 };
 
 #endif // C_VARIANTSTRUCT_H

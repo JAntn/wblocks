@@ -11,46 +11,49 @@ C_VariantStruct::~C_VariantStruct()
     // void
 }
 
-list<C_Variant*>::const_iterator C_VariantStruct::begin()
+QList<C_Variant*>::iterator C_VariantStruct::begin()
 {
     return m_Childreen.begin();
 }
 
-list<C_Variant*>::const_iterator C_VariantStruct::end()
+QList<C_Variant*>::iterator C_VariantStruct::end()
 {
     return m_Childreen.end();
 }
 
-list<C_Variant*>::const_iterator C_VariantStruct::begin() const
+QList<C_Variant*>::const_iterator C_VariantStruct::begin() const
 {
     return m_Childreen.begin();
 }
 
-list<C_Variant*>::const_iterator C_VariantStruct::end() const
+QList<C_Variant*>::const_iterator C_VariantStruct::end() const
 {
     return m_Childreen.end();
 }
 
 void C_VariantStruct::Append( C_Variant& node )
 {
-    m_Childreen.push_back( &node );
+    m_Childreen.append( &node );
     node.m_Parent = this;
 }
 
 void C_VariantStruct::Insert( int index, C_Variant& node )
 {
-    auto iter = m_Childreen.begin();
-
-    for( int count = 0; count < index; ++count )
-        ++iter;
-
-    m_Childreen.insert( iter, &node );
+    m_Childreen.insert( index, &node );
     node.m_Parent = this;
 }
 
-void C_VariantStruct::Insert( const_iterator iter, C_Variant& node )
+void C_VariantStruct::Insert( iterator iter, C_Variant& node )
 {
-    m_Childreen.insert( iter, &node );
+    if( iter == begin() )
+        m_Childreen.push_front( &node );
+
+    else if( iter == end() )
+        m_Childreen.push_back( &node );
+
+    else
+        m_Childreen.insert( --iter, &node );
+
     node.m_Parent = this;
 }
 
@@ -61,7 +64,7 @@ void C_VariantStruct::Clear()
         auto value = *iter;
         value->m_Parent = 0;
         delete value;
-        iter = m_Childreen.erase(iter);
+        iter = m_Childreen.erase( iter );
     }
 }
 

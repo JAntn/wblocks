@@ -50,10 +50,7 @@ void C_UiRealEditor::OnButtonBoxAccepted()
 
     m_Record->m_Value = ui->ValueLineEdit->text();
     m_Record->m_Name = ui->NameLineEdit->text();
-
-    emit Document()
-            .Events()
-            .RecordsChanged();
+    emit Document().Events().RecordsChanged();
 }
 
 void C_UiRealEditor::OnRemoveButtonClicked()
@@ -62,11 +59,7 @@ void C_UiRealEditor::OnRemoveButtonClicked()
                 tr("Do you want to remove this record?")))
     {
         delete & Record();
-
-        emit Document()
-                .Events()
-                .RecordsChanged();
-
+        emit Document().Events().RecordsChanged();
         close();
     }
 }

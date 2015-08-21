@@ -1,5 +1,5 @@
-#ifndef C_TREE_NODE_H
-#define C_TREE_NODE_H
+#ifndef C_VARIANT_H
+#define C_VARIANT_H
 
 #include "FW/macro.h"
 #include <QString>
@@ -19,7 +19,7 @@ public:
     C_Variant(C_Variant* parent=0);
     virtual ~C_Variant();
 
-    ATR_VALUE                                (Childreen, list<C_Variant*>)
+    ATR_VALUE                          (Childreen, QList<C_Variant*>)
 
     void                               SetParent(C_Variant* parent=0);
     C_Variant*                         Parent() const;
@@ -30,6 +30,6 @@ private:
     friend class                       C_VariantStruct;
 };
 
-#endif // C_TREE_NODE_H
+#endif // C_VARIANT_H
 
 #include "FW/variant_struct.h"

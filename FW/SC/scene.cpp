@@ -50,14 +50,14 @@ C_SceneItem* C_Scene::CreateItem( C_Record& record, qreal x, qreal y, qreal z )
     return new C_SceneItem( *this, record, x, y, z );
 }
 
-list<C_SceneItem*> C_Scene::FromRecord( C_Record& record ) const
+QList<C_SceneItem*> C_Scene::FromRecord( C_Record& record ) const
 {
-    list<C_SceneItem*> result;
+    QList<C_SceneItem*> result;
 
     for( C_SceneItem* item : Items() )
     {
         if( & item->Record() == & record )
-            result.push_back( item );
+            result.append( item );
     }
 
     return result;
@@ -94,7 +94,7 @@ void C_Scene::UpdateLines()
                 auto record_target = &target->Record();
 
                 if( record_from->Referencee() == record_target )
-                    m_Lines.push_back( new C_SceneLine( *from, *target ) );
+                    m_Lines.append( new C_SceneLine( *from, *target ) );
             }
         }
     }

@@ -10,6 +10,7 @@ class C_BoolRecord;
 
 class C_StateWriter;
 class C_StateReader;
+class C_FileRecord;
 
 class C_ScriptRecord: public C_Record
 {
@@ -31,9 +32,8 @@ public:
     void                ShowEditor( C_Document& document ) override;
 
     ATR_POINTER         ( Records,    C_RecordStruct )
-    ATR_POINTER         ( FileName,   C_StringRecord )
+    ATR_POINTER         ( File,       C_FileRecord )
     ATR_POINTER         ( Code,       C_StringRecord )
-    ATR_POINTER         ( IsFromFile, C_BoolRecord )
 
     QString             Value() const override;
     void                SetValue( QString ) override;

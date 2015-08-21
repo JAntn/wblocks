@@ -46,7 +46,6 @@ HEADERS += \
     FW/RC/script_record.h \
     FW/RC/bool_record.h \
     FW/UI/ui_bool_editor.h \
-    FW/UI/ui_record_struct_view.h \
     FW/clipboard.h \
     FW/ST/state_reader_table.h \
     FW/ST/state_reader.h \
@@ -59,7 +58,12 @@ HEADERS += \
     FW/RC/reference_record.h \
     FW/UI/ui_reference_editor.h \
     FW/events.h \
-    FW/SC/scene_line.h
+    FW/SC/scene_line.h \
+    FW/RC/file_record.h \
+    FW/UI/ui_code_editor.h \
+    FW/UI/ui_code_editor_container.h \
+    FW/UI/ui_record_explorer.h \
+    FW/UI/ui_file_explorer.h
 
 
 
@@ -93,7 +97,6 @@ SOURCES += \
     FW/RC/script_record.cpp \
     FW/RC/bool_record.cpp \
     FW/UI/ui_bool_editor.cpp \
-    FW/UI/ui_record_struct_view.cpp \
     FW/clipboard.cpp \
     FW/ST/state_reader_table.cpp \
     FW/ST/state_reader.cpp \
@@ -106,7 +109,12 @@ SOURCES += \
     FW/RC/reference_record.cpp \
     FW/UI/ui_reference_editor.cpp \
     FW/events.cpp \
-    FW/SC/scene_line.cpp
+    FW/SC/scene_line.cpp \
+    FW/RC/file_record.cpp \
+    FW/UI/ui_code_editor.cpp \
+    FW/UI/ui_code_editor_container.cpp \
+    FW/UI/ui_file_explorer.cpp \
+    FW/UI/ui_record_explorer.cpp
 
 FORMS += \
     FW/UI/addrecord.ui \
@@ -118,8 +126,10 @@ FORMS += \
     FW/UI/realeditor.ui \
     FW/UI/booleditor.ui \
     FW/UI/scripteditor.ui \
-    FW/UI/recordstructview.ui \
-    FW/UI/referenceeditor.ui
+    FW/UI/referenceeditor.ui \
+    FW/UI/fileexplorer.ui \
+    FW/UI/recordexplorer.ui \
+    FW/UI/codeeditor.ui
 
 DISTFILES += \
     format_code.astylerc

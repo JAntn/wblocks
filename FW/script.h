@@ -16,9 +16,10 @@ public:
     explicit C_Script( C_Variant* parent = 0 );
     ~C_Script() override;
 
-    void                Generate( C_RecordStruct& record_container );
+    void                      Generate( C_RecordStruct& record_container );
 
     ATR_VALUE                 ( StringList, QStringList )
+    ATR_VALUE                 ( Valid, bool)
 };
 
 #endif // C_SCRIPT_H

@@ -43,10 +43,7 @@ void C_UiStructEditor::OnButtonBoxAccepted()
     }
 
     Record().m_Name = ui->NameLineEdit->text();
-
-    emit Document()
-            .Events()
-            .RecordsChanged();
+    emit Document().Events().RecordsChanged();
 }
 
 
@@ -56,11 +53,7 @@ void C_UiStructEditor::OnRemoveButtonClicked()
                 tr("Do you want to remove this record?")))
     {
         delete & Record();
-
-        emit Document()
-                .Events()
-                .RecordsChanged();
-
+        emit Document().Events().RecordsChanged();
         close();
     }
 }

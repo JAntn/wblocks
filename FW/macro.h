@@ -37,10 +37,7 @@
 
 
 #include <QDebug>
-#include <list>
-#include <vector>
-using std::list;
-using std::vector;
+#include <QList>
 
 #define FLAG_ACTION_ALL          0xFF
 #define FLAG_ACTION_ADD          0x01

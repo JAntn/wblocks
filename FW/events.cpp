@@ -1,6 +1,6 @@
 #include "FW/document.h"
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/ui_record_struct_view.h"
+#include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_add_record.h"
 #include <QFileDialog>
 #include "FW/RC/record_struct.h"
@@ -10,6 +10,7 @@
 #include "ui_mainwindow.h"
 #include <FW/UI/ui_find_record.h>
 #include <QWebFrame>
+#include <FW/UI/ui_code_editor_container.h>
 
 C_Events::C_Events( C_Document& document, C_UiMainWindow& main_window, QObject* parent )
     : QObject( parent )
@@ -25,7 +26,6 @@ C_Events::~C_Events()
 
 void C_Events::ConnectEvents()
 {
-    // TODO : move signals to C_Document
     connect(
         this,
         C_Events::RecordsChanged,
@@ -40,21 +40,54 @@ void C_Events::ConnectEvents()
 
     connect(
         this,
-        C_Events::ScriptChanged,
+        C_Events::ClientScriptChanged,
         this,
-        C_Events::OnScriptChanged );
+        C_Events::OnClientScriptChanged );
+
+    connect(
+        this,
+        C_Events::RecordExplorerChanged,
+        this,
+        C_Events::OnRecordExplorerChanged );
+
+    connect(
+        this,
+        C_Events::FileExplorerChanged,
+        this,
+        C_Events::OnFileExplorerChanged );
+
+    connect(
+        this,
+        C_Events::CodeEditorContainerChanged,
+        this,
+        C_Events::OnCodeEditorContainerChanged );
+}
+
+void C_Events::OnRecordExplorerChanged()
+{
+    MainWindow().UpdateMenubar();
+}
+
+void C_Events::OnFileExplorerChanged()
+{
+    MainWindow().UpdateMenubar();
 }
 
 void C_Events::OnRecordsChanged()
 {
-    MainWindow().UpdateTableView();
+    MainWindow().UpdateRecordExplorer();
     Document().UpdateScript();
     Document().UpdateScene();
 }
 
-void C_Events::OnScriptChanged()
+void C_Events::OnClientScriptChanged()
 {
-    MainWindow().UpdateScriptView();
+    MainWindow().UpdateClientScriptView();
+}
+
+void C_Events::OnCodeEditorContainerChanged()
+{
+    MainWindow().UpdateMenubar();
 }
 
 void C_Events::OnSceneChanged()
@@ -62,7 +95,7 @@ void C_Events::OnSceneChanged()
     MainWindow().UpdateSceneView();
 }
 
-void C_Events::OnActionFileLoad()
+void C_Events::OnActionLoadFile()
 {
     QString file_name = QFileDialog::getOpenFileName( &MainWindow(),
                         tr( "Load File" ),
@@ -77,7 +110,7 @@ void C_Events::OnActionFileLoad()
 
 }
 
-void C_Events::OnActionFileSave()
+void C_Events::OnActionSaveFile()
 {
     QString file_name = QFileDialog::getSaveFileName( &MainWindow(),
                         tr( "Save File" ),
@@ -91,7 +124,7 @@ void C_Events::OnActionFileSave()
     Document().FileSave( file );
 }
 
-void C_Events::OnActionSQLLoad()
+void C_Events::OnActionLoadSQL()
 {
     QString file_name = QFileDialog::getOpenFileName( &MainWindow(),
                         tr( "Load SQL Database File" ),
@@ -104,7 +137,7 @@ void C_Events::OnActionSQLLoad()
     Document().DatabaseLoad( file_name );
 }
 
-void C_Events::OnActionSQLSave()
+void C_Events::OnActionSaveSQL()
 {
     QString file_name = QFileDialog::getSaveFileName( &MainWindow(),
                         tr( "Save SQL Database File" ),
@@ -117,7 +150,7 @@ void C_Events::OnActionSQLSave()
     Document().DatabaseSave( file_name );
 }
 
-void C_Events::OnActionScriptSave()
+void C_Events::OnActionSaveClientScript()
 {
     QString file_name = QFileDialog::getSaveFileName( &Document().MainWindow(),
                         tr( "Save Java Script File" ),
@@ -128,11 +161,11 @@ void C_Events::OnActionScriptSave()
         return;
 
     Document().Script().Generate( Document().Records() );
-    emit Document().Events().ScriptChanged();
+    emit Document().Events().ClientScriptChanged();
     C_Document::SaveTextFile( file_name, Document().Script().StringList().join( "" ) );
 }
 
-void C_Events::OnActionEdit()
+void C_Events::OnActionEditRecord()
 {
     long action_flags =
         Document()
@@ -143,15 +176,15 @@ void C_Events::OnActionEdit()
     bool has_selection =
         Document()
         .MainWindow()
-        .RecordStructView()
+        .RecordExplorer()
         .HasSelection();
 
-    if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_EDIT ) && has_selection )
     {
         auto record =
             static_cast<C_Record*>(
                 *MainWindow()
-                .RecordStructView()
+                .RecordExplorer()
                 .Selection()
                 .begin()
             );
@@ -160,7 +193,7 @@ void C_Events::OnActionEdit()
     }
 }
 
-void C_Events::OnActionRemove()
+void C_Events::OnActionRemoveRecord()
 {
     long action_flags =
         Document()
@@ -171,15 +204,15 @@ void C_Events::OnActionRemove()
     bool has_selection =
         Document()
         .MainWindow()
-        .RecordStructView()
+        .RecordExplorer()
         .HasSelection();
 
     if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection )
     {
-        list<C_Record*> selection_list =
+        QList<C_Record*> selection_list =
             Document()
             .MainWindow()
-            .RecordStructView()
+            .RecordExplorer()
             .Selection();
 
         if( selection_list.size() == 1 )
@@ -196,20 +229,18 @@ void C_Events::OnActionRemove()
         for( auto record : selection_list )
             delete record;
 
-        emit Document()
-        .Events()
-        .RecordsChanged();
+        emit Document().Events().RecordsChanged();
     }
 }
 
-void C_Events::OnActionAdd()
+void C_Events::OnActionAddRecord()
 {
 
     int position = -1;
     bool has_selection =
         Document()
         .MainWindow()
-        .RecordStructView()
+        .RecordExplorer()
         .HasSelection();
 
     if ( has_selection )
@@ -217,7 +248,7 @@ void C_Events::OnActionAdd()
         auto front =
             Document()
             .MainWindow()
-            .RecordStructView()
+            .RecordExplorer()
             .Selection()
             .front();
         position =
@@ -237,8 +268,6 @@ void C_Events::OnActionAdd()
     dialog->show();
 }
 
-
-
 void C_Events::OnActionAddSceneItem()
 {
     long action_flags =
@@ -248,12 +277,12 @@ void C_Events::OnActionAddSceneItem()
         .Flags();
 
     if( ( action_flags & FLAG_ACTION_ADD_SCENE ) &&
-            MainWindow().RecordStructView().HasSelection() )
+            MainWindow().RecordExplorer().HasSelection() )
     {
-        list<C_Record*> selection_list =
+        QList<C_Record*> selection_list =
             Document()
             .MainWindow()
-            .RecordStructView()
+            .RecordExplorer()
             .Selection();
 
         for( auto record : selection_list )
@@ -264,13 +293,11 @@ void C_Events::OnActionAddSceneItem()
             .CreateItem( *record );
         }
 
-        emit Document()
-        .Events()
-        .SceneChanged();
+        emit Document().Events().SceneChanged();
     }
 }
 
-void C_Events::OnActionCopy()
+void C_Events::OnActionCopyRecord()
 {
     long action_flags =
         Document()
@@ -280,7 +307,7 @@ void C_Events::OnActionCopy()
     bool has_selection =
         Document()
         .MainWindow()
-        .RecordStructView()
+        .RecordExplorer()
         .HasSelection();
 
     if( ( action_flags & FLAG_ACTION_COPY ) && has_selection )
@@ -290,17 +317,15 @@ void C_Events::OnActionCopy()
         .Copy(
             Document()
             .MainWindow()
-            .RecordStructView()
+            .RecordExplorer()
             .Selection()
         );
 
-        Document()
-        .MainWindow()
-        .UpdateMenubar();
+        Document().MainWindow().UpdateMenubar();
     }
 }
 
-void C_Events::OnActionPaste()
+void C_Events::OnActionPasteRecord()
 {
 
     long action_flags =
@@ -312,7 +337,7 @@ void C_Events::OnActionPaste()
     bool has_selection =
         Document()
         .MainWindow()
-        .RecordStructView()
+        .RecordExplorer()
         .HasSelection();
 
     int position = -1;
@@ -325,13 +350,13 @@ void C_Events::OnActionPaste()
             auto selection_list =
                 Document()
                 .MainWindow()
-                .RecordStructView()
+                .RecordExplorer()
                 .Selection();
 
             position =
                 Document()
                 .MainWindow()
-                .RecordStructView()
+                .RecordExplorer()
                 .Records()
                 .GetIndex( selection_list.front() );
         }
@@ -345,21 +370,12 @@ void C_Events::OnActionPaste()
             position
         );
 
-        Document()
-        .Clipboard()
-        .Clear();
-
-        Document()
-        .MainWindow()
-        .UpdateMenubar();
-
-        emit Document()
-        .Events()
-        .RecordsChanged();
+        Document().Clipboard().Clear();
+        emit Document().Events().RecordsChanged();
     }
 }
 
-void C_Events::OnActionCut()
+void C_Events::OnActionCutRecord()
 {
     long action_flags =
         Document()
@@ -370,7 +386,7 @@ void C_Events::OnActionCut()
     bool has_selection =
         Document()
         .MainWindow()
-        .RecordStructView()
+        .RecordExplorer()
         .HasSelection();
 
     if( ( action_flags & FLAG_ACTION_CUT ) && has_selection )
@@ -378,7 +394,7 @@ void C_Events::OnActionCut()
         auto selection_list =
             Document()
             .MainWindow()
-            .RecordStructView()
+            .RecordExplorer()
             .Selection();
 
         for( auto record : selection_list )
@@ -393,41 +409,107 @@ void C_Events::OnActionCut()
                 delete item;
         }
 
-        Document()
-        .Clipboard()
-        .Copy( selection_list );
-
-        emit Document()
-        .Events()
-        .RecordsChanged();
+        Document().Clipboard().Copy( selection_list );
+        emit Document().Events().RecordsChanged();
     }
-
 }
 
-void C_Events::OnActionNewDocument()
+void C_Events::OnActionNewFile()
 {
-    Document()
-    .Clear();
+    Document().Clear();
 }
 
-void C_Events::OnActionFind()
+void C_Events::OnActionFindRecord()
 {
     QWidget* dialog = new C_UiFindRecord( Document(), &MainWindow() );
     dialog->show();
 }
 
-void C_Events::OnActionExit()
+void C_Events::OnActionNewEditorFile()
 {
-    Document()
-    .MainWindow()
-    .close();
+    QString file_name = QFileDialog::getSaveFileName( &MainWindow(),
+                        tr( "New File" ),
+                        tr( "untitled.js" ),
+                        tr( "JS Files (*.js)" ) );
+
+    if( file_name.isEmpty() )
+        return;
+
+    C_Document::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
+
+    MainWindow().CodeEditorContainer().Append( file_name );
+    emit CodeEditorContainerChanged();
 }
 
-void C_Events::OnActionRunScript()
+void C_Events::OnActionCloseEditorFile()
 {
-    Document()
-    .MainWindow()
-    .UpdateWebView();
+    if( C_Document::AcceptMessage( tr( "Save changes?" ) ) )
+        MainWindow().CodeEditorContainer().SaveCurrent();
+
+    MainWindow().CodeEditorContainer().CloseCurrent();
+    emit CodeEditorContainerChanged();
+}
+
+void C_Events::OnActionCloseAllEditorFiles()
+{
+    if( C_Document::AcceptMessage( tr( "Save changes?" ) ) )
+        MainWindow().CodeEditorContainer().SaveAll();
+
+    MainWindow().CodeEditorContainer().CloseAll();
+    emit CodeEditorContainerChanged();
+}
+
+void C_Events::OnActionSaveEditorFile()
+{
+    MainWindow().CodeEditorContainer().SaveCurrent();
+}
+
+void C_Events::OnActionSaveAllEditorFiles()
+{
+    MainWindow().CodeEditorContainer().SaveAll();
+}
+
+void C_Events::OnActionLoadEditorFile()
+{
+    QString file_name = QFileDialog::getOpenFileName( &MainWindow(),
+                        tr( "New File" ),
+                        tr( "untitled.js" ),
+                        tr( "JS Files (*.js)" ) );
+
+    if( !QFileInfo( file_name ).exists() )
+    {
+        C_Document::Message( tr( "File doesn't exists" ) );
+        return;
+    }
+
+    if( MainWindow().CodeEditorContainer().HasFile( file_name ) )
+    {
+        if( C_Document::AcceptMessage( tr( "File already loaded.\n\nLoad again?" ) ) )
+        {
+            MainWindow().CodeEditorContainer().Clear( file_name );
+            MainWindow().CodeEditorContainer().Append( file_name );
+            emit CodeEditorContainerChanged();
+        }
+        return;
+    }
+
+    MainWindow().CodeEditorContainer().Append( file_name );
+    emit CodeEditorContainerChanged();
+}
+
+void C_Events::OnActionExit()
+{
+    Document().MainWindow().close();
+}
+
+void C_Events::OnActionRunClientScript()
+{
+    Document().MainWindow().UpdateWebView();
+}
+
+void C_Events::OnActionUpdateClientScript()
+{
+    Document().UpdateScript();
 }
 
 

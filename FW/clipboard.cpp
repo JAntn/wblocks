@@ -18,7 +18,7 @@ void C_Clipboard::Clear()
     m_Flags = 0;
 }
 
-void C_Clipboard::Copy( const list<C_Record*>& records )
+void C_Clipboard::Copy( const QList<C_Record*>& records )
 {
     Clear();
     m_Data = records;
@@ -30,7 +30,7 @@ bool C_Clipboard::Empty()
     return m_Data.empty();
 }
 
-void C_Clipboard::Cut( const list<C_Record*>& records )
+void C_Clipboard::Cut( const QList<C_Record*>& records )
 {
     Clear();
     m_Data = records;
@@ -39,8 +39,8 @@ void C_Clipboard::Cut( const list<C_Record*>& records )
 
 void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
 {
-    list<QStringList> table;
-    C_RecordStruct::const_iterator iter;
+    QList<QStringList> table;
+    QList<C_Variant*>::iterator iter;
 
     if ( position < 0 )
         iter = record_struct.end();

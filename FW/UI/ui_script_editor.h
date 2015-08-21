@@ -24,13 +24,12 @@ public:
     ATR_POINTER                  ( Record,   C_ScriptRecord )
     ATR_POINTER                  ( Document, C_Document )
 
+
 public slots:
 
     void                         OnButtonBoxAccepted();
     void                         OnRemoveButtonClicked();
-    void                         OnLoadButtonClicked();
-    void                         OnSaveButtonClicked();
-    void                         OnFileCheckBoxStateChanged( int arg1 );
+    void                         OnSelectButtonClicked();
 
 private:
     Ui::C_UiScriptEditor* ui;

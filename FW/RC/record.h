@@ -33,7 +33,7 @@ public:
     QString                       FullName() const;
     virtual void                  SetValue( QString value );
     virtual QString               Value() const;
-    ATR_VALUE                                 ( Flags, long )
+    ATR_VALUE                     ( Flags, long )
 
 protected:
 

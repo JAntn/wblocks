@@ -66,10 +66,10 @@ void C_StringRecord::SetState( C_StateWriter& state )
     if( state.Flags() & FLAG_STATE_NEWID )
         m_Id    = C_RecordFactory::GenerateId();
     else
-        m_Id    = row.at( 0 );
+        m_Id    = row[0];
 
-    m_Name  = row.at( 1 );
-    m_Value = row.at( 2 );
+    m_Name  = row[1];
+    m_Value = row[2];
 }
 
 C_Record* C_StringRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )

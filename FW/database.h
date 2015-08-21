@@ -32,4 +32,4 @@ public:
     int                 RowCount( QString class_name );
 };
 
-#endif // C_DATABASE__H
+#endif // C_DATABASE_H

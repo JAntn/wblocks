@@ -13,27 +13,25 @@ class C_RecordStruct : public C_VariantStruct
 {
 public:
 
-    typedef list<C_Variant*>::const_iterator const_iterator;
-
     explicit C_RecordStruct( QString name, C_Variant* parent = 0 );
     ~C_RecordStruct() override;
 
     C_Record*                          CreateRecord( C_StateWriter& state, int position = -1 );
     C_Record*                          CreateRecord( QString name, QString value, QString class_name, int position = -1 );
-    C_Record*                          CreateRecord( C_StateWriter& state, const_iterator position );
-    C_Record*                          CreateRecord( QString name, QString value, QString class_name, const_iterator position );
+    C_Record*                          CreateRecord(C_StateWriter& state, iterator position );
+    C_Record*                          CreateRecord(QString name, QString value, QString class_name, iterator position );
 
     C_Record*                          FromIndex( int row ) const;
     C_Record*                          FromName( QString name , bool deep = false ) const;
     C_Record*                          FromId( QString record_id, bool deep = false ) const;
     int                                GetIndex( C_Record* record ) const;
+    C_Record*                          FromFullName(QString name) const;
 
     static
     C_RecordFactory*                   FactoryFromName( QString class_name );
 
     static
-    const
-    list<C_RecordFactory*>&            FactoryList() ;
+    const QList<C_RecordFactory*>&     FactoryList() ;
 
     static
     void                               InitFactoryList();
@@ -44,7 +42,7 @@ public:
 private:
 
     static
-    list<C_RecordFactory*>             m_FactoryList;
+    QList<C_RecordFactory*>             m_FactoryList;
 };
 
 

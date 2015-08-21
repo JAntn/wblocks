@@ -7,7 +7,7 @@
 
 namespace Ui
 {
-class C_UiRecordStructView;
+class C_UiRecordExplorer;
 }
 
 class C_UiRecordTableModel;
@@ -15,13 +15,13 @@ class C_RecordStruct;
 class C_Document;
 class C_Record;
 
-class C_UiRecordStructView : public QWidget
+class C_UiRecordExplorer : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit C_UiRecordStructView( C_Document& document, QWidget* parent = 0 );
-    ~C_UiRecordStructView() override;
+    explicit C_UiRecordExplorer( C_Document& document, QWidget* parent = 0 );
+    ~C_UiRecordExplorer() override;
 
     void                          Update();
 
@@ -29,21 +29,21 @@ public:
     ATR_POINTER                   ( RecordTableModel, C_UiRecordTableModel )
 
     C_RecordStruct&               Records();
-    list<C_Record*>               Selection();
+    QList<C_Record*>              Selection();
     void                          ClearSelection();
     bool                          HasSelection();
-
+    void                          Activate(C_Record* record);
 public slots:
 
     void                          OnCustomContextMenuRequested( const QPoint& point );
     void                          OnDoubleClicked( const QModelIndex& index );
     void                          OnRootButtonClicked();
     void                          OnUpButtonClicked();
-    void                          OnSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+    void                          OnSelectionChanged(const QItemSelection&, const QItemSelection&);
     void                          OnLineEditReturnPressed();
 private:
 
-    Ui::C_UiRecordStructView*  ui;
+    Ui::C_UiRecordExplorer*  ui;
 };
 
 #endif // UIRECORDTABLEVIEW_H

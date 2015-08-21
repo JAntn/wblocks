@@ -8,22 +8,19 @@
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_script_editor.h"
+#include "FW/RC/file_record.h"
 
 #define CLASS_NAME "Script"
-#include <qDebug>
 
 C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value,  C_Variant* parent )
     : C_Record( id, name, value, parent )
 {
     m_Records = new C_RecordStruct( m_Name, this );
     Records().SetFlags( FLAG_ACTION_EDIT | FLAG_ACTION_ADD_SCENE | FLAG_ACTION_COPY );
-    m_IsFromFile = static_cast<C_BoolRecord*>   ( Records().CreateRecord( "IsFromFile", "False", "Bool" ) );
-    m_Code       = static_cast<C_StringRecord*> ( Records().CreateRecord( "Code", "//Script: \n", "String" ) );
-    m_FileName   = static_cast<C_StringRecord*> ( Records().CreateRecord( "FileName", "", "String" ) );
-
-    m_IsFromFile ->SetFlags( ~FLAG_ACTION_REMOVE );
-    m_Code       ->SetFlags( ~FLAG_ACTION_REMOVE );
-    m_FileName   ->SetFlags( ~FLAG_ACTION_REMOVE );
+    m_File = static_cast<C_FileRecord*> ( Records().CreateRecord( "File", "unnamed.js", "File" ) );
+    m_File ->SetFlags( ~FLAG_ACTION_REMOVE );
+    m_Code = static_cast<C_StringRecord*> ( Records().CreateRecord( "Code", "//EMPTY", "String" ) );
+    m_Code ->SetFlags( ~FLAG_ACTION_REMOVE );
 }
 
 C_ScriptRecord::C_ScriptRecord( C_StateWriter& state, C_Variant* parent )
@@ -41,6 +38,7 @@ C_ScriptRecord::~C_ScriptRecord()
 
 QString C_ScriptRecord::Script() const
 {
+    Code().SetValue( C_Document::LoadTextFile( File().Value() ) );
     return Code().Value();
 }
 
@@ -91,25 +89,21 @@ void C_ScriptRecord::SetState( C_StateWriter& state )
     if( state.Flags() & FLAG_STATE_NEWID )
         m_Id    = C_RecordFactory::GenerateId();
     else
-        m_Id    = row.at( 0 );
+        m_Id    = row[0];
 
-    m_Name  = row.at( 1 );
-    m_Value = row.at( 2 );
+    m_Name  = row[1];
+    m_Value = row[2];
     int size = m_Value.toInt();
 
     for( int count = 0; count < size; ++count )
         Records().CreateRecord( state );
 
-    m_IsFromFile = static_cast<C_BoolRecord*>( Records().FromName( "IsFromFile" ) );
-    m_FileName   = static_cast<C_StringRecord*>( Records().FromName( "FileName" ) );
-    m_Code       = static_cast<C_StringRecord*>( Records().FromName( "Code" ) );
+    m_File = static_cast<C_FileRecord*>( Records().FromName( "File" ) );
+    m_File ->SetFlags( ~FLAG_ACTION_REMOVE );
 
-    m_IsFromFile ->SetFlags( ~FLAG_ACTION_REMOVE );
-    m_Code       ->SetFlags( ~FLAG_ACTION_REMOVE );
-    m_FileName   ->SetFlags( ~FLAG_ACTION_REMOVE );
-
-    if( IsFromFile().Value() == "True" )
-        Code().SetValue( C_Document::LoadTextFile( FileName().Value() ) );
+    m_Code = static_cast<C_StringRecord*>( Records().FromName( "Code" ) );
+    m_Code ->SetFlags( ~FLAG_ACTION_REMOVE );
+    Code().SetValue( C_Document::LoadTextFile( File().Value() ) );
 }
 
 void C_ScriptRecord::ShowEditor( C_Document& document )

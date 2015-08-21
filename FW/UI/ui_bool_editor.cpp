@@ -1,6 +1,5 @@
 #include "FW/RC/bool_record.h"
 #include "FW/document.h"
-
 #include "FW/UI/ui_bool_editor.h"
 #include "ui_booleditor.h"
 
@@ -55,11 +54,7 @@ void C_UiBoolEditor::OnButtonBoxAccepted()
 
     m_Record->m_Value = ui->ComboBox->currentText();
     m_Record->m_Name = ui->NameLineEdit->text();
-
-
-    emit Document()
-    .Events()
-    .RecordsChanged();
+    emit Document().Events().RecordsChanged();
 }
 
 void C_UiBoolEditor::OnRemoveButtonClicked()
@@ -68,11 +63,7 @@ void C_UiBoolEditor::OnRemoveButtonClicked()
                 tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
-
-        emit Document()
-        .Events()
-        .RecordsChanged();
-
+        emit Document().Events().RecordsChanged();
         close();
     }
 }

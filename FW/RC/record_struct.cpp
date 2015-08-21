@@ -8,23 +8,26 @@
 #include "FW/RC/bool_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
+#include "FW/RC/file_record.h"
 
 ///////////////////////////////////////////////////////////////////////
 /// STATIC
 
-list<C_RecordFactory*> C_RecordStruct::m_FactoryList;
+QList<C_RecordFactory*> C_RecordStruct::m_FactoryList;
 
 void C_RecordStruct::InitFactoryList()
 {
     if( m_FactoryList.empty() )
     {
-        m_FactoryList.push_back( &C_BoolRecordFactory::Instance() );
-        m_FactoryList.push_back( &C_IntegerRecordFactory::Instance() );
-        m_FactoryList.push_back( &C_RealRecordFactory::Instance() );
-        m_FactoryList.push_back( &C_StringRecordFactory::Instance() );
-        m_FactoryList.push_back( &C_ScriptRecordFactory::Instance() );
-        m_FactoryList.push_back( &C_StructRecordFactory::Instance() );
-        m_FactoryList.push_back( &C_ReferenceRecordFactory::Instance() );
+        m_FactoryList.append( &C_BoolRecordFactory::Instance() );
+        m_FactoryList.append( &C_IntegerRecordFactory::Instance() );
+        m_FactoryList.append( &C_RealRecordFactory::Instance() );
+        m_FactoryList.append( &C_StringRecordFactory::Instance() );
+        m_FactoryList.append( &C_ScriptRecordFactory::Instance() );
+        m_FactoryList.append( &C_StructRecordFactory::Instance() );
+        m_FactoryList.append( &C_ReferenceRecordFactory::Instance() );
+        m_FactoryList.append( &C_FileRecordFactory::Instance() );
+
         // Add more classes here or later
     }
 }
@@ -38,7 +41,7 @@ QString C_RecordStruct::FullName()
     return static_cast<C_Record*>( parent )->FullName();
 }
 
-const list<C_RecordFactory*>& C_RecordStruct::FactoryList()
+const QList<C_RecordFactory*>& C_RecordStruct::FactoryList()
 {
     return m_FactoryList;
 }
@@ -69,7 +72,7 @@ C_RecordStruct::~C_RecordStruct()
     Clear();
 }
 
-C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, const_iterator position )
+C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position )
 {
     C_Record*           record = 0;
     QString             class_name = state.Data().at( 3 );
@@ -129,7 +132,7 @@ C_Record* C_RecordStruct::CreateRecord(
     QString name,
     QString value,
     QString class_name,
-    const_iterator position )
+    iterator position )
 {
     C_Record* record = 0;
     C_RecordFactory* record_factory = C_RecordStruct::FactoryFromName( class_name );
@@ -222,6 +225,29 @@ C_Record* C_RecordStruct::FromId( QString record_id , bool deep ) const
     return 0;
 }
 
+C_Record* C_RecordStruct::FromFullName( QString full_name ) const
+{
+    QStringList tokens = full_name.split( "." );
+    QString token_end = tokens.back();
+    tokens.pop_back();
+    C_Record* record;
+    const C_RecordStruct* record_struct = this;
+
+    for( QString token : tokens )
+    {
+        record = record_struct->FromName( token );
+
+        if( record == 0 )
+            return 0;
+
+        record_struct = record->Struct();
+
+        if( record_struct == 0 )
+            return 0;
+    }
+
+    return record_struct->FromName( token_end );
+}
 
 
 

@@ -1,5 +1,5 @@
-#ifndef C_SIGNALS_H
-#define C_SIGNALS_H
+#ifndef C_EVENTS_H
+#define C_EVENTS_H
 
 #include "FW/macro.h"
 
@@ -27,35 +27,48 @@ public:
 
 public slots:
 
+    void                OnRecordExplorerChanged();
+    void                OnFileExplorerChanged();
     void                OnRecordsChanged();
-    void                OnScriptChanged();
     void                OnSceneChanged();
+    void                OnClientScriptChanged();
+    void                OnCodeEditorContainerChanged();
 
-    void                OnActionFileLoad();
-    void                OnActionFileSave();
-    void                OnActionSQLLoad();
-    void                OnActionSQLSave();
-    void                OnActionScriptSave();
+    void                OnActionRunClientScript();
+    void                OnActionUpdateClientScript();
+    void                OnActionSaveClientScript();
 
-    void                OnActionAdd();
-    void                OnActionEdit();
-    void                OnActionRemove();
+    void                OnActionLoadFile();
+    void                OnActionSaveFile();
+    void                OnActionLoadSQL();
+    void                OnActionSaveSQL();
+
+    void                OnActionAddRecord();
+    void                OnActionEditRecord();
+    void                OnActionRemoveRecord();
     void                OnActionAddSceneItem();
-    void                OnActionCopy();
-    void                OnActionPaste();
-    void                OnActionCut();
-    void                OnActionRunScript();
+    void                OnActionCopyRecord();
+    void                OnActionPasteRecord();
+    void                OnActionCutRecord();
     void                OnActionExit();
-    void                OnActionNewDocument();
-    void                OnActionFind();
+    void                OnActionNewFile();
+    void                OnActionFindRecord();
+
+    void                OnActionNewEditorFile();
+    void                OnActionCloseEditorFile();
+    void                OnActionCloseAllEditorFiles();
+    void                OnActionSaveEditorFile();
+    void                OnActionSaveAllEditorFiles();
+    void                OnActionLoadEditorFile();
 
 signals:
-
+    void                RecordExplorerChanged();
+    void                FileExplorerChanged();
     void                RecordsChanged();
-    void                ScriptChanged();
     void                SceneChanged();
-
+    void                ClientScriptChanged();
+    void                CodeEditorContainerChanged();
 
 };
 
-#endif // C_SIGNALS_H
+#endif // C_EVENTS_H

@@ -25,7 +25,7 @@ public:
     C_SceneItem*                  CreateItem( C_Record& record );
     C_SceneItem*                  CreateItem( C_Record& record, qreal x, qreal y, qreal z = -1 );
 
-    list<C_SceneItem*>            FromRecord( C_Record& record ) const;
+    QList<C_SceneItem*>           FromRecord( C_Record& record ) const;
 
     void                          Clear();
     int                           Size();
@@ -34,8 +34,8 @@ public:
     ATR_POINTER                   ( Document,      C_Document )
     ATR_POINTER                   ( GraphicsScene, QGraphicsScene )
     ATR_CONST_VALUE               ( TopZ,  double )
-    ATR_CONST_VALUE               ( Items, list<C_SceneItem*> )
-    ATR_CONST_VALUE               ( Lines, list<C_SceneLine*>)
+    ATR_CONST_VALUE               ( Items, QList<C_SceneItem*> )
+    ATR_CONST_VALUE               ( Lines, QList<C_SceneLine*>)
 
     static QString                GenerateId();
     static QString                IdCount();

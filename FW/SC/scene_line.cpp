@@ -11,7 +11,7 @@ C_SceneLine::C_SceneLine( C_SceneItem& from, C_SceneItem& target )
 
 C_SceneLine::~C_SceneLine()
 {
-    From().Scene().m_Lines.remove( this );
+    From().Scene().m_Lines.removeOne( this );
 }
 
 void C_SceneLine::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )

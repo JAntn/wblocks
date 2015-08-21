@@ -64,10 +64,7 @@ void C_UiReferenceEditor::OnButtonBoxAccepted()
     m_Record->SetDocument( Document() );
     m_Record->SetValue( ui->ReferenceLineEdit->text() );
     m_Record->SetName( ui->NameLineEdit->text() );
-
-    emit Document()
-    .Events()
-    .RecordsChanged();
+    emit Document().Events().RecordsChanged();
 }
 
 void C_UiReferenceEditor::OnRemoveButtonClicked()

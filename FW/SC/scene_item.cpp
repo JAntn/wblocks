@@ -24,7 +24,7 @@ C_SceneItem::C_SceneItem(C_Scene& scene, C_StateWriter& state) :
 {
     SetState(state);
 
-    Scene().m_Items.push_back(this);
+    Scene().m_Items.append(this);
     SetParent(&Record());
 
     Scene().m_GraphicsScene->addItem(this);
@@ -38,7 +38,7 @@ C_SceneItem::C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_
 
 {
     m_Id = Scene().GenerateId();
-    Scene().m_Items.push_back(this);
+    Scene().m_Items.append(this);
 
     SetParent(&Record());
 
@@ -55,7 +55,7 @@ C_SceneItem::C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_
 
 C_SceneItem::~C_SceneItem()
 {
-    Scene().m_Items.remove(this);
+    Scene().m_Items.removeOne(this);
 }
 
 

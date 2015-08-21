@@ -6,8 +6,10 @@
 
 class C_Document;
 class C_Record;
-class C_UiRecordStructView;
+class C_UiRecordExplorer;
 class C_UiRecordTableModel;
+class C_UiCodeEditorContainer;
+class C_UiFileExplorer;
 
 namespace Ui
 {
@@ -23,16 +25,18 @@ public:
     explicit C_UiMainWindow( QWidget* parent = 0 );
     ~C_UiMainWindow() override;
 
-    void                          UpdateTableView();
-    void                          UpdateScriptView();
+    void                          UpdateRecordExplorer();
+    void                          UpdateFileExplorer();
+    void                          UpdateClientScriptView();
     void                          UpdateSceneView();
     void                          UpdateMenubar();
     void                          UpdateWebView();
     void                          ConnectEvents();
 
-    ATR_POINTER                   ( Document,         C_Document )
-    ATR_POINTER                   ( RecordStructView, C_UiRecordStructView )
-
+    ATR_POINTER                   ( Document,            C_Document )
+    ATR_POINTER                   ( RecordExplorer,      C_UiRecordExplorer )
+    ATR_POINTER                   ( CodeEditorContainer, C_UiCodeEditorContainer )
+    ATR_POINTER                   ( FileExplorer,        C_UiFileExplorer )
 
 private:
 

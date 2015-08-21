@@ -12,7 +12,8 @@
 C_RealRecord::C_RealRecord( QString id, QString name, QString value, C_Variant* parent )
     : C_Record( id, name, value, parent )
 {
-    // void
+    if( m_Value.isEmpty() )
+        m_Value = "0";
 }
 
 C_RealRecord::C_RealRecord( C_StateWriter& state, C_Variant* parent )
@@ -65,10 +66,10 @@ void C_RealRecord::SetState( C_StateWriter& state )
     if( state.Flags() & FLAG_STATE_NEWID )
         m_Id    = C_RecordFactory::GenerateId();
     else
-        m_Id    = row.at( 0 );
+        m_Id    = row[0];
 
-    m_Name  = row.at( 1 );
-    m_Value = row.at( 2 );
+    m_Name  = row[1];
+    m_Value = row[2];
 }
 
 

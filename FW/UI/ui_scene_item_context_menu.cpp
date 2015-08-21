@@ -60,7 +60,6 @@ void C_UiSceneItemContextMenu::OnRemove()
                 tr( "Do you want to remove this record?" ) ) )
     {
         delete & SceneItem().Record();
-
         emit SceneItem()
         .Scene()
         .Document()

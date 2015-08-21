@@ -14,11 +14,11 @@ public:
 
     void                Clear();
     void                Paste( C_RecordStruct& record_struct, int position );
-    void                Cut( const list<C_Record*>& records );
-    void                Copy( const list<C_Record*>& records );
+    void                Cut( const QList<C_Record*>& records );
+    void                Copy( const QList<C_Record*>& records );
     bool                Empty();
 
-    ATR_CONST_VALUE     ( Data, list<C_Record*> )
+    ATR_CONST_VALUE     ( Data, QList<C_Record*> )
     ATR_CONST_VALUE     ( Flags, long )
 };
 

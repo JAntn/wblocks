@@ -1,5 +1,5 @@
-#ifndef C_APPMANAGER_H
-#define C_APPMANAGER_H
+#ifndef C_DOCUMENT_H
+#define C_DOCUMENT_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
@@ -55,4 +55,4 @@ public:
 #include "script.h"
 #include "events.h"
 
-#endif // C_APPMANAGER_H
+#endif // C_DOCUMENT_H

@@ -1,5 +1,5 @@
-#ifndef C_DOCUMENTCONTEXT_H
-#define C_DOCUMENTCONTEXT_H
+#ifndef C_CONTEXT_H
+#define C_CONTEXT_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
@@ -18,4 +18,4 @@ public:
 
 };
 
-#endif // C_DOCUMENTCONTEXT_H
+#endif // C_CONTEXT_H

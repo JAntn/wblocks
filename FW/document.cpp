@@ -6,7 +6,6 @@
 #include "clipboard.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-
 #include "FW/UI/ui_main_window.h"
 #include <QMessageBox>
 #include <QStack>
@@ -68,7 +67,12 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
             ->SetValue(
                 "document.write(SampleString)"
                 );
-
+    static_cast<C_ScriptRecord*> (record2)
+            ->Struct()
+            ->FromName("File")
+            ->SetValue(
+                "sample.js"
+                );
 }
 
 C_Document::~C_Document()
@@ -79,7 +83,7 @@ C_Document::~C_Document()
 void C_Document::UpdateScript()
 {
     Script().Generate( Records() );
-    MainWindow().UpdateScriptView();
+    MainWindow().UpdateClientScriptView();
 }
 
 void C_Document::UpdateScene()
@@ -93,7 +97,6 @@ void C_Document::Clear()
     Records().Clear();
     Scene().Clear();
     Clipboard().Clear();
-
     emit Events().RecordsChanged();
 }
 
@@ -252,13 +255,13 @@ void C_Document::DatabaseLoad( QString file_name )
     Database().OpenDatabase( file_name );
     QStringList row;
     row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_ID_COUNT" ) );
-    C_RecordFactory::m_IdCount = row.at( 1 ).toLong();
+    C_RecordFactory::m_IdCount = row[1].toLong();
     row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENE_ID_COUNT" ) );
-    C_Scene::m_IdCount = row.at( 1 ).toLong();
+    C_Scene::m_IdCount = row[1].toLong();
     row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_NUM" ) );
-    long record_size = row.at( 1 ).toLong();
+    long record_size = row[1].toLong();
     row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENEITEM_NUM" ) );
-    long scene_size = row.at( 1 ).toLong();
+    long scene_size = row[1].toLong();
 
     // RECORDS TABLE
 

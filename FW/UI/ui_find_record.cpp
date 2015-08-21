@@ -53,9 +53,9 @@ C_UiFindRecord::C_UiFindRecord( C_Document& document, QWidget* parent ) :
 
     connect(
         ui->SpinBox,
-        SIGNAL(QSpinBox::valueChanged(int)),
+        SIGNAL( QSpinBox::valueChanged( int ) ),
         this,
-        SLOT(C_UiFindRecord::OnSpinBoxValueChanged(int))
+        SLOT( C_UiFindRecord::OnSpinBoxValueChanged( int ) )
     );
 }
 
@@ -169,23 +169,18 @@ void C_UiFindRecord::OnRemoveButtonClicked()
                 tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
-
-        emit Document()
-        .Events()
-        .RecordsChanged();
-
+        emit Document().Events().RecordsChanged();
         m_Record = 0;
         ui->LineEdit->setText( "" );
         ui->PlainTextEdit->clear();
         ui->PlainTextEdit->appendPlainText( tr( "Out of Bounds" ) );
         ui->EditButton->setEnabled( false );
         ui->RemoveButton->setEnabled( false );
-
-        int max = Document()
-                  .Context()
-                  .Records()
-                  .Size();
-
+        int max =
+            Document()
+            .Context()
+            .Records()
+            .Size();
         ui->SpinBox->setMaximum( max - 1 );
     }
 }
