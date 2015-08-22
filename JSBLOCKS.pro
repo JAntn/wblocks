@@ -63,7 +63,8 @@ HEADERS += \
     FW/UI/ui_code_editor.h \
     FW/UI/ui_code_editor_container.h \
     FW/UI/ui_record_explorer.h \
-    FW/UI/ui_file_explorer.h
+    FW/UI/ui_file_explorer.h \
+    FW/config.h
 
 
 
@@ -114,7 +115,8 @@ SOURCES += \
     FW/UI/ui_code_editor.cpp \
     FW/UI/ui_code_editor_container.cpp \
     FW/UI/ui_file_explorer.cpp \
-    FW/UI/ui_record_explorer.cpp
+    FW/UI/ui_record_explorer.cpp \
+    FW/config.cpp
 
 FORMS += \
     FW/UI/addrecord.ui \

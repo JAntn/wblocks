@@ -24,8 +24,14 @@ C_Events::~C_Events()
     // void
 }
 
-void C_Events::ConnectEvents()
+void C_Events::InitConnections()
 {
+    connect(
+        this,
+        C_Events::DirectoryChanged,
+        this,
+        C_Events::OnDirectoryChanged );
+
     connect(
         this,
         C_Events::RecordsChanged,
@@ -60,7 +66,12 @@ void C_Events::ConnectEvents()
         this,
         C_Events::CodeEditorContainerChanged,
         this,
-        C_Events::OnCodeEditorContainerChanged );
+                C_Events::OnCodeEditorContainerChanged );
+}
+
+void C_Events::OnDirectoryChanged()
+{
+    MainWindow().UpdateFileExplorer();
 }
 
 void C_Events::OnRecordExplorerChanged()
@@ -99,14 +110,14 @@ void C_Events::OnActionLoadFile()
 {
     QString file_name = QFileDialog::getOpenFileName( &MainWindow(),
                         tr( "Load File" ),
-                        "",
-                        tr( "JS Blocks Files (*.blk)" ) );
+                        Document().FileName(),
+                        tr( "Project Files (*.prj)" ) );
 
     if( file_name.isEmpty() )
         return;
 
     QFile file( file_name );
-    Document().FileLoad( file );
+    Document().LoadFile( file );
 
 }
 
@@ -114,14 +125,14 @@ void C_Events::OnActionSaveFile()
 {
     QString file_name = QFileDialog::getSaveFileName( &MainWindow(),
                         tr( "Save File" ),
-                        tr( "untitled.blk" ),
-                        tr( "JS Blocks Files (*.blk)" ) );
+                        Document().FileName(),
+                        tr( "Project Files (*.prj)" ) );
 
     if( file_name.isEmpty() )
         return;
 
     QFile file( file_name );
-    Document().FileSave( file );
+    Document().SaveFile( file );
 }
 
 void C_Events::OnActionLoadSQL()
@@ -134,7 +145,7 @@ void C_Events::OnActionLoadSQL()
     if( file_name.isEmpty() )
         return;
 
-    Document().DatabaseLoad( file_name );
+    Document().LoadSQL( file_name );
 }
 
 void C_Events::OnActionSaveSQL()
@@ -147,7 +158,7 @@ void C_Events::OnActionSaveSQL()
     if( file_name.isEmpty() )
         return;
 
-    Document().DatabaseSave( file_name );
+    Document().SaveSQL( file_name );
 }
 
 void C_Events::OnActionSaveClientScript()
@@ -162,7 +173,8 @@ void C_Events::OnActionSaveClientScript()
 
     Document().Script().Generate( Document().Records() );
     emit Document().Events().ClientScriptChanged();
-    C_Document::SaveTextFile( file_name, Document().Script().StringList().join( "" ) );
+    C_Document::SaveTextFile( file_name,
+                              Document().Script().StringList().join( "" ) );
 }
 
 void C_Events::OnActionEditRecord()
@@ -294,6 +306,7 @@ void C_Events::OnActionAddSceneItem()
         }
 
         emit Document().Events().SceneChanged();
+        MainWindow().SetCurrentTab( MAINWINDOW_TAB_SCENE );
     }
 }
 
@@ -439,6 +452,7 @@ void C_Events::OnActionNewEditorFile()
 
     MainWindow().CodeEditorContainer().Append( file_name );
     emit CodeEditorContainerChanged();
+    MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
 void C_Events::OnActionCloseEditorFile()
@@ -489,12 +503,15 @@ void C_Events::OnActionLoadEditorFile()
             MainWindow().CodeEditorContainer().Clear( file_name );
             MainWindow().CodeEditorContainer().Append( file_name );
             emit CodeEditorContainerChanged();
+            MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
         }
+
         return;
     }
 
     MainWindow().CodeEditorContainer().Append( file_name );
     emit CodeEditorContainerChanged();
+    MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
 void C_Events::OnActionExit()
@@ -505,6 +522,7 @@ void C_Events::OnActionExit()
 void C_Events::OnActionRunClientScript()
 {
     Document().MainWindow().UpdateWebView();
+    MainWindow().SetCurrentTab( MAINWINDOW_TAB_OUTPUT );
 }
 
 void C_Events::OnActionUpdateClientScript()

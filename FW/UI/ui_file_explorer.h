@@ -17,7 +17,7 @@ class C_UiFileExplorer : public QWidget
 
 public:
 
-    C_UiFileExplorer( C_Document& document, QString path = "", QWidget* parent = 0 );
+    C_UiFileExplorer( C_Document& document, QWidget* parent = 0 );
     ~C_UiFileExplorer();
 
     ATR_VALUE                     ( Path,      QString )
@@ -36,6 +36,8 @@ public slots:
     void OnLineEditReturnPressed();
 
 private:
+
+    QString                       AbsolutePath();
 
     Ui::C_UiFileExplorer* ui;
 };

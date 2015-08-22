@@ -73,11 +73,9 @@ void C_UiReferenceEditor::OnRemoveButtonClicked()
                 tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
-
         emit Document()
         .Events()
         .RecordsChanged();
-
         close();
     }
 }

@@ -72,8 +72,7 @@ void C_UiScriptEditor::OnButtonBoxAccepted()
 
 void C_UiScriptEditor::OnRemoveButtonClicked()
 {
-    if(  Document().AcceptMessage(
-                tr( "Do you want to remove this record?" ) ) )
+    if(  Document().AcceptMessage( tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

@@ -22,19 +22,22 @@ class C_Document : public C_Variant
 {
 public:
 
-    C_Document( C_UiMainWindow& main_window, C_Variant* parent = 0 );
+    C_Document(QString file_name, QString path, C_UiMainWindow& main_window, C_Variant* parent = 0 );
     ~C_Document();
 
-    void                FileSave( QFile& file );
-    void                FileLoad( QFile& file );
+    void                SaveFile( QFile& file );
+    void                LoadFile( QFile& file );
 
-    void                DatabaseSave( QString file_name );
-    void                DatabaseLoad( QString file_name );
+    void                SaveSQL( QString file_name );
+    void                LoadSQL( QString file_name );
 
     void                UpdateScript();
     void                UpdateScene();
 
     void                Clear();
+
+    ATR_VALUE           ( FileName,   QString )
+    ATR_VALUE           ( Path,       QString )
 
     ATR_POINTER         ( MainWindow, C_UiMainWindow )
     ATR_POINTER         ( Database,   C_Database )

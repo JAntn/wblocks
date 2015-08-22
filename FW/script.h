@@ -19,7 +19,6 @@ public:
     void                      Generate( C_RecordStruct& record_container );
 
     ATR_VALUE                 ( StringList, QStringList )
-    ATR_VALUE                 ( Valid, bool)
 };
 
 #endif // C_SCRIPT_H

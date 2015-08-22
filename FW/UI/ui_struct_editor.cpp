@@ -6,14 +6,14 @@
 
 #include <FW/document.h>
 
-C_UiStructEditor::C_UiStructEditor(C_StructRecord& record, C_Document& document, QWidget *parent) :
-    QDialog(parent),
-    m_Record(&record),
-    m_Document(&document),
-    ui(new Ui::C_UiStructEditor)
+C_UiStructEditor::C_UiStructEditor( C_StructRecord& record, C_Document& document, QWidget* parent ) :
+    QDialog( parent ),
+    m_Record( &record ),
+    m_Document( &document ),
+    ui( new Ui::C_UiStructEditor )
 {
-    ui->setupUi(this);
-    ui->NameLineEdit->setText(Record().Name());
+    ui->setupUi( this );
+    ui->NameLineEdit->setText( Record().Name() );
 
     connect(
         ui->ButtonBox,
@@ -37,8 +37,9 @@ C_UiStructEditor::~C_UiStructEditor()
 
 void C_UiStructEditor::OnButtonBoxAccepted()
 {
-    if(!ui->NameLineEdit->text().contains(QRegExp("^\\S+$"))) {
-        Document().Message(tr("Name must not contain white spaces"));
+    if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
+    {
+        Document().Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
@@ -49,8 +50,7 @@ void C_UiStructEditor::OnButtonBoxAccepted()
 
 void C_UiStructEditor::OnRemoveButtonClicked()
 {
-    if(  Document().AcceptMessage(
-                tr("Do you want to remove this record?")))
+    if(  Document().AcceptMessage( tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

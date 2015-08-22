@@ -39,7 +39,6 @@ C_UiRecordContextMenu::C_UiRecordContextMenu(
 
     if( ( action_flags & FLAG_ACTION_CUT ) && has_selection )
     {
-
         QAction* action_copy = menu.addAction( tr( "Cut" ) );
         connect( action_copy, QAction::triggered, &document.Events(), C_Events::OnActionCutRecord );
     }
@@ -86,6 +85,6 @@ C_UiRecordContextMenu::C_UiRecordContextMenu(
 
 C_UiRecordContextMenu::~C_UiRecordContextMenu()
 {
-    //void
+    // void
 }
 

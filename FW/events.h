@@ -23,9 +23,11 @@ public:
     ATR_POINTER         (MainWindow, C_UiMainWindow)
     ATR_VALUE           (EventData,  QStringList)
 
-    void                ConnectEvents();
+    void                InitConnections();
 
 public slots:
+
+    void                OnDirectoryChanged();
 
     void                OnRecordExplorerChanged();
     void                OnFileExplorerChanged();
@@ -43,6 +45,9 @@ public slots:
     void                OnActionLoadSQL();
     void                OnActionSaveSQL();
 
+    void                OnActionExit();
+    void                OnActionNewFile();
+
     void                OnActionAddRecord();
     void                OnActionEditRecord();
     void                OnActionRemoveRecord();
@@ -50,8 +55,7 @@ public slots:
     void                OnActionCopyRecord();
     void                OnActionPasteRecord();
     void                OnActionCutRecord();
-    void                OnActionExit();
-    void                OnActionNewFile();
+
     void                OnActionFindRecord();
 
     void                OnActionNewEditorFile();
@@ -62,6 +66,8 @@ public slots:
     void                OnActionLoadEditorFile();
 
 signals:
+
+    void                DirectoryChanged();
     void                RecordExplorerChanged();
     void                FileExplorerChanged();
     void                RecordsChanged();

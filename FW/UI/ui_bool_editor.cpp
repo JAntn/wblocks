@@ -59,8 +59,7 @@ void C_UiBoolEditor::OnButtonBoxAccepted()
 
 void C_UiBoolEditor::OnRemoveButtonClicked()
 {
-    if(  Document().AcceptMessage(
-                tr( "Do you want to remove this record?" ) ) )
+    if(  Document().AcceptMessage( tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

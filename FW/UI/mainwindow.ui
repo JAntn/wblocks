@@ -83,7 +83,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <property name="movable">
         <bool>true</bool>
@@ -170,7 +170,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Project</string>
     </property>
     <addaction name="ActionNew"/>
     <addaction name="separator"/>
@@ -220,8 +220,8 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRecord"/>
-   <addaction name="menuScript"/>
    <addaction name="menuEditor"/>
+   <addaction name="menuScript"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="ActionFileLoad">
@@ -256,12 +256,12 @@
   </action>
   <action name="ActionSQLLoad">
    <property name="text">
-    <string>SQLite Load</string>
+    <string>Load SQL</string>
    </property>
   </action>
   <action name="ActionSQLSave">
    <property name="text">
-    <string>SQLite Save</string>
+    <string>Save SQL</string>
    </property>
   </action>
   <action name="ActionRunClientScript">

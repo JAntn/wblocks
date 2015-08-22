@@ -18,8 +18,6 @@ public:
     virtual bool        AtEnd();
 
     ATR_CONST_VALUE     ( Flags,      long )
-
-    // The number of records inserted to state
     ATR_CONST_VALUE     ( Count,      long )
 
 };

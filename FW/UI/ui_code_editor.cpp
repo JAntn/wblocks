@@ -4,10 +4,10 @@
 #include "FW/document.h"
 
 C_UiCodeEditor::C_UiCodeEditor( QString file_name, QWidget* parent ) :
-    m_FileName( file_name ),
-    m_HasChanged( false ),
     QWidget( parent ),
-    ui( new Ui::C_UiCodeEditor )
+    ui( new Ui::C_UiCodeEditor ),
+    m_FileName( file_name ),
+    m_HasChanged( false )
 {
     ui->setupUi( this );
     ui->FileLineEdit->setText( file_name );

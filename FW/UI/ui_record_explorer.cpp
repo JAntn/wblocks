@@ -73,7 +73,6 @@ void C_UiRecordExplorer::Update()
     emit Document().Events().RecordExplorerChanged();
 }
 
-
 C_RecordStruct& C_UiRecordExplorer::Records()
 {
     return Document().Context().Records();
@@ -124,7 +123,6 @@ void C_UiRecordExplorer::Activate( C_Record* record )
 
     record->ShowEditor( Document() );
 }
-
 
 void C_UiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
 {

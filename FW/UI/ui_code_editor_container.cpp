@@ -21,6 +21,21 @@ C_UiCodeEditorContainer::C_UiCodeEditorContainer( QWidget* parent ): QWidget( pa
     );
 }
 
+void C_UiCodeEditorContainer::Select( QString file_name )
+{
+    for( int index = 0; index < m_TabWidget->count(); ++index )
+    {
+        auto* editor = static_cast<C_UiCodeEditor*>( m_TabWidget->widget( index ) );
+
+        if( editor->FileName() == file_name )
+        {
+            m_TabWidget->setCurrentIndex( index );
+            return;
+        }
+    }
+
+}
+
 void C_UiCodeEditorContainer::Append( QString file_name )
 {
     m_TabWidget->addTab( new C_UiCodeEditor( file_name ), file_name.split( "/" ).back() );

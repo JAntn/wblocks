@@ -7,10 +7,14 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
+#include "FW/UI/ui_file_explorer.h"
 #include <QMessageBox>
 #include <QStack>
 #include <QDebug>
+#include <QFileInfo>
+#include <QDir>
 #include <FW/RC/script_record.h>
+#include "FW/config.h"
 
 QString C_Document::LoadTextFile( QString file_name )
 {
@@ -22,7 +26,7 @@ QString C_Document::LoadTextFile( QString file_name )
         return QString();
     }
 
-    auto text = file.readAll();
+    QString text = file.readAll();
     file.close();
     return text;
 }
@@ -42,11 +46,14 @@ void C_Document::SaveTextFile( QString file_name, QString text )
     file.close();
 }
 
-C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
+C_Document::C_Document( QString file_name, QString path, C_UiMainWindow& main_window, C_Variant* parent ):
     C_Variant( parent ),
     m_MainWindow( &main_window )
 {
     C_RecordStruct::InitFactoryList();
+
+    m_FileName          = file_name;
+    m_Path              = path;
 
     m_Records           = new C_RecordStruct( "root", this );
     m_Scene             = new C_Scene( *this, this );
@@ -54,25 +61,9 @@ C_Document::C_Document( C_UiMainWindow& main_window, C_Variant* parent ):
     m_Script            = new C_Script( this );
     m_Database          = new C_Database( this );
     m_Clipboard         = new C_Clipboard( this );
-    m_Events            = new C_Events( *this, main_window, &main_window );
+    m_Events            = new C_Events( *this, main_window, &main_window ); // TODO MOVE THIS POINTER TO MAINWINDOW
 
-    auto record1 = Records().CreateRecord( "SampleString", "Monday", "String" );
-    Scene().CreateItem( *record1 );
 
-    auto record2 = Records().CreateRecord( "SampleScript", "", "Script" );
-    Scene().CreateItem( *record2 );
-    static_cast<C_ScriptRecord*> (record2)
-            ->Struct()
-            ->FromName("Code")
-            ->SetValue(
-                "document.write(SampleString)"
-                );
-    static_cast<C_ScriptRecord*> (record2)
-            ->Struct()
-            ->FromName("File")
-            ->SetValue(
-                "sample.js"
-                );
 }
 
 C_Document::~C_Document()
@@ -121,7 +112,7 @@ void C_Document::Message( QString msg )
     msgBox.exec();
 }
 
-void C_Document::FileSave( QFile& file )
+void C_Document::SaveFile( QFile& file )
 {
     file.open( QIODevice::WriteOnly );
     QDataStream out( &file );
@@ -150,11 +141,21 @@ void C_Document::FileSave( QFile& file )
     scene_state.Stop();
 
     file.close();
+
+    // UPDATE CONFIG FILE
+
+    SetFileName( QFileInfo( file ).fileName() );
+    SetPath( QFileInfo( file ).canonicalPath() );
+    MainWindow().Config().SetProjectFileName( FileName() );
+    MainWindow().Config().SetProjectPath( Path() );
+    QDir().setCurrent( MainWindow().Config().ProjectPath() );
+    emit Events().DirectoryChanged();
 }
 
-void C_Document::FileLoad( QFile& file )
+void C_Document::LoadFile( QFile& file )
 {
     Clear();
+
     file.open( QIODevice::ReadOnly );
     QDataStream in( &file );
     QString val;
@@ -178,12 +179,22 @@ void C_Document::FileLoad( QFile& file )
         Scene().CreateItem( scene_state );
 
     emit Events().RecordsChanged();
+
     file.close();
+
+    // UPDATE CONFIG FILE
+
+    SetFileName( QFileInfo( file ).fileName() );
+    SetPath( QFileInfo( file ).canonicalPath() );
+    MainWindow().Config().SetProjectFileName( FileName() );
+    MainWindow().Config().SetProjectPath( Path() );
+    QDir().setCurrent( MainWindow().Config().ProjectPath() );
+    emit Events().DirectoryChanged();
 }
 
 #define FIELD(__NAME)   "[$$$"+QString(__NAME)+"]"
 
-void C_Document::DatabaseSave( QString file_name )
+void C_Document::SaveSQL( QString file_name )
 {
     QFile::remove( file_name );
     Database().OpenDatabase( file_name );
@@ -202,7 +213,6 @@ void C_Document::DatabaseSave( QString file_name )
     row.clear();
     row << FIELD( "SCENE_ID_COUNT" ) << C_Scene::IdCount();
     Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
-
 
     // RECORD TABLE
 
@@ -249,7 +259,7 @@ void C_Document::DatabaseSave( QString file_name )
     Database().CloseDatabase();
 }
 
-void C_Document::DatabaseLoad( QString file_name )
+void C_Document::LoadSQL( QString file_name )
 {
     Clear();
     Database().OpenDatabase( file_name );

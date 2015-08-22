@@ -21,9 +21,10 @@ public:
     void                          CloseAll();
     void                          SaveCurrent();
     void                          SaveAll();
-    void                          Save(int index);
+    void                          Save( int index );
     bool                          HasFile( QString file_name );
     int                           Size();
+    void                          Select( QString file_name );
 
     ATR_CONST_POINTER             ( TabWidget, QTabWidget )
 

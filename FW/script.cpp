@@ -2,7 +2,7 @@
 #include "FW/document.h"
 
 C_Script::C_Script( C_Variant* parent ):
-    m_Valid(false), C_Variant( parent )
+    C_Variant( parent )
 {
     // void
 }

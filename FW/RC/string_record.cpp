@@ -26,7 +26,7 @@ C_StringRecord::~C_StringRecord()
 
 QString C_StringRecord::Script() const
 {
-    return FullName() + " = \"" + Value() + "\""  + ";";
+    return FullName() + " = \"" + Value().replace("\n","\\n") + "\""  + ";";
 }
 
 C_RecordStruct* C_StringRecord::Struct() const

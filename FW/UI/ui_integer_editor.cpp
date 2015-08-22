@@ -56,8 +56,7 @@ void C_UiIntegerEditor::OnButtonBoxAccepted()
 
 void C_UiIntegerEditor::OnRemoveButtonClicked()
 {
-    if( C_Document::AcceptMessage(
-                tr( "Do you want to remove this record?" ) ) )
+    if( C_Document::AcceptMessage( tr( "Do you want to remove this record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();
