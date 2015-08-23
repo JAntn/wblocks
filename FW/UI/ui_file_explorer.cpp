@@ -1,10 +1,10 @@
-#include "FW/UI/ui_file_explorer.h"
-#include "ui_fileexplorer.h"
 #include "FW/document.h"
-#include <QDir>
-#include <QStringListModel>
+#include "FW/UI/ui_file_explorer.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_code_editor_container.h"
+#include "ui_fileexplorer.h"
+#include <QDir>
+#include <QStringListModel>
 
 C_UiFileExplorer::C_UiFileExplorer( C_Document& document, QWidget* parent ) :
     QWidget( parent ),

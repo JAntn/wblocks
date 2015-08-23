@@ -8,14 +8,14 @@
 
 #define CLASS_NAME "Reference"
 
-C_ReferenceRecord::C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent )
-    : C_Record( id, name, value, parent )
+C_ReferenceRecord::C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent ):
+    C_Record( id, name, value, parent )
 {
     m_Document = 0;
 }
 
-C_ReferenceRecord::C_ReferenceRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
+C_ReferenceRecord::C_ReferenceRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     SetState( state );
 }
@@ -51,9 +51,7 @@ QString C_ReferenceRecord::Value() const
     if( m_Value.isEmpty() )
         return "";
 
-    auto record = Document()
-                  .Records()
-                  .FromId( m_Value, true );
+    C_Record* record = Document().Records().FromId( m_Value, true );
 
     if( record == 0 )
         return "";
@@ -67,13 +65,9 @@ void C_ReferenceRecord::SetValue( QString full_name )
     C_Record* record;
     C_RecordStruct* record_struct = &Document().Records();
 
-    for( auto
-            iter = string_list.begin();
-            iter != string_list.end();
-            ++iter )
+    for( auto iter = string_list.begin(); iter != string_list.end(); ++iter )
     {
-        auto str = *iter;
-        record = record_struct->FromName( str );
+        record = record_struct->FromName( *iter );
 
         if( record == 0 )
             break;
@@ -101,9 +95,7 @@ void C_ReferenceRecord::SetValue( QString full_name )
 
 C_Record* C_ReferenceRecord::Referencee()
 {
-    return Document()
-                  .Records()
-                  .FromId( m_Value, true );
+    return Document().Records().FromId( m_Value, true );
 }
 
 void C_ReferenceRecord::GetState( C_StateReader& state )

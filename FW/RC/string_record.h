@@ -14,16 +14,13 @@ public:
 
     explicit C_StringRecord( C_StateWriter& state, C_Variant* parent );
     C_StringRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
-
     ~C_StringRecord() override;
 
     QString             Class() const override;
     QString             Script()    const override;
     C_RecordStruct*     Struct()    const override;
-
     void 			    GetState( C_StateReader& state ) override;
     void                SetState( C_StateWriter& value_list ) override;
-
     void                ShowEditor( C_Document& document ) override;
 
 private:

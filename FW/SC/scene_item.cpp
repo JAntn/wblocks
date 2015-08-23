@@ -18,126 +18,115 @@
 #define GFX_VALUE_RECT(__WIDTH)             QRectF(GFX_THICK+5,GFX_THICK+5+20,__WIDTH,20)
 #define GFX_SEPARATOR_LINE(__WIDTH)         QLine(GFX_THICK,GFX_THICK+5+19,__WIDTH+10+GFX_THICK,GFX_THICK+5+19)
 
-C_SceneItem::C_SceneItem(C_Scene& scene, C_StateWriter& state) :
-    C_Variant(0),
-    m_Scene(&scene)
+C_SceneItem::C_SceneItem( C_Scene& scene, C_StateWriter& state ) :
+    C_Variant( 0 ),
+    m_Scene( &scene )
 {
-    SetState(state);
-
-    Scene().m_Items.append(this);
-    SetParent(&Record());
-
-    Scene().m_GraphicsScene->addItem(this);
-    setFlag(QGraphicsItem::ItemIsMovable);
+    SetState( state );
+    Scene().m_Items.append( this );
+    SetParent( &Record() );
+    Scene().m_GraphicsScene->addItem( this );
+    setFlag( QGraphicsItem::ItemIsMovable );
 }
 
-C_SceneItem::C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_val, qreal z_val):
-    C_Variant(0),
-    m_Record(&record),
-    m_Scene(&scene)
+C_SceneItem::C_SceneItem( C_Scene& scene, C_Record& record, qreal x_val, qreal y_val, qreal z_val ):
+    C_Variant( 0 ),
+    m_Record( &record ),
+    m_Scene( &scene )
 
 {
     m_Id = Scene().GenerateId();
-    Scene().m_Items.append(this);
+    Scene().m_Items.append( this );
+    SetParent( &Record() );
+    Scene().m_GraphicsScene->addItem( this );
+    setFlag( QGraphicsItem::ItemIsMovable );
+    setPos( x_val, y_val );
 
-    SetParent(&Record());
-
-    Scene().m_GraphicsScene->addItem(this);
-    setFlag(QGraphicsItem::ItemIsMovable);
-    setPos(x_val,y_val);
-    if( z_val < 0) {
-        Scene().BringFront(*this);
-    }
-    else {
-        setZValue(z_val);
-    }
+    if( z_val < 0 )
+        Scene().BringFront( *this );
+    else
+        setZValue( z_val );
 }
 
 C_SceneItem::~C_SceneItem()
 {
-    Scene().m_Items.removeOne(this);
+    Scene().m_Items.removeOne( this );
 }
 
 
 QString C_SceneItem::HeaderText() const
 {
-    return QString(Record().FullName()).append(" : ").append(Record().Class());
+    return QString( Record().FullName() ).append( " : " ).append( Record().Class() );
 }
 
 QRectF C_SceneItem::boundingRect() const
 {
-    QFontMetrics fm(scene()->font());
-    int header_width = fm.width(HeaderText());
+    QFontMetrics fm( scene()->font() );
+    int header_width = fm.width( HeaderText() );
 
-    if(header_width < 200)
+    if( header_width < 200 )
         header_width = 200;
 
-    return GFX_OUTER_RECT(header_width);
+    return GFX_OUTER_RECT( header_width );
 }
 
-void C_SceneItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
+void C_SceneItem::paint( QPainter* painter, const QStyleOptionGraphicsItem*, QWidget* )
 {
 
-    QFontMetrics fm(this->scene()->font());
-    int header_width = fm.width(HeaderText());
+    QFontMetrics fm( this->scene()->font() );
+    int header_width = fm.width( HeaderText() );
 
-    if(header_width < 200)
+    if( header_width < 200 )
         header_width = 200;
 
-    painter->fillRect(GFX_OUTER_RECT(header_width),GFX_WHITE_BRUSH);
-    painter->setPen(QPen(GFX_BLACK_BRUSH,GFX_THICK));
-    painter->drawRect(GFX_OUTER_RECT(header_width));
-    painter->drawText(GFX_TEXT_RECT(header_width),HeaderText());
-    painter->drawText(GFX_VALUE_RECT(header_width),Record().Value());
-    painter->drawLine(GFX_SEPARATOR_LINE(header_width));
+    painter->fillRect( GFX_OUTER_RECT( header_width ), GFX_WHITE_BRUSH );
+    painter->setPen( QPen( GFX_BLACK_BRUSH, GFX_THICK ) );
+    painter->drawRect( GFX_OUTER_RECT( header_width ) );
+    painter->drawText( GFX_TEXT_RECT( header_width ), HeaderText() );
+    painter->drawText( GFX_VALUE_RECT( header_width ), Record().Value() );
+    painter->drawLine( GFX_SEPARATOR_LINE( header_width ) );
 }
 
-void C_SceneItem::mousePressEvent(QGraphicsSceneMouseEvent*)
+void C_SceneItem::mousePressEvent( QGraphicsSceneMouseEvent* )
 {
-    Scene().BringFront(*this);
+    Scene().BringFront( *this );
 }
 
-void C_SceneItem::GetState(C_StateReader &state)
+void C_SceneItem::GetState( C_StateReader& state )
 {
     QStringList row;
-
     row << Id();
     row << Record().Id();
-    row << QString::number(x());
-    row << QString::number(y());
-    row << QString::number(zValue());
-
-    state.Read(row);
+    row << QString::number( x() );
+    row << QString::number( y() );
+    row << QString::number( zValue() );
+    state.Read( row );
 }
 
-void C_SceneItem::SetState(C_StateWriter& state)
+void C_SceneItem::SetState( C_StateWriter& state )
 {
     QStringList row;
-
-    state.Write(row);
-
-    m_Id = row.at(0);
+    state.Write( row );
+    m_Id = row[0];
 
     m_Record =
-            Scene()
-            .Document()
-            .Records()
-            .FromId(row.at(1),true);
+        Scene()
+        .Document()
+        .Records()
+        .FromId( row[1], true );
 
-    setPos(row.at(2).toFloat(),
-           row.at(3).toFloat());
-
-    setZValue(row.at(4).toFloat());
+    setPos( row[2].toFloat(), row[3].toFloat() );
+    setZValue( row[4].toFloat() );
 }
 
-void C_SceneItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent*)
+void C_SceneItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent* )
 {
-    Record().ShowEditor(Scene().Document());
+    Record().ShowEditor( Scene().Document() );
 }
 
-void C_SceneItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* event)
+void C_SceneItem::contextMenuEvent( QGraphicsSceneContextMenuEvent* event )
 {
-    C_UiSceneItemContextMenu context_menu(*this,event);
+    C_UiSceneItemContextMenu context_menu( *this, event );
 }
 
 

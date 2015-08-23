@@ -2,17 +2,17 @@
 #include "FW/SC/scene.h"
 #include "FW/RC/record.h"
 #include "FW/document.h"
-
 #include <QAction>
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
 #include <QMessageBox>
 
-C_UiSceneItemContextMenu::C_UiSceneItemContextMenu( C_SceneItem& item,
-        QGraphicsSceneContextMenuEvent* event,
-        QObject* parent )
-    : QObject( parent ),
-      m_SceneItem( &item )
+C_UiSceneItemContextMenu::C_UiSceneItemContextMenu(
+    C_SceneItem& item,
+    QGraphicsSceneContextMenuEvent* event,
+    QObject* parent ):
+    QObject( parent ),
+    m_SceneItem( &item )
 {
     QMenu menu;
 

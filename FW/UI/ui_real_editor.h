@@ -23,8 +23,8 @@ public:
     C_UiRealEditor( C_RealRecord& record, C_Document& document, QWidget* parent = 0 );
     ~C_UiRealEditor() override;
 
-    ATR_POINTER         ( Record,   C_RealRecord )
-    ATR_POINTER         ( Document, C_Document )
+    M_POINTER           ( Record,   C_RealRecord )
+    M_POINTER           ( Document, C_Document )
 
 private slots:
 

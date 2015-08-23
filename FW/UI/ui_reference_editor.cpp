@@ -1,9 +1,9 @@
 #include "FW/RC/reference_record.h"
+#include "FW/document.h"
 #include "FW/UI/ui_reference_editor.h"
 #include "ui_referenceeditor.h"
-#include "FW/document.h"
 
-C_UiReferenceEditor::C_UiReferenceEditor( C_ReferenceRecord& record, C_Document& document, QWidget* parent ) :
+C_UiReferenceEditor::C_UiReferenceEditor( C_ReferenceRecord& record, C_Document& document, QWidget* parent ):
     QDialog( parent ),
     m_Record( &record ),
     m_Document( &document ),
@@ -82,7 +82,7 @@ void C_UiReferenceEditor::OnRemoveButtonClicked()
 
 void C_UiReferenceEditor::OnEditButtonClicked()
 {
-    auto record = Document().Records().FromId( m_Record->m_Value );
+    C_Record* record = Document().Records().FromId( m_Record->m_Value );
 
     if( record != 0 )
         record->ShowEditor( Document() );

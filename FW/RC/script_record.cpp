@@ -12,8 +12,8 @@
 
 #define CLASS_NAME "Script"
 
-C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value,  C_Variant* parent )
-    : C_Record( id, name, value, parent )
+C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value,  C_Variant* parent ):
+    C_Record( id, name, value, parent )
 {
     m_Records = new C_RecordStruct( m_Name, this );
     Records().SetFlags( FLAG_ACTION_EDIT | FLAG_ACTION_ADD_SCENE | FLAG_ACTION_COPY );
@@ -23,8 +23,8 @@ C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value,  C_Vari
     m_Code ->SetFlags( ~FLAG_ACTION_REMOVE );
 }
 
-C_ScriptRecord::C_ScriptRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
+C_ScriptRecord::C_ScriptRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     m_Records = new C_RecordStruct( "", this );
     Records().SetFlags( FLAG_ACTION_EDIT | FLAG_ACTION_ADD_SCENE | FLAG_ACTION_COPY );
@@ -72,9 +72,9 @@ void C_ScriptRecord::GetState( C_StateReader& state )
     row.append( Class() );
     state.Read( row );
 
-    for( C_Variant* node : Records() )
+    for( C_Variant* variant : Records() )
     {
-        auto record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
         record->GetState( state );
     }
 }
@@ -100,7 +100,6 @@ void C_ScriptRecord::SetState( C_StateWriter& state )
 
     m_File = static_cast<C_FileRecord*>( Records().FromName( "File" ) );
     m_File ->SetFlags( ~FLAG_ACTION_REMOVE );
-
     m_Code = static_cast<C_StringRecord*>( Records().FromName( "Code" ) );
     m_Code ->SetFlags( ~FLAG_ACTION_REMOVE );
     Code().SetValue( C_Document::LoadTextFile( File().Value() ) );

@@ -8,16 +8,15 @@
 
 #define CLASS_NAME "Bool"
 
-C_BoolRecord::C_BoolRecord( QString id, QString name, QString value, C_Variant* parent )
-    : C_Record( id, name, value, parent )
+C_BoolRecord::C_BoolRecord( QString id, QString name, QString value, C_Variant* parent ):
+    C_Record( id, name, value, parent )
 {
     if( m_Value.isEmpty() )
         m_Value = "False";
 }
 
-C_BoolRecord::C_BoolRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
-
+C_BoolRecord::C_BoolRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     SetState( state );
 }
@@ -35,17 +34,6 @@ QString C_BoolRecord::Script() const
 C_RecordStruct* C_BoolRecord::Struct() const
 {
     return 0;
-}
-
-QString C_BoolRecord::Name() const
-{
-    return m_Name;
-}
-
-
-QString C_BoolRecord::Id() const
-{
-    return m_Id;
 }
 
 QString C_BoolRecord::Class() const

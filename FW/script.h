@@ -4,7 +4,6 @@
 #include "FW/variant.h"
 #include "FW/document.h"
 #include "FW/macro.h"
-
 #include <QStringList>
 
 class C_RecordStruct;
@@ -16,9 +15,9 @@ public:
     explicit C_Script( C_Variant* parent = 0 );
     ~C_Script() override;
 
-    void                      Generate( C_RecordStruct& record_container );
+    void                      Parse(C_RecordStruct& records );
 
-    ATR_VALUE                 ( StringList, QStringList )
+    M_VALUE                   ( StringList, QStringList )
 };
 
 #endif // C_SCRIPT_H

@@ -150,9 +150,9 @@ int C_RecordStruct::GetIndex( C_Record* record_value ) const
 {
     int count = 0;
 
-    for( C_Variant* node : *this )
+    for( C_Variant* variant : *this )
     {
-        auto record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
 
         if( record == record_value )
             return count;
@@ -175,9 +175,9 @@ C_Record* C_RecordStruct::FromIndex( int index ) const
 
 C_Record* C_RecordStruct::FromName( QString name, bool deep ) const
 {
-    for( C_Variant* node : *this )
+    for( C_Variant* variant : *this )
     {
-        auto record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
 
         if( record->Name() == name )
             return record;
@@ -201,9 +201,9 @@ C_Record* C_RecordStruct::FromName( QString name, bool deep ) const
 
 C_Record* C_RecordStruct::FromId( QString record_id , bool deep ) const
 {
-    for( C_Variant* node : *this )
+    for( C_Variant* variant : *this )
     {
-        auto record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
 
         if( record->Id() == record_id )
             return record;

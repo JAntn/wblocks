@@ -1,13 +1,14 @@
-#include "FW/UI/ui_code_editor.h"
 #include "ui_codeeditor.h"
-#include <QFileDialog>
+#include "FW/UI/ui_code_editor.h"
 #include "FW/document.h"
+#include <QFileDialog>
+
 
 C_UiCodeEditor::C_UiCodeEditor( QString file_name, QWidget* parent ) :
     QWidget( parent ),
-    ui( new Ui::C_UiCodeEditor ),
     m_FileName( file_name ),
-    m_HasChanged( false )
+    m_HasChanged( false ),
+    ui( new Ui::C_UiCodeEditor )
 {
     ui->setupUi( this );
     ui->FileLineEdit->setText( file_name );
@@ -33,7 +34,6 @@ void C_UiCodeEditor::OnTextChanged()
     {
         SetHasChanged( true );
         ui->FileLineEdit->setText( FileName() + "*" );
-
         emit TextChangedEvent();
     }
 }
@@ -41,9 +41,7 @@ void C_UiCodeEditor::OnTextChanged()
 void C_UiCodeEditor::Save()
 {
     C_Document::SaveTextFile( FileName(), ui->PlainTextEdit->toPlainText() );
-
     SetHasChanged( false );
     ui->FileLineEdit->setText( FileName() );
-
     emit SavedEvent();
 }

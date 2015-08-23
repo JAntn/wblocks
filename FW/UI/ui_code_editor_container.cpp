@@ -1,9 +1,10 @@
-#include "FW/UI/ui_code_editor_container.h"
 #include "FW/document.h"
+#include "FW/UI/ui_code_editor_container.h"
 #include "FW/UI/ui_code_editor.h"
 #include <QVBoxLayout>
 
-C_UiCodeEditorContainer::C_UiCodeEditorContainer( QWidget* parent ): QWidget( parent )
+C_UiCodeEditorContainer::C_UiCodeEditorContainer( QWidget* parent ):
+    QWidget( parent )
 {
     m_TabWidget = new QTabWidget;
     m_TabWidget->setTabsClosable( true );

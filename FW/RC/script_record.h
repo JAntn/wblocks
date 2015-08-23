@@ -21,22 +21,18 @@ public:
     C_ScriptRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
     ~C_ScriptRecord() override;
 
-
-    QString             Class()     const override;
-    QString             Script()    const override;
-    C_RecordStruct*     Struct()    const override;
-
+    QString             Class() const override;
+    QString             Script() const override;
+    C_RecordStruct*     Struct() const override;
     void 			    GetState( C_StateReader& state ) override;
     void                SetState( C_StateWriter& value_list ) override;
-
     void                ShowEditor( C_Document& document ) override;
-
-    ATR_POINTER         ( Records,    C_RecordStruct )
-    ATR_POINTER         ( File,       C_FileRecord )
-    ATR_POINTER         ( Code,       C_StringRecord )
-
     QString             Value() const override;
     void                SetValue( QString ) override;
+
+    M_POINTER           ( Records,    C_RecordStruct )
+    M_POINTER           ( File,       C_FileRecord )
+    M_POINTER           ( Code,       C_StringRecord )
 
 private:
 

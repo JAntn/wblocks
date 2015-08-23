@@ -12,13 +12,13 @@ C_Script::~C_Script()
     // void
 }
 
-void C_Script::Generate( C_RecordStruct& record_container )
+void C_Script::Parse( C_RecordStruct& records )
 {
     m_StringList.clear();
 
-    for( auto node : record_container )
+    for( C_Variant* variant : records )
     {
-        auto record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
         m_StringList.append( record->Script() );
     }
 }

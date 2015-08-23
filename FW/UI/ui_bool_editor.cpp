@@ -1,5 +1,5 @@
-#include "FW/RC/bool_record.h"
 #include "FW/document.h"
+#include "FW/RC/bool_record.h"
 #include "FW/UI/ui_bool_editor.h"
 #include "ui_booleditor.h"
 
@@ -12,7 +12,6 @@ C_UiBoolEditor::C_UiBoolEditor( C_BoolRecord& record, C_Document& document, QWid
 {
     ui->setupUi( this );
     ui->NameLineEdit->setText( Record().Name() );
-
     ui->ComboBox->addItem( "False" );
     ui->ComboBox->addItem( "True" );
 

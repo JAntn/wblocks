@@ -83,15 +83,15 @@ void C_Scene::UpdateLines()
 {
     ClearLines();
 
-    for( auto from : Items() )
+    for( C_SceneItem* from : Items() )
     {
         if( from->Record().Class() == "Reference" )
         {
-            auto record_from = static_cast<C_ReferenceRecord*>( &from->Record() );
+            C_ReferenceRecord* record_from = static_cast<C_ReferenceRecord*>( &from->Record() );
 
-            for( auto target : Items() )
+            for( C_SceneItem* target : Items() )
             {
-                auto record_target = &target->Record();
+                C_Record* record_target = &target->Record();
 
                 if( record_from->Referencee() == record_target )
                     m_Lines.append( new C_SceneLine( *from, *target ) );

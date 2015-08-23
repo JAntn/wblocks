@@ -2,8 +2,8 @@
 #include "FW/document.h"
 #include "FW/SC/scene.h"
 #include "FW/UI/ui_add_record.h"
-#include "ui_addrecord.h"
 #include "FW/RC/reference_record.h"
+#include "ui_addrecord.h"
 #include <QMessageBox>
 #include <QStringListModel>
 
@@ -24,10 +24,11 @@ C_UiAddRecord::C_UiAddRecord( C_Document& document, int index, QWidget* parent )
     ui->ListView->setModel( model );
     ui->ListView->setCurrentIndex( model->index( 0 ) );
 
-    int index_max = Document()
-                    .Context()
-                    .Records()
-                    .Size();
+    int index_max =
+        Document()
+        .Context()
+        .Records()
+        .Size();
 
     if( index < 0 )
         index = index_max;
@@ -64,10 +65,12 @@ C_UiAddRecord::~C_UiAddRecord()
 bool C_UiAddRecord::CheckFormData() const
 {
     int index = ui->SpinBox->value();
-    int index_max = Document()
-                    .Context()
-                    .Records()
-                    .Size();
+
+    int index_max =
+        Document()
+        .Context()
+        .Records()
+        .Size();
 
     if ( ( index > index_max ) || ( index < 0 ) )
     {
@@ -106,14 +109,14 @@ void C_UiAddRecord::OnButtonBoxAccepted()
         }
 
         QString class_name = ( *iter )->RecordClass();
-
         QString name = ui->LineEdit->text();
         int index = ui->SpinBox->value();
 
-        C_Record* record = Document()
-                           .Context()
-                           .Records()
-                           .CreateRecord( name, "", class_name, index );
+        C_Record* record =
+            Document()
+            .Context()
+            .Records()
+            .CreateRecord( name, "", class_name, index );
 
         if( class_name == "Reference" )
             static_cast<C_ReferenceRecord*>( record )->SetDocument( Document() );
@@ -148,6 +151,7 @@ void C_UiAddRecord::OnEditButtonClicked()
         QString class_name = ( *iter )->RecordClass();
         QString name = ui->LineEdit->text();
         int index = ui->SpinBox->value();
+
         C_Record* record =
             Document()
             .Context()

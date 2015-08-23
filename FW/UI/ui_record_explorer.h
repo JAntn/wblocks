@@ -25,8 +25,8 @@ public:
 
     void                          Update();
 
-    ATR_POINTER                   ( Document,         C_Document )
-    ATR_POINTER                   ( RecordTableModel, C_UiRecordTableModel )
+    M_POINTER                     ( Document,         C_Document )
+    M_POINTER                     ( RecordTableModel, C_UiRecordTableModel )
 
     C_RecordStruct&               Records();
     QList<C_Record*>              Selection();

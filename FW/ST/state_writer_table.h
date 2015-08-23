@@ -11,8 +11,8 @@ public:
 
     void                Next() override;
 
-    ATR_CONST_POINTER   ( Table, QList<QStringList> )
-    ATR_CONST_VALUE     ( Iter,  QList<QStringList>::iterator )
+    M_CONST_POINTER     ( Table, QList<QStringList> )
+    M_CONST_VALUE       ( Iter,  QList<QStringList>::iterator )
 
 };
 

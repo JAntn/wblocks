@@ -13,8 +13,8 @@ C_StringRecord::C_StringRecord( QString id, QString name, QString value, C_Varia
     // void
 }
 
-C_StringRecord::C_StringRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
+C_StringRecord::C_StringRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     SetState( state );
 }
@@ -48,19 +48,16 @@ void C_StringRecord::ShowEditor( C_Document& document )
 void C_StringRecord::GetState( C_StateReader& state )
 {
     QStringList row;
-
     row.append( Id() );
     row.append( Name() );
     row.append( Value() );
     row.append( Class() );
-
     state.Read( row );
 }
 
 void C_StringRecord::SetState( C_StateWriter& state )
 {
     QStringList row;
-
     state.Write( row );
 
     if( state.Flags() & FLAG_STATE_NEWID )

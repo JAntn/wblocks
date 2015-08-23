@@ -1,12 +1,9 @@
+#include "FW/RC/struct_record.h"
+#include "FW/document.h"
 #include "FW/UI/ui_struct_editor.h"
-
 #include "ui_structeditor.h"
 
-#include <FW/RC/struct_record.h>
-
-#include <FW/document.h>
-
-C_UiStructEditor::C_UiStructEditor( C_StructRecord& record, C_Document& document, QWidget* parent ) :
+C_UiStructEditor::C_UiStructEditor( C_StructRecord& record, C_Document& document, QWidget* parent ):
     QDialog( parent ),
     m_Record( &record ),
     m_Document( &document ),

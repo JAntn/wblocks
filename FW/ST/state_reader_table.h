@@ -11,7 +11,7 @@ public:
 
     void                Read( QStringList& row ) override;
 
-    ATR_CONST_POINTER   ( Table, QList<QStringList> )
+    M_CONST_POINTER     ( Table, QList<QStringList> )
 };
 
 #endif // C_STATEREADERTABLE_H

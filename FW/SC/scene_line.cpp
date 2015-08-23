@@ -22,7 +22,6 @@ void C_SceneLine::paint( QPainter* painter, const QStyleOptionGraphicsItem* opti
     x2 = Target().scenePos().x();
     y2 = Target().scenePos().y();
 
-
     if( abs( y2 - y1 ) < From().boundingRect().height() )
     {
         if( x1 > x2 )
@@ -39,8 +38,6 @@ void C_SceneLine::paint( QPainter* painter, const QStyleOptionGraphicsItem* opti
     }
 
     setPen( QPen( Qt::green, 1 ) );
-
     this->QGraphicsLineItem::paint( painter, option, widget );
-
 }
 

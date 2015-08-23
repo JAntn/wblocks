@@ -20,10 +20,10 @@ public:
     C_UiFileExplorer( C_Document& document, QWidget* parent = 0 );
     ~C_UiFileExplorer();
 
-    ATR_VALUE                     ( Path,      QString )
-    ATR_VALUE                     ( ModelData, QStringList )
-    ATR_POINTER                   ( Model,     QStringListModel )
-    ATR_POINTER                   ( Document,  C_Document )
+    M_VALUE                       ( Path,      QString )
+    M_VALUE                       ( ModelData, QStringList )
+    M_POINTER                     ( Model,     QStringListModel )
+    M_POINTER                     ( Document,  C_Document )
 
     void                          Update();
     void                          Activate(QString file_name);

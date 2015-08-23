@@ -36,12 +36,12 @@ public:
     void                          SetCurrentTab(int index);
     void                          closeEvent(QCloseEvent *) override;
 
-    ATR_POINTER                   ( Config,              C_Config )
-    ATR_POINTER                   ( Document,            C_Document )
-    ATR_POINTER                   ( RecordExplorer,      C_UiRecordExplorer )
-    ATR_POINTER                   ( CodeEditorContainer, C_UiCodeEditorContainer )
-    ATR_POINTER                   ( FileExplorer,        C_UiFileExplorer )
-    ATR_VALUE                     ( BinPath,             QString )
+    M_POINTER                     ( Config,              C_Config )
+    M_POINTER                     ( Document,            C_Document )
+    M_POINTER                     ( RecordExplorer,      C_UiRecordExplorer )
+    M_POINTER                     ( CodeEditorContainer, C_UiCodeEditorContainer )
+    M_POINTER                     ( FileExplorer,        C_UiFileExplorer )
+    M_VALUE                       ( BinPath,             QString )
 
 private:
 

@@ -13,15 +13,11 @@ public:
 
     explicit C_BoolRecord( C_StateWriter& state, C_Variant* parent = 0 );
     C_BoolRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
-
     ~C_BoolRecord() override;
 
-    QString             Id()        const override;
-    QString             Name()      const override;
     QString             Class()     const override;
     QString             Script()    const override;
     C_RecordStruct*     Struct()    const override;
-
     void                GetState( C_StateReader& state ) override;
     void                SetState( C_StateWriter& state ) override;
     void                ShowEditor( C_Document& document ) override;

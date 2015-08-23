@@ -1,24 +1,24 @@
 #include "FW/RC/record.h"
 #include "FW/UI/ui_main_window.h"
-#include "ui_mainwindow.h"
 #include "FW/UI/ui_add_record.h"
 #include "FW/document.h"
 #include "FW/SC/scene.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_find_record.h"
 #include "FW/UI/ui_code_editor.h"
+#include "FW/UI/ui_code_editor_container.h"
+#include "FW/UI/ui_file_explorer.h"
+#include "FW/config.h"
+#include "FW/clipboard.h"
 #include "ui_findrecord.h"
 #include "ui_record_context_menu.h"
-#include "FW/clipboard.h"
+#include "ui_mainwindow.h"
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 #include <QGraphicsView>
 #include <QtWebKitWidgets>
-#include "FW/UI/ui_code_editor_container.h"
-#include "FW/UI/ui_file_explorer.h"
-#include "FW/config.h"
 
-C_UiMainWindow::C_UiMainWindow( QWidget* parent ) :
+C_UiMainWindow::C_UiMainWindow( QWidget* parent ):
     QMainWindow( parent ),
     ui( new Ui::C_UiMainWindow )
 {
@@ -40,7 +40,7 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ) :
 
     bool check_config =
         QFileInfo( Config().ProjectPath() ).exists() &&
-        QFileInfo( Config().ProjectFullFileName() ).exists();
+        QFileInfo( Config().ProjectFileFullName() ).exists();
 
     if( !check_config )
     {
@@ -61,7 +61,7 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ) :
     else
     {
         QDir().setCurrent( Config().ProjectPath() );
-        project_file.setFileName( Config().ProjectFullFileName() );
+        project_file.setFileName( Config().ProjectFileFullName() );
     }
 
     // SETUP USER INTERFACE

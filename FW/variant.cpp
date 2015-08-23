@@ -19,9 +19,9 @@ C_Variant::~C_Variant()
 
     for( auto iter = m_Childreen.begin(); iter != m_Childreen.end();  )
     {
-        auto value = *iter;
-        value->m_Parent = 0;
-        delete value;
+        C_Variant* variant = *iter;
+        variant->m_Parent = 0;
+        delete variant;
         iter = m_Childreen.erase(iter);
     }
 }

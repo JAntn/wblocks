@@ -20,7 +20,7 @@ public:
 
     ~C_UiSceneItemContextMenu() override;
 
-    ATR_POINTER         ( SceneItem, C_SceneItem )
+    M_POINTER           ( SceneItem, C_SceneItem )
 
 public slots:
 

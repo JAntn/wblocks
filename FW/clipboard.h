@@ -18,8 +18,8 @@ public:
     void                Copy( const QList<C_Record*>& records );
     bool                Empty();
 
-    ATR_CONST_VALUE     ( Data, QList<C_Record*> )
-    ATR_CONST_VALUE     ( Flags, long )
+    M_CONST_VALUE       ( Data, QList<C_Record*> )
+    M_CONST_VALUE       ( Flags, long )
 };
 
 #endif // C_CLIPBOARD_H

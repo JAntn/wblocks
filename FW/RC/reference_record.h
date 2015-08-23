@@ -16,23 +16,19 @@ public:
 
     explicit C_ReferenceRecord( C_StateWriter& state, C_Variant* parent = 0 );
     C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
-
     ~C_ReferenceRecord() override;
 
-    QString             Class()     const override;
-    QString             Script()    const override;
-    C_RecordStruct*     Struct()    const override;
-
-    void                GetState( C_StateReader& state )   override;
-    void                SetState( C_StateWriter& state )   override;
+    QString             Class() const override;
+    QString             Script() const override;
+    C_RecordStruct*     Struct() const override;
+    void                GetState( C_StateReader& state ) override;
+    void                SetState( C_StateWriter& state ) override;
     void                ShowEditor( C_Document& document ) override;
-
     QString             Value() const override;
     void                SetValue(QString full_name) override;
-
-    ATR_POINTER         ( Document,  C_Document )
-
     C_Record*           Referencee();
+
+    M_POINTER           ( Document,  C_Document )
 
 private:
 

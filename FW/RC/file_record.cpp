@@ -9,15 +9,15 @@
 
 #define CLASS_NAME "File"
 
-C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* parent )
-    : C_Record( id, name, value, parent )
+C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* parent ):
+    C_Record( id, name, value, parent )
 {
     if( m_Value.isEmpty() )
-        m_Value = "unnamed";
+        m_Value = "untitled";
 }
 
-C_FileRecord::C_FileRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
+C_FileRecord::C_FileRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     SetState( state );
 }
@@ -44,14 +44,12 @@ QString C_FileRecord::Class() const
 
 void C_FileRecord::ShowEditor( C_Document& document )
 {
-    QString file_name = QFileDialog::getOpenFileName(
-                            &document.MainWindow(),
-                            QFileDialog::tr("Select file"),
-                            Value(),
-                            "*.*"  );
+    QString file_name =
+        QFileDialog::getOpenFileName(
+            &document.MainWindow(), QFileDialog::tr( "Select file" ), Value(), "*.*" );
 
     if( file_name.isEmpty() )
-        file_name = "unnamed";
+        file_name = "untitled";
 
     m_Value = file_name;
     emit document.Events().RecordsChanged();
@@ -59,14 +57,14 @@ void C_FileRecord::ShowEditor( C_Document& document )
 
 QString C_FileRecord::FileDir()
 {
-    QStringList string_list = Value().split("/");
+    QStringList string_list = Value().split( "/" );
     string_list.pop_back();
-    return string_list.join("/");
+    return string_list.join( "/" );
 }
 
 QString C_FileRecord::FileName()
 {
-    return Value().split("/").back();
+    return Value().split( "/" ).back();
 }
 
 QString C_FileRecord::FileFullName()

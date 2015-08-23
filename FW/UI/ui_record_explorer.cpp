@@ -3,11 +3,11 @@
 #include "FW/document.h"
 #include "FW/UI/ui_record_table_model.h"
 #include "FW/UI/ui_record_explorer.h"
-#include "ui_recordexplorer.h"
 #include "FW/RC/struct_record.h"
 #include "FW/clipboard.h"
 #include "FW/UI/ui_main_window.h"
 #include "ui_mainwindow.h"
+#include "ui_recordexplorer.h"
 
 C_UiRecordExplorer::C_UiRecordExplorer( C_Document& document, QWidget* parent ) :
     QWidget( parent ),
@@ -80,18 +80,20 @@ C_RecordStruct& C_UiRecordExplorer::Records()
 
 QList<C_Record*> C_UiRecordExplorer::Selection()
 {
-    QModelIndexList indexes = ui->TableView
-                              ->selectionModel()
-                              ->selectedRows();
+    QModelIndexList index_list =
+        ui->TableView
+        ->selectionModel()
+        ->selectedRows();
+
     QList<C_Record*> record_list;
 
-
-    for( auto index : indexes )
+    for( auto index : index_list )
     {
-        auto record = Document()
-                      .Context()
-                      .Records()
-                      .FromIndex( index.row() );
+        C_Record* record =
+            Document()
+            .Context()
+            .Records()
+            .FromIndex( index.row() );
 
         record_list.append( record );
     }
@@ -150,7 +152,7 @@ void C_UiRecordExplorer::OnUpButtonClicked()
 {
     if( ( & Records() ) != ( & Document().Records() ) )
     {
-        auto record = static_cast<C_Record*>( Document().Context().Records().Parent() );
+        C_Record* record = static_cast<C_Record*>( Document().Context().Records().Parent() );
         auto parent = static_cast<C_RecordStruct*>( record->Parent() );
         Document().Context().SetRecords( *parent );
         Update();

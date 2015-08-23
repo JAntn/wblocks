@@ -14,12 +14,11 @@ public:
      C_VariantStruct(C_Variant* parent=0);
     ~C_VariantStruct() override;
 
-    void                               Append(C_Variant& node);
-    void                               Insert(int position, C_Variant& node);
-    void                               Insert(iterator position, C_Variant& node);
-
-    int                                Size() const;
-    void                               Clear();
+    void                                Append(C_Variant& variant);
+    void                                Insert(int position, C_Variant& variant);
+    void                                Insert(iterator position, C_Variant& variant);
+    int                                 Size() const;
+    void                                Clear();
 
     QList<C_Variant*>::iterator         begin();
     QList<C_Variant*>::iterator         end();

@@ -2,8 +2,8 @@
 #include <QFile>
 #include <QDir>
 
-C_Config::C_Config( QString config_path, C_Variant* parent )
-    : C_Variant( parent )
+C_Config::C_Config( QString config_path, C_Variant* parent ):
+    C_Variant( parent )
 {
     m_ConfigPath = config_path;
     m_ConfigFileName = "config.cfg";
@@ -18,7 +18,6 @@ void C_Config::Load()
     {
         cfg << "project_file=\n"
             << "project_path=\n";
-
 
         C_Document::SaveTextFile( config_file , cfg.join( "" ) );
         cfg.clear();
@@ -52,12 +51,12 @@ void C_Config::Save()
     );
 }
 
-QString C_Config::ConfigFullFileName()
+QString C_Config::ConfigFileFullName()
 {
     return ConfigPath() + "/" + ConfigFileName();
 }
 
-QString C_Config::ProjectFullFileName()
+QString C_Config::ProjectFileFullName()
 {
     return ProjectPath() + "/" + ProjectFileName();
 }

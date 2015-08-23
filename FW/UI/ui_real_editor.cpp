@@ -3,7 +3,7 @@
 #include "FW/UI/ui_real_editor.h"
 #include "ui_realeditor.h"
 
-C_UiRealEditor::C_UiRealEditor( C_RealRecord& record, C_Document& document, QWidget* parent ) :
+C_UiRealEditor::C_UiRealEditor( C_RealRecord& record, C_Document& document, QWidget* parent ):
     QDialog( parent ),
     m_Record( &record ),
     m_Document( &document ),

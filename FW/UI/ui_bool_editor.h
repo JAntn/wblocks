@@ -1,5 +1,5 @@
-#ifndef C_UiBoolEditor_H
-#define C_UiBoolEditor_H
+#ifndef C_UIBOOLEDITOR_H
+#define C_UIBOOLEDITOR_H
 
 #include "FW/macro.h"
 
@@ -23,9 +23,8 @@ public:
     C_UiBoolEditor( C_BoolRecord& record, C_Document& document, QWidget* parent = 0 );
     ~C_UiBoolEditor() override;
 
-    ATR_POINTER         ( Record,   C_BoolRecord )
-    ATR_POINTER         ( Document, C_Document )
-
+    M_POINTER           ( Record,   C_BoolRecord )
+    M_POINTER           ( Document, C_Document )
 
 public slots:
 
@@ -37,4 +36,4 @@ private:
     Ui::C_UiBoolEditor* ui;
 };
 
-#endif // C_UiBoolEditor_H
+#endif // C_UIBOOLEDITOR_H

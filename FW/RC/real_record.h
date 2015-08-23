@@ -15,10 +15,9 @@ public:
     C_RealRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
     ~C_RealRecord() override;
 
-    QString             Class()     const override;
-    QString             Script()    const override;
-    C_RecordStruct*     Struct()    const override;
-
+    QString             Class() const override;
+    QString             Script() const override;
+    C_RecordStruct*     Struct() const override;
     void                GetState( C_StateReader& state )   override;
     void                SetState( C_StateWriter& state )   override;
     void                ShowEditor( C_Document& document ) override;

@@ -1,6 +1,5 @@
 #include "FW/ST/state_writer_table.h"
 
-
 C_StateWriterTable::C_StateWriterTable( QList<QStringList>& table, long flags, C_Variant* parent )
     : C_StateWriter( flags, parent )
 {

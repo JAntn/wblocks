@@ -14,14 +14,13 @@ public:
     void                Load();
     void                Save();
 
-    QString             ConfigFullFileName();
-    QString             ProjectFullFileName();
+    QString             ConfigFileFullName();
+    QString             ProjectFileFullName();
 
-    ATR_VALUE           ( ConfigPath,     QString )
-    ATR_VALUE           ( ConfigFileName, QString )
-
-    ATR_VALUE           ( ProjectPath,     QString )
-    ATR_VALUE           ( ProjectFileName, QString )
+    M_VALUE             ( ConfigPath,  QString )
+    M_VALUE             ( ConfigFileName, QString )
+    M_VALUE             ( ProjectPath,  QString )
+    M_VALUE             ( ProjectFileName, QString )
 
 };
 

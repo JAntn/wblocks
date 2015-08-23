@@ -20,7 +20,7 @@ public:
 
     ~C_UiRecordContextMenu() override;
 
-    ATR_POINTER         ( Document, C_Document )
+    M_POINTER           ( Document, C_Document )
 
 };
 

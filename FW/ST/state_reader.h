@@ -17,8 +17,8 @@ public:
     virtual void        Read( QStringList& data) = 0;
     virtual bool        AtEnd();
 
-    ATR_CONST_VALUE     ( Flags,      long )
-    ATR_CONST_VALUE     ( Count,      long )
+    M_CONST_VALUE       ( Flags,      long )
+    M_CONST_VALUE       ( Count,      long )
 
 };
 

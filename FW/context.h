@@ -13,8 +13,8 @@ public:
                         C_Context(C_RecordStruct& records, C_Scene& scene, C_Variant* parent=0);
                         ~C_Context() override;
 
-    ATR_POINTER         (Records, C_RecordStruct)
-    ATR_POINTER         (Scene,   C_Scene)
+    M_POINTER           (Records, C_RecordStruct)
+    M_POINTER           (Scene,   C_Scene)
 
 };
 

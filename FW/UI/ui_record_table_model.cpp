@@ -16,8 +16,9 @@ int C_UiRecordTableModel::columnCount( const QModelIndex& ) const
     return 3;
 }
 
-C_UiRecordTableModel::C_UiRecordTableModel( C_Document& document, QObject* parent )
-    : QAbstractTableModel( parent ), m_Document( &document )
+C_UiRecordTableModel::C_UiRecordTableModel( C_Document& document, QObject* parent ):
+    QAbstractTableModel( parent ),
+    m_Document( &document )
 {
     // void
 }
@@ -44,7 +45,7 @@ QVariant C_UiRecordTableModel::data( const QModelIndex& index, int role ) const
 
     if ( role == Qt::DisplayRole )
     {
-        auto record = Records().FromIndex( index.row() );
+        C_Record* record = Records().FromIndex( index.row() );
 
         if( index.column() == 2 )
             return record->Class();

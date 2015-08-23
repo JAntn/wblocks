@@ -27,31 +27,27 @@ public:
 
     void                SaveFile( QFile& file );
     void                LoadFile( QFile& file );
-
     void                SaveSQL( QString file_name );
     void                LoadSQL( QString file_name );
-
     void                UpdateScript();
     void                UpdateScene();
-
     void                Clear();
-
-    ATR_VALUE           ( FileName,   QString )
-    ATR_VALUE           ( Path,       QString )
-
-    ATR_POINTER         ( MainWindow, C_UiMainWindow )
-    ATR_POINTER         ( Database,   C_Database )
-    ATR_POINTER         ( Script,     C_Script )
-    ATR_POINTER         ( Events,     C_Events )
-    ATR_POINTER         ( Records,    C_RecordStruct )
-    ATR_POINTER         ( Scene,      C_Scene )
-    ATR_POINTER         ( Context,    C_Context )
-    ATR_POINTER         ( Clipboard,  C_Clipboard )
 
     static bool         AcceptMessage( QString msg );
     static void         Message( QString msg );
     static QString      LoadTextFile( QString file_name );
     static void         SaveTextFile( QString file_name, QString text );
+
+    M_VALUE             ( FileName,   QString )
+    M_VALUE             ( Path,       QString )
+    M_POINTER           ( MainWindow, C_UiMainWindow )
+    M_POINTER           ( Database,   C_Database )
+    M_POINTER           ( Script,     C_Script )
+    M_POINTER           ( Events,     C_Events )
+    M_POINTER           ( Records,    C_RecordStruct )
+    M_POINTER           ( Scene,      C_Scene )
+    M_POINTER           ( Context,    C_Context )
+    M_POINTER           ( Clipboard,  C_Clipboard )
 };
 
 #include "context.h"

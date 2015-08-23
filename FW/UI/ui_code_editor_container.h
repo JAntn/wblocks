@@ -26,7 +26,7 @@ public:
     int                           Size();
     void                          Select( QString file_name );
 
-    ATR_CONST_POINTER             ( TabWidget, QTabWidget )
+    M_CONST_POINTER               ( TabWidget, QTabWidget )
 
 public slots:
 

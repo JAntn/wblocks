@@ -1,8 +1,11 @@
 #include "FW/ST/state_reader_stream.h"
 #include <QDataStream>
 
-C_StateReaderStream::C_StateReaderStream( QDataStream& data_stream, long flags, C_Variant* parent )
-    : C_StateReader( flags, parent )
+C_StateReaderStream::C_StateReaderStream(
+    QDataStream& data_stream,
+    long flags,
+    C_Variant* parent ):
+    C_StateReader( flags, parent )
 {
     m_DataStream = &data_stream;
 }

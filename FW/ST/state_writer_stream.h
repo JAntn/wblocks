@@ -11,7 +11,7 @@ public:
 
     void                Next() override;
 
-    ATR_CONST_POINTER   ( DataStream, QDataStream )
+    M_CONST_POINTER     ( DataStream, QDataStream )
 
 };
 

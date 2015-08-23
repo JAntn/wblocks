@@ -54,7 +54,7 @@ void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
 
     C_StateReaderTable reader( table );
 
-    for( auto record : Data() )
+    for( C_Record* record : Data() )
         record->GetState( reader );
 
     C_StateWriterTable writer( table, m_Flags );

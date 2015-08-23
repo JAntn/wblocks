@@ -1,20 +1,21 @@
 #include "FW/document.h"
 #include "FW/RC/script_record.h"
 #include "FW/UI/ui_script_editor.h"
-#include "ui_scripteditor.h"
+#include "FW/RC/file_record.h"
+#include "FW/UI/ui_code_editor_container.h"
+#include "FW/RC/bool_record.h"
+#include "FW/RC/string_record.h"
 #include "FW/UI/ui_main_window.h"
+#include "ui_scripteditor.h"
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
 #include <QFileDialog>
-#include "FW/RC/bool_record.h"
-#include "FW/RC/string_record.h"
 #include <QDebug>
 #include <QDesktopWidget>
-#include "FW/RC/file_record.h"
-#include "FW/UI/ui_code_editor_container.h"
 
-C_UiScriptEditor::C_UiScriptEditor( C_ScriptRecord& record, C_Document& document, QWidget* parent ) :
+
+C_UiScriptEditor::C_UiScriptEditor( C_ScriptRecord& record, C_Document& document, QWidget* parent ):
     QDialog( parent ),
     m_Record( &record ),
     m_Document( &document ),

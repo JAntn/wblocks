@@ -1,20 +1,20 @@
-#include "FW/RC/struct_record.h"
 #include "FW/document.h"
+#include "FW/RC/struct_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
-#include <FW/UI/ui_struct_editor.h>
+#include "FW/UI/ui_struct_editor.h"
 
 #define CLASS_NAME "Struct"
 
-C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Variant* parent )
-    : C_Record( id, name, value, parent )
+C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Variant* parent ):
+    C_Record( id, name, value, parent )
 {
     m_Records = new C_RecordStruct( name, this );
 }
 
-C_StructRecord::C_StructRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
+C_StructRecord::C_StructRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     m_Records = new C_RecordStruct( "", this );
     SetState( state );
@@ -50,8 +50,8 @@ QString C_StructRecord::Script() const
     QStringList script;
     script << FullName() << " = {} ;";
 
-    for( C_Variant* node : Records() )
-        script << "\n" << static_cast<C_Record*>( node )->Script() ;
+    for( C_Variant* variant : Records() )
+        script << "\n" << static_cast<C_Record*>( variant )->Script() ;
 
     return script.join( "" );
 }
@@ -65,9 +65,9 @@ void C_StructRecord::GetState( C_StateReader& state )
     row.append( Class() );
     state.Read( row );
 
-    for( C_Variant* node : Records() )
+    for( C_Variant* variant : Records() )
     {
-        auto record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
         record->GetState( state );
     }
 }

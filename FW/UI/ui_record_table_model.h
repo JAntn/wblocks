@@ -24,7 +24,7 @@ public:
 
     C_RecordStruct&               Records() const;
 
-    ATR_POINTER                   ( Document, C_Document )
+    M_POINTER                     ( Document, C_Document )
 
 };
 

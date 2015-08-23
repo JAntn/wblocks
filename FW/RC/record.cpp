@@ -14,7 +14,10 @@ QString C_RecordFactory::IdCount()
 }
 
 C_Record::C_Record( QString id, QString name, QString value, C_Variant* parent ) :
-    C_Variant( parent ), m_Id( id ), m_Name( name ), m_Value( value )
+    C_Variant( parent ),
+    m_Id( id ),
+    m_Name( name ),
+    m_Value( value )
 {
     SetFlags(FLAG_ACTION_ALL);
 }
@@ -24,28 +27,13 @@ C_Record::~C_Record()
     // void
 }
 
-QString C_Record::Id() const
-{
-    return m_Id;
-}
-
-QString C_Record::Name() const
-{
-    return m_Name;
-}
-
-void C_Record::SetName( QString name )
-{
-     m_Name = name;
-}
-
 QString C_Record::FullName() const
 {
     auto record_struct = static_cast<C_RecordStruct*>( Parent() );
 
     if( record_struct->Name() != "root" )
     {
-        auto record = static_cast<C_Record*>( record_struct->Parent() );
+        C_Record* record = static_cast<C_Record*>( record_struct->Parent() );
         return record->FullName() + "." + Name();
     }
 

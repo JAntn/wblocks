@@ -22,8 +22,8 @@ public:
     explicit C_UiFindRecord( C_Document& document, QWidget* parent = 0 );
     ~C_UiFindRecord() override;
 
-    ATR_POINTER         ( Document, C_Document )
-    ATR_POINTER         ( Record, C_Record )
+    M_POINTER           ( Document, C_Document )
+    M_POINTER           ( Record, C_Record )
 
 public slots:
 

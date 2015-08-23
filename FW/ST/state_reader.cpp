@@ -1,7 +1,7 @@
 #include "FW/ST/state_reader.h"
 
-C_StateReader::C_StateReader( long flags, C_Variant* parent )
-    : C_Variant( parent )
+C_StateReader::C_StateReader( long flags, C_Variant* parent ):
+    C_Variant( parent )
 {
     m_Flags = flags;
     m_Count = 0;

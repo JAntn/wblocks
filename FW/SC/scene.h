@@ -3,10 +3,8 @@
 
 #include "FW/variant.h"
 #include "FW/macro.h"
-
 #include <QObject>
 #include <QGraphicsScene>
-
 
 class C_SceneItem;
 class C_Record;
@@ -21,27 +19,24 @@ public:
     explicit C_Scene( C_Document& document, C_Variant* parent = 0 );
     ~C_Scene() override;
 
-    C_SceneItem*                  CreateItem(C_StateWriter &state );
-    C_SceneItem*                  CreateItem( C_Record& record );
-    C_SceneItem*                  CreateItem( C_Record& record, qreal x, qreal y, qreal z = -1 );
-
-    QList<C_SceneItem*>           FromRecord( C_Record& record ) const;
-
-    void                          Clear();
-    int                           Size();
-    void                          BringFront( C_SceneItem& sc );
-
-    ATR_POINTER                   ( Document,      C_Document )
-    ATR_POINTER                   ( GraphicsScene, QGraphicsScene )
-    ATR_CONST_VALUE               ( TopZ,  double )
-    ATR_CONST_VALUE               ( Items, QList<C_SceneItem*> )
-    ATR_CONST_VALUE               ( Lines, QList<C_SceneLine*>)
-
     static QString                GenerateId();
     static QString                IdCount();
 
+    C_SceneItem*                  CreateItem(C_StateWriter &state );
+    C_SceneItem*                  CreateItem( C_Record& record );
+    C_SceneItem*                  CreateItem( C_Record& record, qreal x, qreal y, qreal z = -1 );
+    QList<C_SceneItem*>           FromRecord( C_Record& record ) const;
+    void                          Clear();
+    int                           Size();
+    void                          BringFront( C_SceneItem& sc );
     void                          UpdateLines();
     void                          ClearLines();
+
+    M_POINTER                     ( Document,       C_Document )
+    M_POINTER                     ( GraphicsScene,  QGraphicsScene )
+    M_CONST_VALUE                 ( TopZ,           double )
+    M_CONST_VALUE                 ( Items,          QList<C_SceneItem*> )
+    M_CONST_VALUE                 ( Lines,          QList<C_SceneLine*>)
 
 private:
 

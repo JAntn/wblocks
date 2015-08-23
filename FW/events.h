@@ -16,12 +16,12 @@ class C_Events : public QObject
 
 public:
 
-    C_Events(C_Document& document,C_UiMainWindow& window, QObject* parent=0);
+    C_Events(C_Document& document,C_UiMainWindow& window);
     ~C_Events() override;
 
-    ATR_POINTER         (Document,   C_Document)
-    ATR_POINTER         (MainWindow, C_UiMainWindow)
-    ATR_VALUE           (EventData,  QStringList)
+    M_POINTER           (Document,   C_Document)
+    M_POINTER           (MainWindow, C_UiMainWindow)
+    M_VALUE             (EventData,  QStringList)
 
     void                InitConnections();
 

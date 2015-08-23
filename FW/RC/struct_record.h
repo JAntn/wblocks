@@ -20,15 +20,13 @@ public:
     QString             Class()  const override;
     C_RecordStruct*     Struct() const override;
     QString             Script() const override;
-
     void                GetState( C_StateReader& state ) override;
     void                SetState( C_StateWriter& state ) override;
     void                ShowEditor( C_Document& document ) override;
-
-    ATR_POINTER         ( Records, C_RecordStruct )
-
     QString             Value() const override;
     void                SetValue( QString ) override;
+
+    M_POINTER           ( Records, C_RecordStruct )
 
 private:
 

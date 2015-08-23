@@ -14,8 +14,8 @@ public:
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) override;
 
-    ATR_POINTER              (From, C_SceneItem)
-    ATR_POINTER              (Target, C_SceneItem)
+    M_POINTER                (From, C_SceneItem)
+    M_POINTER                (Target, C_SceneItem)
 
 };
 

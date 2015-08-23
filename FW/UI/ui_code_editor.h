@@ -1,5 +1,5 @@
-#ifndef UI_FILE_EDITOR_H
-#define UI_FILE_EDITOR_H
+#ifndef C_UIFILEEDITOR_H
+#define C_UIFILEEDITOR_H
 
 #include <QWidget>
 #include "FW/macro.h"
@@ -20,8 +20,8 @@ public:
 
     void                         Save();
 
-    ATR_VALUE                    ( FileName,    QString )
-    ATR_VALUE                    ( HasChanged,  bool )
+    M_VALUE                      ( FileName,    QString )
+    M_VALUE                      ( HasChanged,  bool )
 
 public slots:
 
@@ -37,4 +37,4 @@ private:
     Ui::C_UiCodeEditor* ui;
 };
 
-#endif // UI_FILE_EDITOR_H
+#endif // C_UIFILEEDITOR_H

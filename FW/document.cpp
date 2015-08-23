@@ -3,18 +3,19 @@
 #include "FW/SC/scene.h"
 #include "FW/database.h"
 #include "FW/document.h"
-#include "clipboard.h"
+#include "FW/clipboard.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_file_explorer.h"
+#include "FW/RC/script_record.h"
+#include "FW/config.h"
 #include <QMessageBox>
 #include <QStack>
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
-#include <FW/RC/script_record.h>
-#include "FW/config.h"
+
 
 QString C_Document::LoadTextFile( QString file_name )
 {
@@ -54,16 +55,13 @@ C_Document::C_Document( QString file_name, QString path, C_UiMainWindow& main_wi
 
     m_FileName          = file_name;
     m_Path              = path;
-
     m_Records           = new C_RecordStruct( "root", this );
     m_Scene             = new C_Scene( *this, this );
     m_Context           = new C_Context( Records(), Scene(), this );
     m_Script            = new C_Script( this );
     m_Database          = new C_Database( this );
     m_Clipboard         = new C_Clipboard( this );
-    m_Events            = new C_Events( *this, main_window, &main_window ); // TODO MOVE THIS POINTER TO MAINWINDOW
-
-
+    m_Events            = new C_Events( *this, main_window ); // TODO MOVE THIS POINTER TO MAINWINDOW
 }
 
 C_Document::~C_Document()
@@ -73,7 +71,7 @@ C_Document::~C_Document()
 
 void C_Document::UpdateScript()
 {
-    Script().Generate( Records() );
+    Script().Parse( Records() );
     MainWindow().UpdateClientScriptView();
 }
 
@@ -123,9 +121,9 @@ void C_Document::SaveFile( QFile& file )
 
     C_StateReaderStream record_state( out );
 
-    for( C_Variant* node : Records() )
+    for( C_Variant* variant : Records() )
     {
-        auto record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
         record->GetState( record_state );
     }
 
@@ -158,11 +156,11 @@ void C_Document::LoadFile( QFile& file )
 
     file.open( QIODevice::ReadOnly );
     QDataStream in( &file );
-    QString val;
-    in >> val;
-    C_RecordFactory::m_IdCount = val.toLong();
-    in >> val;
-    C_Scene::m_IdCount = val.toLong();
+    QString value;
+    in >> value;
+    C_RecordFactory::m_IdCount = value.toLong();
+    in >> value;
+    C_Scene::m_IdCount = value.toLong();
 
     // SET RECORDS
 
@@ -202,7 +200,7 @@ void C_Document::SaveSQL( QString file_name )
     // SETUP TABLE
 
     QStringList row;
-    row << FIELD( "ROW" ) << FIELD( "VALUE" );
+    row << FIELD( "ROW" ) << FIELD( "valueUE" );
     Database().CreateTable( FIELD( "SETUP_TABLE" ), row );
 
     // FILL SETUP TABLE
@@ -220,7 +218,7 @@ void C_Document::SaveSQL( QString file_name )
     record_fields.append( FIELD( "ROW" ) );
     record_fields.append( FIELD( "ID" ) );
     record_fields.append( FIELD( "NAME" ) );
-    record_fields.append( FIELD( "VALUE" ) );
+    record_fields.append( FIELD( "valueUE" ) );
     record_fields.append( FIELD( "CLASS_NAME" ) );
     Database().CreateTable( FIELD( "RECORD_TABLE" ), record_fields );
 
@@ -228,9 +226,9 @@ void C_Document::SaveSQL( QString file_name )
 
     C_StateReaderDatabase record_state( Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
 
-    for( C_Variant* node : Records() )
+    for( C_Variant* variant : Records() )
     {
-        C_Record* record = static_cast<C_Record*>( node );
+        C_Record* record = static_cast<C_Record*>( variant );
         record->GetState( record_state );
     }
 

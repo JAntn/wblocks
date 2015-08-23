@@ -30,9 +30,9 @@ public:
     virtual void        GetState(C_StateReader& state);
     virtual void        SetState(C_StateWriter& state);
 
-    ATR_POINTER         (Record, C_Record)
-    ATR_POINTER         (Scene,  C_Scene)
-    ATR_CONST_VALUE     (Id,     QString)
+    M_POINTER           (Record,    C_Record)
+    M_POINTER           (Scene,     C_Scene)
+    M_CONST_VALUE       (Id,        QString)
 
 private:
 

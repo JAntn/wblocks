@@ -1,19 +1,19 @@
+#include "FW/RC/record_struct.h"
+#include "FW/SC/scene.h"
+#include "FW/clipboard.h"
 #include "FW/document.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_add_record.h"
-#include <QFileDialog>
-#include "FW/RC/record_struct.h"
-#include "FW/SC/scene.h"
-#include "FW/clipboard.h"
-#include <QList>
+#include "FW/UI/ui_find_record.h"
+#include "FW/UI/ui_code_editor_container.h"
 #include "ui_mainwindow.h"
-#include <FW/UI/ui_find_record.h>
+#include <QList>
+#include <QFileDialog>
 #include <QWebFrame>
-#include <FW/UI/ui_code_editor_container.h>
 
-C_Events::C_Events( C_Document& document, C_UiMainWindow& main_window, QObject* parent )
-    : QObject( parent )
+C_Events::C_Events( C_Document& document, C_UiMainWindow& main_window ):
+    QObject( &main_window )
 {
     m_Document = &document;
     m_MainWindow = &main_window;
@@ -66,7 +66,7 @@ void C_Events::InitConnections()
         this,
         C_Events::CodeEditorContainerChanged,
         this,
-                C_Events::OnCodeEditorContainerChanged );
+        C_Events::OnCodeEditorContainerChanged );
 }
 
 void C_Events::OnDirectoryChanged()
@@ -108,10 +108,13 @@ void C_Events::OnSceneChanged()
 
 void C_Events::OnActionLoadFile()
 {
-    QString file_name = QFileDialog::getOpenFileName( &MainWindow(),
-                        tr( "Load File" ),
-                        Document().FileName(),
-                        tr( "Project Files (*.prj)" ) );
+    QString file_name =
+        QFileDialog::getOpenFileName(
+            &MainWindow(),
+            tr( "Load File" ),
+            Document().FileName(),
+            tr( "Project Files (*.prj)" )
+        );
 
     if( file_name.isEmpty() )
         return;
@@ -123,10 +126,13 @@ void C_Events::OnActionLoadFile()
 
 void C_Events::OnActionSaveFile()
 {
-    QString file_name = QFileDialog::getSaveFileName( &MainWindow(),
-                        tr( "Save File" ),
-                        Document().FileName(),
-                        tr( "Project Files (*.prj)" ) );
+    QString file_name =
+        QFileDialog::getSaveFileName(
+            &MainWindow(),
+            tr( "Save File" ),
+            Document().FileName(),
+            tr( "Project Files (*.prj)" )
+        );
 
     if( file_name.isEmpty() )
         return;
@@ -137,10 +143,13 @@ void C_Events::OnActionSaveFile()
 
 void C_Events::OnActionLoadSQL()
 {
-    QString file_name = QFileDialog::getOpenFileName( &MainWindow(),
-                        tr( "Load SQL Database File" ),
-                        "",
-                        tr( "SQL Files (*.sql)" ) );
+    QString file_name =
+        QFileDialog::getOpenFileName(
+            &MainWindow(),
+            tr( "Load SQL Database File" ),
+            "",
+            tr( "SQL Files (*.sql)" )
+        );
 
     if( file_name.isEmpty() )
         return;
@@ -150,10 +159,13 @@ void C_Events::OnActionLoadSQL()
 
 void C_Events::OnActionSaveSQL()
 {
-    QString file_name = QFileDialog::getSaveFileName( &MainWindow(),
-                        tr( "Save SQL Database File" ),
-                        tr( "untitled.sql" ),
-                        tr( "SQL Files (*.sql)" ) );
+    QString file_name =
+        QFileDialog::getSaveFileName(
+            &MainWindow(),
+            tr( "Save SQL Database File" ),
+            tr( "untitled.sql" ),
+            tr( "SQL Files (*.sql)" )
+        );
 
     if( file_name.isEmpty() )
         return;
@@ -163,18 +175,23 @@ void C_Events::OnActionSaveSQL()
 
 void C_Events::OnActionSaveClientScript()
 {
-    QString file_name = QFileDialog::getSaveFileName( &Document().MainWindow(),
-                        tr( "Save Java Script File" ),
-                        tr( "untitled.js" ),
-                        tr( "JS Files (*.js)" ) );
+    QString file_name =
+        QFileDialog::getSaveFileName(
+            &Document().MainWindow(),
+            tr( "Save Java Script File" ),
+            tr( "untitled.js" ),
+            tr( "JS Files (*.js)" )
+        );
 
     if( file_name.isEmpty() )
         return;
 
-    Document().Script().Generate( Document().Records() );
+    Document().Script().Parse( Document().Records() );
     emit Document().Events().ClientScriptChanged();
-    C_Document::SaveTextFile( file_name,
-                              Document().Script().StringList().join( "" ) );
+    C_Document::SaveTextFile(
+        file_name,
+        Document().Script().StringList().join( "" )
+    );
 }
 
 void C_Events::OnActionEditRecord()
@@ -193,7 +210,7 @@ void C_Events::OnActionEditRecord()
 
     if( ( action_flags & FLAG_ACTION_EDIT ) && has_selection )
     {
-        auto record =
+        C_Record* record =
             static_cast<C_Record*>(
                 *MainWindow()
                 .RecordExplorer()
@@ -238,7 +255,7 @@ void C_Events::OnActionRemoveRecord()
                 return;
         }
 
-        for( auto record : selection_list )
+        for( C_Record* record : selection_list )
             delete record;
 
         emit Document().Events().RecordsChanged();
@@ -263,6 +280,7 @@ void C_Events::OnActionAddRecord()
             .RecordExplorer()
             .Selection()
             .front();
+
         position =
             Document()
             .Context()
@@ -297,7 +315,7 @@ void C_Events::OnActionAddSceneItem()
             .RecordExplorer()
             .Selection();
 
-        for( auto record : selection_list )
+        for( C_Record* record : selection_list )
         {
             Document()
             .Context()
@@ -317,6 +335,7 @@ void C_Events::OnActionCopyRecord()
         .Context()
         .Records()
         .Flags();
+
     bool has_selection =
         Document()
         .MainWindow()
@@ -410,7 +429,7 @@ void C_Events::OnActionCutRecord()
             .RecordExplorer()
             .Selection();
 
-        for( auto record : selection_list )
+        for( C_Record* record : selection_list )
         {
             record->SetParent( 0 );
             auto items =
@@ -485,10 +504,13 @@ void C_Events::OnActionSaveAllEditorFiles()
 
 void C_Events::OnActionLoadEditorFile()
 {
-    QString file_name = QFileDialog::getOpenFileName( &MainWindow(),
-                        tr( "New File" ),
-                        tr( "untitled.js" ),
-                        tr( "JS Files (*.js)" ) );
+    QString file_name =
+        QFileDialog::getOpenFileName(
+            &MainWindow(),
+            tr( "New File" ),
+            tr( "untitled.js" ),
+            tr( "JS Files (*.js)" )
+        );
 
     if( !QFileInfo( file_name ).exists() )
     {

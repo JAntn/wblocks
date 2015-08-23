@@ -5,10 +5,10 @@
 #include "FW/clipboard.h"
 #include "FW/UI/ui_add_record.h"
 #include "FW/UI/ui_main_window.h"
+#include "FW/UI/ui_record_explorer.h"
 #include <QMenu>
 #include <QModelIndexList>
 #include <QTableView>
-#include "FW/UI/ui_record_explorer.h"
 
 C_UiRecordContextMenu::C_UiRecordContextMenu(
     C_Document& document,
@@ -25,10 +25,11 @@ C_UiRecordContextMenu::C_UiRecordContextMenu(
         .RecordExplorer()
         .HasSelection();
 
-    long action_flags = document
-                 .Context()
-                 .Records()
-                 .Flags();
+    long action_flags =
+        document
+        .Context()
+        .Records()
+        .Flags();
 
     if( ( action_flags & FLAG_ACTION_COPY ) && has_selection )
     {

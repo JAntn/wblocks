@@ -17,15 +17,15 @@ C_RecordStruct* C_IntegerRecord::Struct() const
     return 0;
 }
 
-C_IntegerRecord::C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent )
-    : C_Record( id, name, value, parent )
+C_IntegerRecord::C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent ):
+    C_Record( id, name, value, parent )
 {
     if( m_Value.isEmpty() )
         m_Value = "0";
 }
 
-C_IntegerRecord::C_IntegerRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
+C_IntegerRecord::C_IntegerRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     SetState( state );
 }
@@ -49,12 +49,10 @@ void C_IntegerRecord::ShowEditor( C_Document& document )
 void C_IntegerRecord::GetState( C_StateReader& state )
 {
     QStringList row;
-
     row.append( m_Id );
     row.append( m_Name );
     row.append( m_Value );
     row.append( Class() );
-
     state.Read( row );
 }
 

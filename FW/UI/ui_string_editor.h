@@ -23,8 +23,8 @@ public:
     C_UiStringEditor( C_StringRecord& record, C_Document& document, QWidget* parent = 0 );
     ~C_UiStringEditor() override;
 
-    ATR_POINTER                  ( Record,   C_StringRecord )
-    ATR_POINTER                  ( Document, C_Document )
+    M_POINTER                    ( Record,   C_StringRecord )
+    M_POINTER                    ( Document, C_Document )
 
 private slots:
 

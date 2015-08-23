@@ -18,11 +18,9 @@ public:
     virtual bool        AtEnd();
     virtual void        Next() = 0;
 
-    ATR_CONST_VALUE     ( Data,       QStringList )
-    ATR_CONST_VALUE     ( Flags,      long )
-
-    // The number of records writed to state
-    ATR_CONST_VALUE     ( Count,      long )
+    M_CONST_VALUE       ( Data,       QStringList )
+    M_CONST_VALUE       ( Flags,      long )
+    M_CONST_VALUE       ( Count,      long )
 
 };
 

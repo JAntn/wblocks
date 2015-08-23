@@ -9,15 +9,15 @@
 
 #define CLASS_NAME "Real"
 
-C_RealRecord::C_RealRecord( QString id, QString name, QString value, C_Variant* parent )
-    : C_Record( id, name, value, parent )
+C_RealRecord::C_RealRecord( QString id, QString name, QString value, C_Variant* parent ):
+    C_Record( id, name, value, parent )
 {
     if( m_Value.isEmpty() )
         m_Value = "0";
 }
 
-C_RealRecord::C_RealRecord( C_StateWriter& state, C_Variant* parent )
-    : C_Record( "", "", "", parent )
+C_RealRecord::C_RealRecord( C_StateWriter& state, C_Variant* parent ):
+    C_Record( "", "", "", parent )
 {
     SetState( state );
 }

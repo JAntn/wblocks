@@ -8,7 +8,8 @@
 class C_Record;
 class C_Document;
 
-namespace Ui {
+namespace Ui
+{
 class C_UiAddRecord;
 }
 
@@ -18,12 +19,12 @@ class C_UiAddRecord : public QDialog
 
 public:
 
-    explicit C_UiAddRecord(C_Document& document, int position = -1, QWidget *parent = 0);
+    explicit C_UiAddRecord( C_Document& document, int position = -1, QWidget* parent = 0 );
     ~C_UiAddRecord() override;
 
     bool                CheckFormData() const;
 
-    ATR_POINTER         (Document, C_Document)
+    M_POINTER           ( Document, C_Document )
 
 public slots:
 
@@ -33,7 +34,7 @@ public slots:
 
 private:
 
-    Ui::C_UiAddRecord *ui;
+    Ui::C_UiAddRecord* ui;
 };
 
 #endif // C_UIADDRECORD_H

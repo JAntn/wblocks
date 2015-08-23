@@ -1,11 +1,10 @@
 #include "FW/RC/integer_record.h"
 #include "FW/document.h"
-
 #include "FW/UI/ui_integer_editor.h"
 #include "ui_integereditor.h"
 #include <QRegExp>
 
-C_UiIntegerEditor::C_UiIntegerEditor( C_IntegerRecord& record, C_Document& document, QWidget* parent ) :
+C_UiIntegerEditor::C_UiIntegerEditor( C_IntegerRecord& record, C_Document& document, QWidget* parent ):
     QDialog( parent ),
     m_Record( &record ),
     m_Document( &document ),

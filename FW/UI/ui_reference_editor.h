@@ -21,8 +21,8 @@ public:
     explicit C_UiReferenceEditor(C_ReferenceRecord& record, C_Document& document, QWidget *parent = 0);
     ~C_UiReferenceEditor();
 
-    ATR_POINTER                  ( Record,   C_ReferenceRecord )
-    ATR_POINTER                  ( Document, C_Document )
+    M_POINTER                    ( Record,   C_ReferenceRecord )
+    M_POINTER                    ( Document, C_Document )
 
 private slots:
 

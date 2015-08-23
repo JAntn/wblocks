@@ -7,20 +7,20 @@
                                             __CLASS_NAME(){}\
                                             static __CLASS_NAME& Instance() { static __CLASS_NAME singleton; return singleton; }
 
-#define ATR_POINTER(__VAR_NAME,__VAR_TYPE)\
+#define M_POINTER(__VAR_NAME,__VAR_TYPE)\
                                            protected:\
                                            __VAR_TYPE* m_##__VAR_NAME;\
                                            public:\
                                            __VAR_TYPE& __VAR_NAME() const {return *m_##__VAR_NAME;}\
                                            void Set##__VAR_NAME(__VAR_TYPE& __ARG) { m_##__VAR_NAME = &__ARG;}
 
-#define ATR_CONST_POINTER(__VAR_NAME,__VAR_TYPE)\
+#define M_CONST_POINTER(__VAR_NAME,__VAR_TYPE)\
                                            protected:\
                                            __VAR_TYPE* m_##__VAR_NAME;\
                                            public:\
                                            const __VAR_TYPE& __VAR_NAME() const {return *m_##__VAR_NAME;}
 
-#define ATR_VALUE(__VAR_NAME,__VAR_TYPE)\
+#define M_VALUE(__VAR_NAME,__VAR_TYPE)\
                                            protected:\
                                            __VAR_TYPE m_##__VAR_NAME;\
                                            public:\
@@ -28,7 +28,7 @@
                                            __VAR_TYPE& __VAR_NAME() {return m_##__VAR_NAME;}\
                                            void Set##__VAR_NAME(const __VAR_TYPE& __ARG) { m_##__VAR_NAME = __ARG;}
 
-#define ATR_CONST_VALUE(__VAR_NAME,__VAR_TYPE)\
+#define M_CONST_VALUE(__VAR_NAME,__VAR_TYPE)\
                                            protected:\
                                            __VAR_TYPE m_##__VAR_NAME;\
                                            public:\

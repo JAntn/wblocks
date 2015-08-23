@@ -18,26 +18,21 @@ public:
 
     C_Record*                          CreateRecord( C_StateWriter& state, int position = -1 );
     C_Record*                          CreateRecord( QString name, QString value, QString class_name, int position = -1 );
-    C_Record*                          CreateRecord(C_StateWriter& state, iterator position );
-    C_Record*                          CreateRecord(QString name, QString value, QString class_name, iterator position );
-
+    C_Record*                          CreateRecord( C_StateWriter& state, iterator position );
+    C_Record*                          CreateRecord( QString name, QString value, QString class_name, iterator position );
     C_Record*                          FromIndex( int row ) const;
     C_Record*                          FromName( QString name , bool deep = false ) const;
     C_Record*                          FromId( QString record_id, bool deep = false ) const;
     int                                GetIndex( C_Record* record ) const;
-    C_Record*                          FromFullName(QString name) const;
-
-    static
-    C_RecordFactory*                   FactoryFromName( QString class_name );
-
-    static
-    const QList<C_RecordFactory*>&     FactoryList() ;
-
-    static
-    void                               InitFactoryList();
+    C_Record*                          FromFullName( QString name ) const;
     QString                            FullName();
-    ATR_VALUE                          ( Name, QString )
-    ATR_VALUE                          ( Flags, long )
+
+    static C_RecordFactory*                   FactoryFromName( QString class_name );
+    static const QList<C_RecordFactory*>&     FactoryList() ;
+    static void                               InitFactoryList();
+
+    M_VALUE                            ( Name, QString )
+    M_VALUE                            ( Flags, long )
 
 private:
 

@@ -21,8 +21,8 @@ public:
     C_UiStructEditor( C_StructRecord& record, C_Document& document, QWidget* parent = 0 );
     ~C_UiStructEditor() override;
 
-    ATR_POINTER         ( Record,   C_StructRecord )
-    ATR_POINTER         ( Document, C_Document )
+    M_POINTER           ( Record,   C_StructRecord )
+    M_POINTER           ( Document, C_Document )
 
 
 private slots:

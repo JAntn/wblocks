@@ -13,9 +13,9 @@ public:
 
     void                Read(QStringList& data ) override;
 
-    ATR_CONST_POINTER   ( Database, C_Database )
-    ATR_CONST_VALUE     ( TableName, QString )
-    ATR_CONST_VALUE     ( FieldName, QString )
+    M_CONST_POINTER     ( Database, C_Database )
+    M_CONST_VALUE       ( TableName, QString )
+    M_CONST_VALUE       ( FieldName, QString )
 };
 
 #endif // C_STATEREADERDATABASE_H
