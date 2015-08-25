@@ -1,23 +1,24 @@
 #include "FW/RC/reference_record.h"
-#include "FW/UI/ui_reference_editor.h"
+#include "FW/UI/ui_reference_record_properties.h"
 #include "FW/UI/ui_main_window.h"
-#include "ui_referenceeditor.h"
+#include "ui_referencerecordproperties.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/document.h"
 
 #define CLASS_NAME "Reference"
 
-C_ReferenceRecord::C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent ):
-    C_Record( id, name, value, parent )
+C_ReferenceRecord::C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
+    C_Record( id, name, value, parent, root )
 {
-    m_Document = 0;
+    m_Root = root;
 }
 
-C_ReferenceRecord::C_ReferenceRecord( C_StateWriter& state, C_Variant* parent ):
-    C_Record( "", "", "", parent )
+C_ReferenceRecord::C_ReferenceRecord( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root ):
+    C_Record( "", "", "", parent, root )
 {
-    SetState( state );
+    m_Root = root;
+    SetState( state, root );
 }
 
 C_ReferenceRecord::~C_ReferenceRecord()
@@ -25,77 +26,62 @@ C_ReferenceRecord::~C_ReferenceRecord()
     // void
 }
 
-QString C_ReferenceRecord::Script() const
-{
-    return  "";
-}
-
-C_RecordStruct* C_ReferenceRecord::Struct() const
-{
-    return 0;
-}
-
 QString C_ReferenceRecord::Class() const
 {
     return CLASS_NAME;
 }
 
-void C_ReferenceRecord::ShowEditor( C_Document& document )
+void C_ReferenceRecord::EditProperties( C_Document& document )
 {
-    QWidget* dialog = new C_UiReferenceEditor( *this, document, &document.MainWindow() );
+    QWidget* dialog = new C_UiReferenceRecordProperties( *this, document, &document.MainWindow() );
     dialog->show();
 }
 
-QString C_ReferenceRecord::Value() const
+QString C_ReferenceRecord::Value()
 {
     if( m_Value.isEmpty() )
         return "";
 
-    C_Record* record = Document().Records().FromId( m_Value, true );
+    C_Record* record = Referencee();
 
-    if( record == 0 )
-        return "";
+    if( record != 0 )
+        return record->FullName();
 
-    return record->FullName();
+    qDebug() << "Warning - Reference invalid:"
+             << FullName();
+
+    return "";
 }
 
 void C_ReferenceRecord::SetValue( QString full_name )
 {
-    QStringList string_list = full_name.split( "." );
-    C_Record* record;
-    C_RecordStruct* record_struct = &Document().Records();
+    C_Record* record =  Root().FromFullName( full_name );
 
-    for( auto iter = string_list.begin(); iter != string_list.end(); ++iter )
+    if( record != 0 )
     {
-        record = record_struct->FromName( *iter );
-
-        if( record == 0 )
-            break;
-        else
-        {
-            auto tmp = iter;
-
-            if( ( ++tmp ) == string_list.end() )
-            {
-                m_Value = record->Id();
-                return;
-            }
-            else
-            {
-                if( record->Struct() != 0 )
-                    record_struct = record->Struct();
-                else
-                    break;
-            }
-        }
+        m_Value = record->Id();
+        return;
     }
 
     m_Value = "";
 }
 
+QString C_ReferenceRecord::Script()
+{
+    C_Record* record = Referencee();
+
+    if( record != 0 )
+        return "\n" + FullName() + " = " + record->FullName() + ";";
+
+    qDebug() << "Warning - Reference invalid:"
+             << FullName();
+
+    return "";
+}
+
 C_Record* C_ReferenceRecord::Referencee()
 {
-    return Document().Records().FromId( m_Value, true );
+    return Root().FromId( m_Value, true );
 }
 
 void C_ReferenceRecord::GetState( C_StateReader& state )
@@ -108,8 +94,10 @@ void C_ReferenceRecord::GetState( C_StateReader& state )
     state.Read( row );
 }
 
-void C_ReferenceRecord::SetState( C_StateWriter& state )
+void C_ReferenceRecord::SetState( C_StateWriter& state , C_RecordStruct* root )
 {
+    m_Root = root;
+
     QStringList row;
     state.Write( row );
 
@@ -122,15 +110,15 @@ void C_ReferenceRecord::SetState( C_StateWriter& state )
     m_Value = row[2];
 }
 
-C_Record* C_ReferenceRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
+C_Record* C_ReferenceRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
 {
-    C_ReferenceRecord* record = new C_ReferenceRecord( C_RecordFactory::GenerateId(), name, value, parent );
+    C_ReferenceRecord* record = new C_ReferenceRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_ReferenceRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent )
+C_Record* C_ReferenceRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
 {
-    C_ReferenceRecord* record = new C_ReferenceRecord( state, parent );
+    C_ReferenceRecord* record = new C_ReferenceRecord( state, parent, root );
     return record;
 }
 

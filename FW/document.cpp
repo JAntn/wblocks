@@ -3,12 +3,13 @@
 #include "FW/SC/scene.h"
 #include "FW/database.h"
 #include "FW/document.h"
+#include "FW/html.h"
 #include "FW/clipboard.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_file_explorer.h"
-#include "FW/RC/script_record.h"
+#include "FW/RC/script_file_record.h"
 #include "FW/config.h"
 #include <QMessageBox>
 #include <QStack>
@@ -55,13 +56,14 @@ C_Document::C_Document( QString file_name, QString path, C_UiMainWindow& main_wi
 
     m_FileName          = file_name;
     m_Path              = path;
-    m_Records           = new C_RecordStruct( "root", this );
+    m_Root              = new C_RecordStruct( "root", this );
     m_Scene             = new C_Scene( *this, this );
-    m_Context           = new C_Context( Records(), Scene(), this );
+    m_Context           = new C_Context( Root(), Scene(), this );
     m_Script            = new C_Script( this );
+    m_Html              = new C_Html( this );
     m_Database          = new C_Database( this );
     m_Clipboard         = new C_Clipboard( this );
-    m_Events            = new C_Events( *this, main_window ); // TODO MOVE THIS POINTER TO MAINWINDOW
+    m_Events            = new C_Events( *this, main_window );
 }
 
 C_Document::~C_Document()
@@ -69,10 +71,21 @@ C_Document::~C_Document()
     // void
 }
 
-void C_Document::UpdateScript()
+void C_Document::UpdateHtmlDoc()
 {
-    Script().Parse( Records() );
-    MainWindow().UpdateClientScriptView();
+    Script().Parse( Root() );
+    Html().Parse( Root() );
+
+    m_HtmlDoc =
+        ( QStringList()
+          << "\n<!DOCTYPE html>"
+          << "\n<html>"
+          << "\n<script>"
+          << Script().StringList().join( "" )
+          << "\n</script>"
+          << Html().StringList().join( "" )
+          << "\n</html>"
+        ).join( "" );
 }
 
 void C_Document::UpdateScene()
@@ -82,11 +95,22 @@ void C_Document::UpdateScene()
 
 void C_Document::Clear()
 {
-    Context().SetRecords( Records() );
-    Records().Clear();
+    Context().SetRecords( Root() );
+    Root().Clear();
     Scene().Clear();
     Clipboard().Clear();
     emit Events().RecordsChanged();
+
+    // UPDATE CONFIG FILE
+
+    SetFileName( "" );
+    SetPath( "" );
+    MainWindow().Config().SetProjectFileName( "" );
+    MainWindow().Config().SetProjectPath( "" );
+    QDir().setCurrent( "" );
+    emit Events().DirectoryChanged();
+
+    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
 }
 
 bool C_Document::AcceptMessage( QString msg )
@@ -121,7 +145,7 @@ void C_Document::SaveFile( QFile& file )
 
     C_StateReaderStream record_state( out );
 
-    for( C_Variant* variant : Records() )
+    for( C_Variant* variant : Root() )
     {
         C_Record* record = static_cast<C_Record*>( variant );
         record->GetState( record_state );
@@ -137,7 +161,6 @@ void C_Document::SaveFile( QFile& file )
         item->GetState( scene_state );
 
     scene_state.Stop();
-
     file.close();
 
     // UPDATE CONFIG FILE
@@ -148,6 +171,8 @@ void C_Document::SaveFile( QFile& file )
     MainWindow().Config().SetProjectPath( Path() );
     QDir().setCurrent( MainWindow().Config().ProjectPath() );
     emit Events().DirectoryChanged();
+
+    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
 }
 
 void C_Document::LoadFile( QFile& file )
@@ -167,7 +192,7 @@ void C_Document::LoadFile( QFile& file )
     C_StateWriterStream record_state( in );
 
     while( !record_state.AtEnd() )
-        Records().CreateRecord( record_state );
+        Root().CreateRecord( record_state, -1, &Root() );
 
     // SET SCENE ITEMS
 
@@ -188,6 +213,8 @@ void C_Document::LoadFile( QFile& file )
     MainWindow().Config().SetProjectPath( Path() );
     QDir().setCurrent( MainWindow().Config().ProjectPath() );
     emit Events().DirectoryChanged();
+
+    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
 }
 
 #define FIELD(__NAME)   "[$$$"+QString(__NAME)+"]"
@@ -226,7 +253,7 @@ void C_Document::SaveSQL( QString file_name )
 
     C_StateReaderDatabase record_state( Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
 
-    for( C_Variant* variant : Records() )
+    for( C_Variant* variant : Root() )
     {
         C_Record* record = static_cast<C_Record*>( variant );
         record->GetState( record_state );
@@ -276,7 +303,7 @@ void C_Document::LoadSQL( QString file_name )
     C_StateWriterDatabase record_state( Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
 
     while( !record_state.AtEnd() )
-        Records().CreateRecord( record_state );
+        Root().CreateRecord( record_state, -1, &Root() );
 
     // SCENE ITEMS TABLE
 
@@ -287,5 +314,6 @@ void C_Document::LoadSQL( QString file_name )
 
     Database().CloseDatabase();
     emit Events().RecordsChanged();
+
 }
 

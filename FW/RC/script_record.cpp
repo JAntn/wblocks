@@ -1,60 +1,35 @@
 #include "FW/RC/script_record.h"
-#include "FW/RC/string_record.h"
-#include "FW/RC/record_struct.h"
-#include "FW/RC/bool_record.h"
-#include "FW/RC/string_record.h"
+#include "FW/UI/ui_script_record_properties.h"
+#include "FW/UI/ui_main_window.h"
 #include "FW/document.h"
+#include "FW/UI/ui_record_value_editor.h"
+#include "FW/UI/ui_text_editor_container.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include "FW/UI/ui_main_window.h"
-#include "FW/UI/ui_script_editor.h"
-#include "FW/RC/file_record.h"
+
 
 #define CLASS_NAME "Script"
 
-C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value,  C_Variant* parent ):
-    C_Record( id, name, value, parent )
+C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root )
+    : C_Record( id, name, value, parent, root )
 {
-    m_Records = new C_RecordStruct( m_Name, this );
-    Records().SetFlags( FLAG_ACTION_EDIT | FLAG_ACTION_ADD_SCENE | FLAG_ACTION_COPY );
-    m_File = static_cast<C_FileRecord*> ( Records().CreateRecord( "File", "unnamed.js", "File" ) );
-    m_File ->SetFlags( ~FLAG_ACTION_REMOVE );
-    m_Code = static_cast<C_StringRecord*> ( Records().CreateRecord( "Code", "//EMPTY", "String" ) );
-    m_Code ->SetFlags( ~FLAG_ACTION_REMOVE );
+    // void
 }
 
-C_ScriptRecord::C_ScriptRecord( C_StateWriter& state, C_Variant* parent ):
-    C_Record( "", "", "", parent )
+C_ScriptRecord::C_ScriptRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
+    C_Record( "", "", "", parent, root )
 {
-    m_Records = new C_RecordStruct( "", this );
-    Records().SetFlags( FLAG_ACTION_EDIT | FLAG_ACTION_ADD_SCENE | FLAG_ACTION_COPY );
-    SetState( state );
+    SetState( state, root );
 }
 
 C_ScriptRecord::~C_ScriptRecord()
 {
-    // void
+    //void
 }
 
-QString C_ScriptRecord::Script() const
+QString C_ScriptRecord::Script()
 {
-    Code().SetValue( C_Document::LoadTextFile( File().Value() ) );
-    return Code().Value();
-}
-
-C_RecordStruct* C_ScriptRecord::Struct() const
-{
-    return m_Records;
-}
-
-QString C_ScriptRecord::Value() const
-{
-    return QString::number( Records().Size() );
-}
-
-void C_ScriptRecord::SetValue( QString )
-{
-    // void
+    return "\n" + Value();
 }
 
 QString C_ScriptRecord::Class() const
@@ -62,6 +37,37 @@ QString C_ScriptRecord::Class() const
     return CLASS_NAME;
 }
 
+void C_ScriptRecord::EditProperties( C_Document& document )
+{
+    QWidget* dialog = new C_UiScriptRecordProperties( *this, document, &document.MainWindow() );
+    dialog->show();
+}
+
+void C_ScriptRecord::OpenInEditor( C_Document& document )
+{
+    // DEFAULT OPEN OPERATION (WILL BE EXTENDED)
+
+    auto& main_window = document.MainWindow();
+    QString editor_id = "RECORD:TEXT:" + Id();
+    QString editor_name = Name();
+
+    if( main_window.TextEditorContainer().HasId( editor_id ) )
+    {
+        if( C_Document::AcceptMessage( "Record already opened.\n\nLoad again?" ) )
+        {
+            main_window.TextEditorContainer().Close( editor_id );
+            main_window.TextEditorContainer().Append( new C_UiRecordValueEditor( editor_id, editor_name, *this ) );
+            emit document.Events().TextEditorContainerChanged();
+            main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+        }
+
+        return;
+    }
+
+    main_window.TextEditorContainer().Append( new C_UiRecordValueEditor( editor_id, editor_name, *this ) );
+    emit document.Events().TextEditorContainerChanged();
+    main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+}
 
 void C_ScriptRecord::GetState( C_StateReader& state )
 {
@@ -71,18 +77,10 @@ void C_ScriptRecord::GetState( C_StateReader& state )
     row.append( Value() );
     row.append( Class() );
     state.Read( row );
-
-    for( C_Variant* variant : Records() )
-    {
-        C_Record* record = static_cast<C_Record*>( variant );
-        record->GetState( state );
-    }
 }
 
-void C_ScriptRecord::SetState( C_StateWriter& state )
+void C_ScriptRecord::SetState( C_StateWriter& state, C_RecordStruct* )
 {
-    Records().Clear();
-
     QStringList row;
     state.Write( row );
 
@@ -93,33 +91,17 @@ void C_ScriptRecord::SetState( C_StateWriter& state )
 
     m_Name  = row[1];
     m_Value = row[2];
-    int size = m_Value.toInt();
-
-    for( int count = 0; count < size; ++count )
-        Records().CreateRecord( state );
-
-    m_File = static_cast<C_FileRecord*>( Records().FromName( "File" ) );
-    m_File ->SetFlags( ~FLAG_ACTION_REMOVE );
-    m_Code = static_cast<C_StringRecord*>( Records().FromName( "Code" ) );
-    m_Code ->SetFlags( ~FLAG_ACTION_REMOVE );
-    Code().SetValue( C_Document::LoadTextFile( File().Value() ) );
 }
 
-void C_ScriptRecord::ShowEditor( C_Document& document )
+C_Record* C_ScriptRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
 {
-    QWidget* dialog = new C_UiScriptEditor( *this, document, &document.MainWindow() );
-    dialog->show();
-}
-
-C_Record* C_ScriptRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
-{
-    C_ScriptRecord* record = new C_ScriptRecord( C_RecordFactory::GenerateId(), name, value, parent );
+    C_ScriptRecord* record = new C_ScriptRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_ScriptRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent )
+C_Record* C_ScriptRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
 {
-    C_ScriptRecord* record = new C_ScriptRecord( state, parent );
+    C_ScriptRecord* record = new C_ScriptRecord( state, parent, root );
     return record;
 }
 
@@ -127,4 +109,5 @@ QString C_ScriptRecordFactory::RecordClass() const
 {
     return CLASS_NAME;
 }
+
 

@@ -2,15 +2,17 @@
 #include "FW/SC/scene.h"
 #include "FW/clipboard.h"
 #include "FW/document.h"
+#include "FW/UI/ui_file_text_editor.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_add_record.h"
 #include "FW/UI/ui_find_record.h"
-#include "FW/UI/ui_code_editor_container.h"
+#include "FW/UI/ui_text_editor_container.h"
 #include "ui_mainwindow.h"
 #include <QList>
 #include <QFileDialog>
 #include <QWebFrame>
+
 
 C_Events::C_Events( C_Document& document, C_UiMainWindow& main_window ):
     QObject( &main_window )
@@ -64,9 +66,9 @@ void C_Events::InitConnections()
 
     connect(
         this,
-        C_Events::CodeEditorContainerChanged,
+        C_Events::TextEditorContainerChanged,
         this,
-        C_Events::OnCodeEditorContainerChanged );
+        C_Events::OnTextEditorContainerChanged );
 }
 
 void C_Events::OnDirectoryChanged()
@@ -87,16 +89,16 @@ void C_Events::OnFileExplorerChanged()
 void C_Events::OnRecordsChanged()
 {
     MainWindow().UpdateRecordExplorer();
-    Document().UpdateScript();
+    Document().UpdateHtmlDoc();
     Document().UpdateScene();
 }
 
 void C_Events::OnClientScriptChanged()
 {
-    MainWindow().UpdateClientScriptView();
+    MainWindow().UpdateHtmlDocView();
 }
 
-void C_Events::OnCodeEditorContainerChanged()
+void C_Events::OnTextEditorContainerChanged()
 {
     MainWindow().UpdateMenubar();
 }
@@ -106,7 +108,7 @@ void C_Events::OnSceneChanged()
     MainWindow().UpdateSceneView();
 }
 
-void C_Events::OnActionLoadFile()
+void C_Events::OnActionLoadProjectFile()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
@@ -117,14 +119,17 @@ void C_Events::OnActionLoadFile()
         );
 
     if( file_name.isEmpty() )
+    {
+        qDebug() << "File Selection failed";
         return;
+    }
 
     QFile file( file_name );
     Document().LoadFile( file );
 
 }
 
-void C_Events::OnActionSaveFile()
+void C_Events::OnActionSaveProjectFile()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -135,13 +140,16 @@ void C_Events::OnActionSaveFile()
         );
 
     if( file_name.isEmpty() )
+    {
+        qDebug() << "File Selection failed";
         return;
+    }
 
     QFile file( file_name );
     Document().SaveFile( file );
 }
 
-void C_Events::OnActionLoadSQL()
+void C_Events::OnActionLoadProjectSQL()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
@@ -152,12 +160,15 @@ void C_Events::OnActionLoadSQL()
         );
 
     if( file_name.isEmpty() )
+    {
+        qDebug() << "File Selection failed";
         return;
+    }
 
     Document().LoadSQL( file_name );
 }
 
-void C_Events::OnActionSaveSQL()
+void C_Events::OnActionSaveProjectSQL()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -168,7 +179,10 @@ void C_Events::OnActionSaveSQL()
         );
 
     if( file_name.isEmpty() )
+    {
+        qDebug() << "File Selection failed";
         return;
+    }
 
     Document().SaveSQL( file_name );
 }
@@ -184,9 +198,12 @@ void C_Events::OnActionSaveClientScript()
         );
 
     if( file_name.isEmpty() )
+    {
+        qDebug() << "File Selection failed";
         return;
+    }
 
-    Document().Script().Parse( Document().Records() );
+    Document().Script().Parse( Document().Root() );
     emit Document().Events().ClientScriptChanged();
     C_Document::SaveTextFile(
         file_name,
@@ -194,7 +211,7 @@ void C_Events::OnActionSaveClientScript()
     );
 }
 
-void C_Events::OnActionEditRecord()
+void C_Events::OnActionEditRecordProperties()
 {
     long action_flags =
         Document()
@@ -208,7 +225,7 @@ void C_Events::OnActionEditRecord()
         .RecordExplorer()
         .HasSelection();
 
-    if( ( action_flags & FLAG_ACTION_EDIT ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_PROPERTIES ) && has_selection )
     {
         C_Record* record =
             static_cast<C_Record*>(
@@ -218,7 +235,19 @@ void C_Events::OnActionEditRecord()
                 .begin()
             );
 
-        record->ShowEditor( Document() );
+        if( !( record->Flags() & FLAG_ACTION_PROPERTIES ) )
+        {
+            qDebug() << "FLAG_ACTION_PROPERTIES is disabled on Record:"
+                     << record->Name();
+            return;
+        }
+
+        record->EditProperties( Document() );
+    }
+    else
+    {
+        qDebug() << "FLAG_ACTION_PROPERTIES is disabled on Struct:"
+                 << Document().Context().Records().Name();
     }
 }
 
@@ -238,7 +267,7 @@ void C_Events::OnActionRemoveRecord()
 
     if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection )
     {
-        QList<C_Record*> selection_list =
+        auto selection_list =
             Document()
             .MainWindow()
             .RecordExplorer()
@@ -256,16 +285,44 @@ void C_Events::OnActionRemoveRecord()
         }
 
         for( C_Record* record : selection_list )
+        {
+            if( !( record->Flags() & FLAG_ACTION_REMOVE ) )
+            {
+                qDebug() << "FLAG_ACTION_REMOVE is disabled on Record:"
+                         << record->Name();
+                return;
+            }
+        }
+
+        for( C_Record* record : selection_list )
             delete record;
 
         emit Document().Events().RecordsChanged();
+    }
+    else
+    {
+        qDebug() << "FLAG_ACTION_REMOVE is disabled on Struct:"
+                 << Document().Context().Records().Name();
     }
 }
 
 void C_Events::OnActionAddRecord()
 {
+    long action_flags =
+        Document()
+        .Context()
+        .Records()
+        .Flags() ;
+
+    if( !( action_flags & FLAG_ACTION_ADD ) )
+    {
+        qDebug() << "FLAG_ACTION_ADD is disabled on Struct:"
+                 << Document().Context().Records().Name();
+        return;
+    }
 
     int position = -1;
+
     bool has_selection =
         Document()
         .MainWindow()
@@ -309,11 +366,21 @@ void C_Events::OnActionAddSceneItem()
     if( ( action_flags & FLAG_ACTION_ADD_SCENE ) &&
             MainWindow().RecordExplorer().HasSelection() )
     {
-        QList<C_Record*> selection_list =
+        auto selection_list =
             Document()
             .MainWindow()
             .RecordExplorer()
             .Selection();
+
+        for( C_Record* record : selection_list )
+        {
+            if( !( record->Flags() & FLAG_ACTION_ADD_SCENE ) )
+            {
+                qDebug() << "FLAG_ACTION_ADD_SCENE is disabled on Record:"
+                         << record->Name();
+                return;
+            }
+        }
 
         for( C_Record* record : selection_list )
         {
@@ -325,6 +392,12 @@ void C_Events::OnActionAddSceneItem()
 
         emit Document().Events().SceneChanged();
         MainWindow().SetCurrentTab( MAINWINDOW_TAB_SCENE );
+    }
+    else
+    {
+        qDebug() << "FLAG_ACTION_ADD_SCENE is disabled on Struct:"
+                 << Document().Context().Records().Name();
+        return;
     }
 }
 
@@ -342,18 +415,34 @@ void C_Events::OnActionCopyRecord()
         .RecordExplorer()
         .HasSelection();
 
+
+
     if( ( action_flags & FLAG_ACTION_COPY ) && has_selection )
     {
-        Document()
-        .Clipboard()
-        .Copy(
+        auto selection_list =
             Document()
             .MainWindow()
             .RecordExplorer()
-            .Selection()
-        );
+            .Selection();
 
+        for( C_Record* record : selection_list )
+        {
+            if( !( record->Flags() & FLAG_ACTION_CUT ) )
+            {
+                qDebug() << "FLAG_ACTION_CUT is disabled on Record:"
+                         << record->Name();
+                return;
+            }
+        }
+
+        Document().Clipboard().Copy( selection_list );
         Document().MainWindow().UpdateMenubar();
+    }
+    else
+    {
+        qDebug() << "FLAG_ACTION_COPY is disabled on Struct:"
+                 << Document().Context().Records().Name();
+        return;
     }
 }
 
@@ -405,6 +494,12 @@ void C_Events::OnActionPasteRecord()
         Document().Clipboard().Clear();
         emit Document().Events().RecordsChanged();
     }
+    else
+    {
+        qDebug() << "FLAG_ACTION_PASTE is disabled on Struct:"
+                 << Document().Context().Records().Name();
+        return;
+    }
 }
 
 void C_Events::OnActionCutRecord()
@@ -431,7 +526,18 @@ void C_Events::OnActionCutRecord()
 
         for( C_Record* record : selection_list )
         {
+            if( !( record->Flags() & FLAG_ACTION_CUT ) )
+            {
+                qDebug() << "FLAG_ACTION_CUT is disabled on Record:"
+                         << record->Name();
+                return;
+            }
+        }
+
+        for( C_Record* record : selection_list )
+        {
             record->SetParent( 0 );
+
             auto items =
                 Document()
                 .Scene()
@@ -444,9 +550,55 @@ void C_Events::OnActionCutRecord()
         Document().Clipboard().Copy( selection_list );
         emit Document().Events().RecordsChanged();
     }
+    else
+    {
+        qDebug() << "FLAG_ACTION_CUT is disabled on Struct:"
+                 << Document().Context().Records().Name();
+        return;
+    }
 }
 
-void C_Events::OnActionNewFile()
+void C_Events::OnActionOpenRecordInEditor()
+{
+    long action_flags =
+        Document()
+        .Context()
+        .Records()
+        .Flags() ;
+
+    bool has_selection =
+        Document()
+        .MainWindow()
+        .RecordExplorer()
+        .HasSelection();
+
+    if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection )
+    {
+        C_Record* record =
+            static_cast<C_Record*>(
+                *MainWindow()
+                .RecordExplorer()
+                .Selection()
+                .begin()
+            );
+
+        if( !( record->Flags() & FLAG_ACTION_OPEN ) )
+        {
+            qDebug() << "FLAG_ACTION_OPEN is disabled on Record:"
+                     << record->Name();
+            return;
+        }
+
+        record->OpenInEditor( Document() );
+    }
+    else
+    {
+        qDebug() << "FLAG_ACTION_OPEN is disabled on Struct:"
+                 << Document().Context().Records().Name();
+    }
+}
+
+void C_Events::OnActionNewProjectFile()
 {
     Document().Clear();
 }
@@ -457,52 +609,57 @@ void C_Events::OnActionFindRecord()
     dialog->show();
 }
 
-void C_Events::OnActionNewEditorFile()
+void C_Events::OnActionNewFile()
 {
-    QString file_name = QFileDialog::getSaveFileName( &MainWindow(),
-                        tr( "New File" ),
-                        tr( "untitled.js" ),
-                        tr( "JS Files (*.js)" ) );
+    QString file_name =
+        QFileDialog::getSaveFileName(
+            &MainWindow(),
+            tr( "New File" ),
+            tr( "untitled.js" ),
+            tr( "JS Files (*.js)" )
+        );
 
     if( file_name.isEmpty() )
         return;
 
     C_Document::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
 
-    MainWindow().CodeEditorContainer().Append( file_name );
-    emit CodeEditorContainerChanged();
+    QString editor_id = "FILE:TEXT:" + file_name;
+
+    MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
+    emit TextEditorContainerChanged();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
-void C_Events::OnActionCloseEditorFile()
+void C_Events::OnActionCloseFile()
 {
     if( C_Document::AcceptMessage( tr( "Save changes?" ) ) )
-        MainWindow().CodeEditorContainer().SaveCurrent();
+        MainWindow().TextEditorContainer().SaveStateCurrent();
 
-    MainWindow().CodeEditorContainer().CloseCurrent();
-    emit CodeEditorContainerChanged();
+    MainWindow().TextEditorContainer().CloseCurrent();
+    emit TextEditorContainerChanged();
 }
 
-void C_Events::OnActionCloseAllEditorFiles()
+void C_Events::OnActionCloseAllFiles()
 {
     if( C_Document::AcceptMessage( tr( "Save changes?" ) ) )
-        MainWindow().CodeEditorContainer().SaveAll();
+        MainWindow().TextEditorContainer().SaveStateAll();
 
-    MainWindow().CodeEditorContainer().CloseAll();
-    emit CodeEditorContainerChanged();
+    MainWindow().TextEditorContainer().CloseAll();
+    emit TextEditorContainerChanged();
 }
 
-void C_Events::OnActionSaveEditorFile()
+void C_Events::OnActionSaveFile()
 {
-    MainWindow().CodeEditorContainer().SaveCurrent();
+    MainWindow().TextEditorContainer().SaveStateCurrent();
 }
 
-void C_Events::OnActionSaveAllEditorFiles()
+void C_Events::OnActionSaveAllFiles()
 {
-    MainWindow().CodeEditorContainer().SaveAll();
+    MainWindow().TextEditorContainer().SaveStateAll();
 }
 
-void C_Events::OnActionLoadEditorFile()
+void C_Events::OnActionLoadFile()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
@@ -518,38 +675,41 @@ void C_Events::OnActionLoadEditorFile()
         return;
     }
 
-    if( MainWindow().CodeEditorContainer().HasFile( file_name ) )
+    QString editor_id = "FILE:TEXT:" + file_name;
+
+    if( MainWindow().TextEditorContainer().HasId( editor_id ) )
     {
-        if( C_Document::AcceptMessage( tr( "File already loaded.\n\nLoad again?" ) ) )
+        if( C_Document::AcceptMessage( tr( "File already opened.\n\nLoad again?" ) ) )
         {
-            MainWindow().CodeEditorContainer().Clear( file_name );
-            MainWindow().CodeEditorContainer().Append( file_name );
-            emit CodeEditorContainerChanged();
+            MainWindow().TextEditorContainer().Close( editor_id );
+            MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
+            emit TextEditorContainerChanged();
             MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
         }
 
         return;
     }
 
-    MainWindow().CodeEditorContainer().Append( file_name );
-    emit CodeEditorContainerChanged();
+    MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
+    emit TextEditorContainerChanged();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
 void C_Events::OnActionExit()
 {
-    Document().MainWindow().close();
+    MainWindow().close();
 }
 
 void C_Events::OnActionRunClientScript()
 {
-    Document().MainWindow().UpdateWebView();
+    MainWindow().UpdateWebView();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_OUTPUT );
 }
 
 void C_Events::OnActionUpdateClientScript()
 {
-    Document().UpdateScript();
+    MainWindow().UpdateHtmlDocView();
+    MainWindow().SetCurrentTab( MAINWINDOW_TAB_CLIENT );
 }
 
 

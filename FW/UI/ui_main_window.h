@@ -8,7 +8,7 @@ class C_Document;
 class C_Record;
 class C_UiRecordExplorer;
 class C_UiRecordTableModel;
-class C_UiCodeEditorContainer;
+class C_UiTextEditorContainer;
 class C_UiFileExplorer;
 class C_Config;
 
@@ -28,18 +28,19 @@ public:
 
     void                          UpdateRecordExplorer();
     void                          UpdateFileExplorer();
-    void                          UpdateClientScriptView();
+    void                          UpdateHtmlDocView();
     void                          UpdateSceneView();
     void                          UpdateMenubar();
     void                          UpdateWebView();
     void                          InitConnections();
     void                          SetCurrentTab(int index);
     void                          closeEvent(QCloseEvent *) override;
+    void                          SetTitle(QString title);
 
     M_POINTER                     ( Config,              C_Config )
     M_POINTER                     ( Document,            C_Document )
     M_POINTER                     ( RecordExplorer,      C_UiRecordExplorer )
-    M_POINTER                     ( CodeEditorContainer, C_UiCodeEditorContainer )
+    M_POINTER                     ( TextEditorContainer, C_UiTextEditorContainer )
     M_POINTER                     ( FileExplorer,        C_UiFileExplorer )
     M_VALUE                       ( BinPath,             QString )
 

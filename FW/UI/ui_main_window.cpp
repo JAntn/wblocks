@@ -5,11 +5,12 @@
 #include "FW/SC/scene.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_find_record.h"
-#include "FW/UI/ui_code_editor.h"
-#include "FW/UI/ui_code_editor_container.h"
+#include "FW/UI/ui_file_text_editor.h"
+#include "FW/UI/ui_text_editor_container.h"
 #include "FW/UI/ui_file_explorer.h"
 #include "FW/config.h"
 #include "FW/clipboard.h"
+#include "FW/html.h"
 #include "ui_findrecord.h"
 #include "ui_record_context_menu.h"
 #include "ui_mainwindow.h"
@@ -51,7 +52,7 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ):
         Config().SetProjectFileName( Document().FileName() );
 
         C_Record* string_record =
-            Document().Records().CreateRecord(
+            Document().Root().CreateRecord(
                 "SampleString",
                 "Welcome to JS Blocks.\n This is a sample string", "String"
             );
@@ -69,11 +70,11 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ):
     ui->setupUi( this );
 
     m_RecordExplorer = new C_UiRecordExplorer( Document(), this );
-    m_CodeEditorContainer = new C_UiCodeEditorContainer( this );
+    m_TextEditorContainer = new C_UiTextEditorContainer( this );
     m_FileExplorer = new C_UiFileExplorer( Document(), this );
 
     ui->RecordExplorerLayout->addWidget( m_RecordExplorer );
-    ui->EditorLayout->addWidget( m_CodeEditorContainer );
+    ui->EditorLayout->addWidget( m_TextEditorContainer );
     ui->FileExplorerLayout->addWidget( m_FileExplorer );
     ui->GraphicsView->setScene(
         &Document().Context().Scene().GraphicsScene() );
@@ -107,28 +108,34 @@ void C_UiMainWindow::InitConnections()
     Document().Events().InitConnections();
 
     connect(
+        ui->ActionExit,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionExit );
+
+    connect(
         ui->ActionFileLoad,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionLoadFile );
+        C_Events::OnActionLoadProjectFile );
 
     connect(
         ui->ActionFileSave,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionSaveFile );
+        C_Events::OnActionSaveProjectFile );
 
     connect(
         ui->ActionSQLLoad,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionLoadSQL );
+        C_Events::OnActionLoadProjectSQL );
 
     connect(
         ui->ActionSQLSave,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionSaveSQL );
+        C_Events::OnActionSaveProjectSQL );
 
     connect(
         ui->ActionSaveClientScript,
@@ -159,6 +166,18 @@ void C_UiMainWindow::InitConnections()
         QAction::triggered,
         &Document().Events(),
         C_Events::OnActionAddSceneItem );
+
+    connect(
+        ui->ActionProperties,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionEditRecordProperties );
+
+    connect(
+        ui->ActionOpen_In_Editor,
+        QAction::triggered,
+        &Document().Events(),
+        C_Events::OnActionOpenRecordInEditor );
 
     connect(
         ui->ActionRemove,
@@ -194,49 +213,76 @@ void C_UiMainWindow::InitConnections()
         ui->ActionNew,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionNewFile );
+        C_Events::OnActionNewProjectFile );
 
     connect(
         ui->ActionNewEditorFile,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionNewEditorFile );
+        C_Events::OnActionNewFile );
 
     connect(
         ui->ActionCloseEditorFile,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionCloseEditorFile );
+        C_Events::OnActionCloseFile );
 
     connect(
         ui->ActionCloseAllEditorFiles,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionCloseAllEditorFiles );
+        C_Events::OnActionCloseAllFiles );
 
     connect(
         ui->ActionSaveEditorFile,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionSaveEditorFile );
+        C_Events::OnActionSaveFile );
 
     connect(
         ui->ActionSaveAllEditorFiles,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionSaveAllEditorFiles );
+        C_Events::OnActionSaveAllFiles );
 
     connect(
         ui->ActionLoadEditorFile,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionLoadEditorFile );
+        C_Events::OnActionLoadFile );
 }
 
 void C_UiMainWindow::closeEvent( QCloseEvent* )
 {
-    if( C_Document::AcceptMessage( tr( "Save project changes?" ) ) )
-        Document().Events().OnActionSaveFile();
+    if( C_Document::AcceptMessage( "Save project changes?" ) )
+    {
+        QString file_name = Document().FileName();
+
+        if( file_name.isEmpty() )
+        {
+            file_name =
+                QFileDialog::getSaveFileName(
+                    this,
+                    tr( "Save File" ),
+                    "untitled.prj",
+                    tr( "Project Files (*.prj)" )
+                );
+        }
+
+        if( file_name.isEmpty() )
+            qDebug() << "File Selection failed";
+        else
+        {
+            TextEditorContainer().SaveStateAll();
+            QFile file( file_name );
+            Document().SaveFile( file );
+        }
+    }
+}
+
+void C_UiMainWindow::SetTitle( QString title )
+{
+    setWindowTitle( "JSBlocks - " + title );
 }
 
 void C_UiMainWindow::UpdateRecordExplorer()
@@ -251,13 +297,10 @@ void C_UiMainWindow::UpdateFileExplorer()
         m_FileExplorer->Update();
 }
 
-void C_UiMainWindow::UpdateClientScriptView()
+void C_UiMainWindow::UpdateHtmlDocView()
 {
-    ui->TextEdit->clear();
-
-    for( QString str : Document().Script().StringList() )
-        ui->TextEdit->append( str );
-
+    Document().UpdateHtmlDoc();
+    ui->TextEdit->setPlainText( Document().HtmlDoc() );
     ui->TextEdit->update();
 }
 
@@ -277,8 +320,9 @@ void C_UiMainWindow::UpdateMenubar()
             ui->ActionPaste,
             ui->ActionAdd,
             ui->ActionAdd_to_scene,
-            ui->ActionEdit,
-            ui->ActionRemove
+            ui->ActionProperties,
+            ui->ActionRemove,
+            ui->ActionOpen_In_Editor
         };
 
         QList<long> action_flags =
@@ -288,8 +332,9 @@ void C_UiMainWindow::UpdateMenubar()
             FLAG_ACTION_PASTE,
             FLAG_ACTION_ADD,
             FLAG_ACTION_ADD_SCENE,
-            FLAG_ACTION_EDIT,
-            FLAG_ACTION_REMOVE
+            FLAG_ACTION_PROPERTIES,
+            FLAG_ACTION_REMOVE,
+            FLAG_ACTION_OPEN
         };
 
         auto iter = action_flags.begin();
@@ -313,6 +358,9 @@ void C_UiMainWindow::UpdateMenubar()
             ui->ActionCut->setEnabled( false );
             ui->ActionAdd_to_scene->setEnabled( false );
             ui->ActionRemove->setEnabled( false );
+            ui->ActionOpen_In_Editor->setEnabled( false );
+            ui->ActionProperties->setEnabled( false );
+
         }
 
         bool is_empty =
@@ -324,9 +372,9 @@ void C_UiMainWindow::UpdateMenubar()
             ui->ActionPaste->setEnabled( false );
     }
 
-    // Update Code Edit menu
+    // Update Text Edit Container
     {
-        if( CodeEditorContainer().Size() == 0 )
+        if( TextEditorContainer().Size() == 0 )
         {
             ui->ActionSaveAllEditorFiles->setEnabled( false );
             ui->ActionSaveEditorFile->setEnabled( false );
@@ -345,8 +393,7 @@ void C_UiMainWindow::UpdateMenubar()
 
 void C_UiMainWindow::UpdateWebView()
 {
-    ui->WebView->setHtml( "<html><body></body></html>" );
-    ui->WebView->page()->mainFrame()->evaluateJavaScript(
-        Document().Script().StringList().join( "" ) );
+    Document().UpdateHtmlDoc();
+    ui->WebView->setHtml( Document().HtmlDoc() );
     ui->WebView->show();
 }

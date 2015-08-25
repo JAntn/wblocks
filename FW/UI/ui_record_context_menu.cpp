@@ -53,10 +53,16 @@ C_UiRecordContextMenu::C_UiRecordContextMenu(
     if( !menu.isEmpty() )
         menu.addSeparator();
 
-    if( ( action_flags & FLAG_ACTION_EDIT ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection )
     {
-        QAction* action_1 = menu.addAction( tr( "Edit" ) );
-        connect( action_1, QAction::triggered, &document.Events(), C_Events::OnActionEditRecord );
+        QAction* action_openrecord = menu.addAction( tr( "Open.." ) );
+        connect( action_openrecord, QAction::triggered, &document.Events(), C_Events::OnActionOpenRecordInEditor );
+    }
+
+    if( ( action_flags & FLAG_ACTION_PROPERTIES ) && has_selection )
+    {
+        QAction* action_1 = menu.addAction( tr( "Properties.." ) );
+        connect( action_1, QAction::triggered, &document.Events(), C_Events::OnActionEditRecordProperties );
     }
 
     if( ( action_flags & FLAG_ACTION_ADD_SCENE ) && has_selection )

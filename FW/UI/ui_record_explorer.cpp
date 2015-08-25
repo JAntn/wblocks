@@ -123,7 +123,7 @@ void C_UiRecordExplorer::Activate( C_Record* record )
         return;
     }
 
-    record->ShowEditor( Document() );
+    record->EditProperties( Document() );
 }
 
 void C_UiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
@@ -144,13 +144,13 @@ void C_UiRecordExplorer::OnDoubleClicked( const QModelIndex& index )
 
 void C_UiRecordExplorer::OnRootButtonClicked()
 {
-    Document().Context().SetRecords( Document().Records() );
+    Document().Context().SetRecords( Document().Root() );
     Update();
 }
 
 void C_UiRecordExplorer::OnUpButtonClicked()
 {
-    if( ( & Records() ) != ( & Document().Records() ) )
+    if( ( & Records() ) != ( & Document().Root() ) )
     {
         C_Record* record = static_cast<C_Record*>( Document().Context().Records().Parent() );
         auto parent = static_cast<C_RecordStruct*>( record->Parent() );
@@ -170,10 +170,10 @@ void C_UiRecordExplorer::OnLineEditReturnPressed()
 
     if( full_name == "" )
     {
-        Document().Context().SetRecords( Document().Records() );
+        Document().Context().SetRecords( Document().Root() );
         Update();
         return;
     }
 
-    Activate( Document().Records().FromFullName( full_name ) );
+    Activate( Document().Root().FromFullName( full_name ) );
 }

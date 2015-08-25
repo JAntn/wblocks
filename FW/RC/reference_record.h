@@ -14,21 +14,23 @@ class C_ReferenceRecord : public C_Record
 
 public:
 
-    explicit C_ReferenceRecord( C_StateWriter& state, C_Variant* parent = 0 );
-    C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
+    explicit C_ReferenceRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
+    C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_ReferenceRecord() override;
 
     QString             Class() const override;
-    QString             Script() const override;
-    C_RecordStruct*     Struct() const override;
+
     void                GetState( C_StateReader& state ) override;
-    void                SetState( C_StateWriter& state ) override;
-    void                ShowEditor( C_Document& document ) override;
-    QString             Value() const override;
+    void                SetState( C_StateWriter& state, C_RecordStruct* root = 0) override;
+    void                EditProperties( C_Document& document ) override;
+
+    QString             Value() override;
     void                SetValue(QString full_name) override;
+    QString             Script() override;
+
     C_Record*           Referencee();
 
-    M_POINTER           ( Document,  C_Document )
+    M_POINTER           ( Root,  C_RecordStruct )
 
 private:
 
@@ -42,8 +44,8 @@ public:
 
     SINGLETON_CLASS( C_ReferenceRecordFactory )
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0 ) override;
+    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
     QString             RecordClass() const override;
 };
 

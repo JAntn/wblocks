@@ -16,13 +16,15 @@ public:
     explicit C_RecordStruct( QString name, C_Variant* parent = 0 );
     ~C_RecordStruct() override;
 
-    C_Record*                          CreateRecord( C_StateWriter& state, int position = -1 );
-    C_Record*                          CreateRecord( QString name, QString value, QString class_name, int position = -1 );
-    C_Record*                          CreateRecord( C_StateWriter& state, iterator position );
-    C_Record*                          CreateRecord( QString name, QString value, QString class_name, iterator position );
+    C_Record*                          CreateRecord( C_StateWriter& state, int position = -1, C_RecordStruct* root = 0 );
+    C_Record*                          CreateRecord( QString name, QString value, QString class_name, int position = -1, C_RecordStruct* root = 0 );
+    C_Record*                          CreateRecord( C_StateWriter& state, iterator position, C_RecordStruct* root = 0 );
+    C_Record*                          CreateRecord( QString name, QString value, QString class_name, iterator position, C_RecordStruct* root = 0 );
+
     C_Record*                          FromIndex( int row ) const;
     C_Record*                          FromName( QString name , bool deep = false ) const;
     C_Record*                          FromId( QString record_id, bool deep = false ) const;
+
     int                                GetIndex( C_Record* record ) const;
     C_Record*                          FromFullName( QString name ) const;
     QString                            FullName();

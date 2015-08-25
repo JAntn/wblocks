@@ -16,10 +16,10 @@ C_UiSceneItemContextMenu::C_UiSceneItemContextMenu(
 {
     QMenu menu;
 
-    if( FLAG_ACTION_EDIT & SceneItem().Record().Flags() )
+    if( FLAG_ACTION_PROPERTIES & SceneItem().Record().Flags() )
     {
-        QAction* action1 = menu.addAction( tr( "Edit" ) );
-        connect( action1, SIGNAL( triggered() ), this, SLOT( OnEdit() ) );
+        QAction* action1 = menu.addAction( tr( "Properties" ) );
+        connect( action1, SIGNAL( triggered() ), this, SLOT( OnEditRecordProperties() ) );
     }
 
     menu.addSeparator();
@@ -44,11 +44,11 @@ C_UiSceneItemContextMenu::~C_UiSceneItemContextMenu()
     //void
 }
 
-void C_UiSceneItemContextMenu::OnEdit()
+void C_UiSceneItemContextMenu::OnEditRecordProperties()
 {
     SceneItem()
     .Record()
-    .ShowEditor(
+    .EditProperties(
         SceneItem()
         .Scene()
         .Document() );

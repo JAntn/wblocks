@@ -1,5 +1,5 @@
 #include "FW/RC/integer_record.h"
-#include "FW/UI/ui_integer_editor.h"
+#include "FW/UI/ui_integer_record_properties.h"
 #include "FW/UI/ui_main_window.h"
 #include <FW/ST/state_writer.h>
 #include <FW/ST/state_reader.h>
@@ -7,27 +7,22 @@
 
 #define CLASS_NAME "Integer"
 
-QString C_IntegerRecord::Script() const
+QString C_IntegerRecord::Script()
 {
-    return FullName() + " = " + Value() + ";";
+    return "\n" + FullName() + " = " + Value() + ";";
 }
 
-C_RecordStruct* C_IntegerRecord::Struct() const
-{
-    return 0;
-}
-
-C_IntegerRecord::C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent ):
-    C_Record( id, name, value, parent )
+C_IntegerRecord::C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
+    C_Record( id, name, value, parent, root )
 {
     if( m_Value.isEmpty() )
         m_Value = "0";
 }
 
-C_IntegerRecord::C_IntegerRecord( C_StateWriter& state, C_Variant* parent ):
-    C_Record( "", "", "", parent )
+C_IntegerRecord::C_IntegerRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
+    C_Record( "", "", "", parent, root )
 {
-    SetState( state );
+    SetState( state, root );
 }
 
 C_IntegerRecord::~C_IntegerRecord()
@@ -40,9 +35,9 @@ QString C_IntegerRecord::Class() const
     return CLASS_NAME;
 }
 
-void C_IntegerRecord::ShowEditor( C_Document& document )
+void C_IntegerRecord::EditProperties( C_Document& document )
 {
-    QWidget* dialog = new C_UiIntegerEditor( *this, document, &document.MainWindow() );
+    QWidget* dialog = new C_UiIntegerRecordProperties( *this, document, &document.MainWindow() );
     dialog->show();
 }
 
@@ -56,7 +51,7 @@ void C_IntegerRecord::GetState( C_StateReader& state )
     state.Read( row );
 }
 
-void C_IntegerRecord::SetState( C_StateWriter& state )
+void C_IntegerRecord::SetState( C_StateWriter& state, C_RecordStruct* )
 {
     QStringList row;
     state.Write( row );
@@ -75,15 +70,15 @@ QString C_IntegerRecordFactory::RecordClass() const
     return CLASS_NAME;
 }
 
-C_Record* C_IntegerRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
+C_Record* C_IntegerRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent , C_RecordStruct* root )
 {
-    C_IntegerRecord* record = new C_IntegerRecord( C_RecordFactory::GenerateId(), name, value, parent );
+    C_IntegerRecord* record = new C_IntegerRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_IntegerRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent )
+C_Record* C_IntegerRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
 {
-    C_IntegerRecord* record = new C_IntegerRecord( state, parent );
+    C_IntegerRecord* record = new C_IntegerRecord( state, parent, root );
     return record;
 }
 

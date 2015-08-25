@@ -11,20 +11,20 @@ class C_IntegerRecord : public C_Record
 {
 public:
 
-    explicit C_IntegerRecord( C_StateWriter& state, C_Variant* parent = 0 );
-    C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent = 0 );
+    explicit C_IntegerRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
+    C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_IntegerRecord() override;
 
     QString             Class() const override;
-    QString             Script() const override;
-    C_RecordStruct*     Struct() const override;
+    QString             Script() override;
+
     void                GetState( C_StateReader& state ) override;
-    void                SetState( C_StateWriter& state ) override;
-    void                ShowEditor( C_Document& document ) override;
+    void                SetState( C_StateWriter& state, C_RecordStruct* root = 0 ) override;
+    void                EditProperties( C_Document& document ) override;
 
 private:
 
-    friend class        C_UiIntegerEditor;
+    friend class        C_UiIntegerRecordProperties;
     friend class        C_IntegerRecordFactory;
 };
 
@@ -34,8 +34,8 @@ public:
 
     SINGLETON_CLASS   ( C_IntegerRecordFactory )
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0 ) override;
+    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
     QString             RecordClass() const override;
 };
 

@@ -18,35 +18,30 @@ TEMPLATE = app
 
 HEADERS += \
     FW/macro.h \
-    FW/RC/record.h \
-    FW/SC/scene.h \
     FW/document.h \
-    FW/RC/integer_record.h \
-    FW/RC/struct_record.h \
-    FW/SC/scene_item.h \
-    FW/UI/ui_add_record.h \
-    FW/UI/ui_find_record.h \
-    FW/UI/ui_integer_editor.h \
-    FW/UI/ui_main_window.h \
-    FW/UI/ui_record_table_model.h \
+    FW/config.h \
     FW/database.h \
-    FW/UI/ui_scene_item_context_menu.h \
-    FW/UI/ui_record_context_menu.h \
     FW/context.h \
     FW/script.h \
-    FW/UI/ui_string_editor.h \
-    FW/RC/string_record.h \
-    FW/UI/ui_struct_editor.h \
-    FW/RC/real_record.h \
-    FW/UI/ui_real_editor.h \
     FW/variant.h \
     FW/variant_struct.h \
-    FW/UI/ui_script_editor.h \
-    FW/RC/record_struct.h \
-    FW/RC/script_record.h \
-    FW/RC/bool_record.h \
-    FW/UI/ui_bool_editor.h \
     FW/clipboard.h \
+    FW/events.h \
+    FW/RC/record.h \
+    FW/RC/script_file_record.h\
+    FW/RC/file_record.h \
+    FW/RC/integer_record.h \
+    FW/RC/struct_record.h \
+    FW/RC/string_record.h \
+    FW/RC/real_record.h \
+    FW/RC/record_struct.h \
+    FW/RC/bool_record.h \
+    FW/UI/ui_add_record.h \
+    FW/UI/ui_find_record.h \
+    FW/UI/ui_main_window.h \
+    FW/UI/ui_record_table_model.h \
+    FW/UI/ui_scene_item_context_menu.h \
+    FW/UI/ui_record_context_menu.h \
     FW/ST/state_reader_table.h \
     FW/ST/state_reader.h \
     FW/ST/state_writer.h \
@@ -56,49 +51,62 @@ HEADERS += \
     FW/ST/state_reader_database.h \
     FW/ST/state_writer_database.h \
     FW/RC/reference_record.h \
-    FW/UI/ui_reference_editor.h \
-    FW/events.h \
-    FW/SC/scene_line.h \
-    FW/RC/file_record.h \
-    FW/UI/ui_code_editor.h \
-    FW/UI/ui_code_editor_container.h \
     FW/UI/ui_record_explorer.h \
     FW/UI/ui_file_explorer.h \
-    FW/config.h
-
+    FW/SC/scene.h \
+    FW/SC/scene_line.h \
+    FW/SC/scene_item.h \
+    FW/UI/ui_text_editor_container.h \
+    FW/UI/ui_text_editor.h \
+    FW/UI/ui_file_text_editor.h \
+    FW/RC/script_record.h \
+    FW/UI/ui_record_value_editor.h \
+    FW/UI/ui_bool_record_properties.h \
+    FW/UI/ui_record_properties.h \
+    FW/UI/ui_file_record_properties.h \
+    FW/UI/ui_integer_record_properties.h \
+    FW/UI/ui_real_record_properties.h \
+    FW/UI/ui_reference_record_properties.h \
+    FW/UI/ui_script_file_record_properties.h \
+    FW/UI/ui_script_record_properties.h \
+    FW/UI/ui_string_record_properties.h \
+    FW/UI/ui_struct_record_properties.h \
+    FW/html.h \
+    FW/RC/html_record.h
 
 
 SOURCES += \
     main.cpp \
-    FW/RC/record.cpp \
     FW/document.cpp \
-    FW/SC/scene.cpp \
-    FW/RC/integer_record.cpp \
-    FW/RC/struct_record.cpp \
-    FW/SC/scene_item.cpp \
-    FW/UI/ui_add_record.cpp \
-    FW/UI/ui_find_record.cpp \
-    FW/UI/ui_integer_editor.cpp \
-    FW/UI/ui_main_window.cpp \
-    FW/UI/ui_record_table_model.cpp \
     FW/database.cpp \
-    FW/UI/ui_scene_item_context_menu.cpp \
-    FW/UI/ui_record_context_menu.cpp \
     FW/context.cpp \
     FW/script.cpp \
-    FW/UI/ui_string_editor.cpp \
-    FW/RC/string_record.cpp \
-    FW/UI/ui_struct_editor.cpp \
-    FW/RC/real_record.cpp \
-    FW/UI/ui_real_editor.cpp \
     FW/variant.cpp \
+    FW/config.cpp \
+    FW/events.cpp \
     FW/variant_struct.cpp \
-    FW/UI/ui_script_editor.cpp \
-    FW/RC/record_struct.cpp \
-    FW/RC/script_record.cpp \
-    FW/RC/bool_record.cpp \
-    FW/UI/ui_bool_editor.cpp \
     FW/clipboard.cpp \
+    FW/RC/string_record.cpp \
+    FW/RC/record.cpp \
+    FW/RC/integer_record.cpp \
+    FW/RC/struct_record.cpp \
+    FW/RC/real_record.cpp \
+    FW/RC/record_struct.cpp \
+    FW/RC/bool_record.cpp \
+    FW/RC/reference_record.cpp \
+    FW/RC/file_record.cpp \
+    FW/RC/script_file_record.cpp \
+    FW/SC/scene.cpp \
+    FW/SC/scene_item.cpp \
+    FW/SC/scene_line.cpp \
+    FW/UI/ui_add_record.cpp \
+    FW/UI/ui_find_record.cpp \
+    FW/UI/ui_main_window.cpp \
+    FW/UI/ui_record_table_model.cpp \
+    FW/UI/ui_scene_item_context_menu.cpp \
+    FW/UI/ui_record_context_menu.cpp \
+    FW/UI/ui_file_explorer.cpp \
+    FW/UI/ui_record_explorer.cpp \
     FW/ST/state_reader_table.cpp \
     FW/ST/state_reader.cpp \
     FW/ST/state_writer.cpp \
@@ -107,31 +115,41 @@ SOURCES += \
     FW/ST/state_writer_stream.cpp \
     FW/ST/state_reader_database.cpp \
     FW/ST/state_writer_database.cpp \
-    FW/RC/reference_record.cpp \
-    FW/UI/ui_reference_editor.cpp \
-    FW/events.cpp \
-    FW/SC/scene_line.cpp \
-    FW/RC/file_record.cpp \
-    FW/UI/ui_code_editor.cpp \
-    FW/UI/ui_code_editor_container.cpp \
-    FW/UI/ui_file_explorer.cpp \
-    FW/UI/ui_record_explorer.cpp \
-    FW/config.cpp
+    FW/UI/ui_text_editor_container.cpp \
+    FW/UI/ui_text_editor.cpp \
+    FW/UI/ui_file_text_editor.cpp \
+    FW/RC/script_record.cpp \
+    FW/UI/ui_record_value_editor.cpp \
+    FW/UI/ui_bool_record_properties.cpp \
+    FW/UI/ui_record_properties.cpp \
+    FW/UI/ui_file_record_properties.cpp \
+    FW/UI/ui_integer_record_properties.cpp \
+    FW/UI/ui_real_record_properties.cpp \
+    FW/UI/ui_reference_record_properties.cpp \
+    FW/UI/ui_script_file_record_properties.cpp \
+    FW/UI/ui_script_record_properties.cpp \
+    FW/UI/ui_string_record_properties.cpp \
+    FW/UI/ui_struct_record_properties.cpp \
+    FW/html.cpp \
+    FW/RC/html_record.cpp
 
 FORMS += \
     FW/UI/addrecord.ui \
     FW/UI/findrecord.ui \
-    FW/UI/integereditor.ui \
-    FW/UI/stringeditor.ui \
     FW/UI/mainwindow.ui \
-    FW/UI/structeditor.ui \
-    FW/UI/realeditor.ui \
-    FW/UI/booleditor.ui \
-    FW/UI/scripteditor.ui \
-    FW/UI/referenceeditor.ui \
     FW/UI/fileexplorer.ui \
     FW/UI/recordexplorer.ui \
-    FW/UI/codeeditor.ui
+    FW/UI/texteditor.ui \
+    FW/UI/boolrecordproperties.ui \
+    FW/UI/filerecordproperties.ui \
+    FW/UI/recordproperties.ui \
+    FW/UI/realrecordproperties.ui \
+    FW/UI/integerrecordproperties.ui \
+    FW/UI/referencerecordproperties.ui \
+    FW/UI/scriptfilerecordproperties.ui \
+    FW/UI/scriptrecordproperties.ui \
+    FW/UI/stringrecordproperties.ui \
+    FW/UI/structrecordproperties.ui
 
 DISTFILES += \
     format_code.astylerc

@@ -152,7 +152,7 @@ void C_UiFindRecord::OnEditButtonClicked()
 {
     if( m_Record != 0 )
     {
-        Record().ShowEditor( Document() );
+        Record().EditProperties( Document() );
 
         int max = Document()
                   .Context()

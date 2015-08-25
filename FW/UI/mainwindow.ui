@@ -196,6 +196,9 @@
     <addaction name="separator"/>
     <addaction name="ActionAdd"/>
     <addaction name="ActionRemove"/>
+    <addaction name="separator"/>
+    <addaction name="ActionProperties"/>
+    <addaction name="ActionOpen_In_Editor"/>
    </widget>
    <widget class="QMenu" name="menuScript">
     <property name="title">
@@ -205,9 +208,9 @@
     <addaction name="ActionUpdateClientScript"/>
     <addaction name="ActionSaveClientScript"/>
    </widget>
-   <widget class="QMenu" name="menuEditor">
+   <widget class="QMenu" name="menuFile_2">
     <property name="title">
-     <string>Editor</string>
+     <string>File</string>
     </property>
     <addaction name="ActionNewEditorFile"/>
     <addaction name="ActionLoadEditorFile"/>
@@ -219,8 +222,8 @@
     <addaction name="ActionCloseAllEditorFiles"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuFile_2"/>
    <addaction name="menuRecord"/>
-   <addaction name="menuEditor"/>
    <addaction name="menuScript"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -337,6 +340,16 @@
   <action name="ActionUpdateClientScript">
    <property name="text">
     <string>Update</string>
+   </property>
+  </action>
+  <action name="ActionProperties">
+   <property name="text">
+    <string>Properties</string>
+   </property>
+  </action>
+  <action name="ActionOpen_In_Editor">
+   <property name="text">
+    <string>Open In Editor</string>
    </property>
   </action>
  </widget>

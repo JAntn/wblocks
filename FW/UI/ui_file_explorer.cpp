@@ -1,8 +1,9 @@
 #include "FW/document.h"
 #include "FW/UI/ui_file_explorer.h"
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/ui_code_editor_container.h"
+#include "FW/UI/ui_text_editor_container.h"
 #include "ui_fileexplorer.h"
+#include "FW/UI/ui_file_text_editor.h"
 #include <QDir>
 #include <QStringListModel>
 
@@ -52,7 +53,7 @@ C_UiFileExplorer::~C_UiFileExplorer()
     delete ui;
 }
 
-QString C_UiFileExplorer::AbsolutePath()
+QString C_UiFileExplorer::FullPath()
 {
     if( !Path().isEmpty() )
         return Document().Path() + "/" + Path();
@@ -63,7 +64,7 @@ QString C_UiFileExplorer::AbsolutePath()
 void C_UiFileExplorer::Update()
 {
     ui->LineEdit->setText( Path() );
-    m_ModelData = QDir( AbsolutePath() ).entryList();
+    m_ModelData = QDir( FullPath() ).entryList();
     m_ModelData.pop_front();
     m_ModelData.pop_front();
     m_Model->setStringList( m_ModelData );
@@ -73,44 +74,59 @@ void C_UiFileExplorer::Update()
 
 void C_UiFileExplorer::Activate( QString file_name )
 {
-    QString file_name_abs = Document().Path();
+    if( file_name.isEmpty() )
+    {
+        m_Path = "";
+        Update();
+        return;
+    }
 
-    if( !file_name.isEmpty() )
-        file_name_abs = file_name_abs + "/" + file_name;
-
-    if( QFileInfo( file_name_abs ).isDir() )
+    if( QFileInfo( file_name ).isDir() )
     {
         m_Path = file_name;
         Update();
         return;
     }
 
-    if( !QFileInfo( file_name_abs ).exists() )
+    if( !QFileInfo( file_name ).exists() )
     {
         C_Document::Message( tr( "File doesn't exists" ) );
         Update();
         return;
     }
 
-    if( Document().MainWindow().CodeEditorContainer().HasFile( file_name ) )
+    QString editor_id = "FILE:TEXT:" + file_name;
+
+    if( Document().MainWindow().TextEditorContainer().HasId( editor_id ) )
     {
         if( C_Document::AcceptMessage( tr( "File already opened. Do you want to load again?" ) ) )
         {
-            Document().MainWindow().CodeEditorContainer().Clear( file_name_abs );
-            Document().MainWindow().CodeEditorContainer().Append( file_name_abs );
+            Document().MainWindow().TextEditorContainer().Close( editor_id );
+            Document().MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
+            Document().MainWindow().TextEditorContainer().SetCurrent( editor_id );
+            Document().MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+
             Update();
         }
 
         return;
     }
 
-    Document().MainWindow().CodeEditorContainer().Append( file_name );
+    Document().MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
+    Document().MainWindow().TextEditorContainer().SetCurrent( editor_id );
+    Document().MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+
     Update();
 }
 
 void C_UiFileExplorer::OnDoubleClicked( const QModelIndex& index )
 {
-    Activate( m_ModelData[index.row()] );
+    QString file_name = m_ModelData[index.row()];
+
+    if( !Path().isEmpty() )
+        file_name.prepend( Path() + "/" );
+
+    Activate( file_name );
 }
 
 void C_UiFileExplorer::OnLineEditReturnPressed()

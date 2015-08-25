@@ -39,15 +39,16 @@
 #include <QDebug>
 #include <QList>
 
-#define FLAG_ACTION_ALL          0xFF
-#define FLAG_ACTION_ADD          0x01
-#define FLAG_ACTION_REMOVE       0x02
-#define FLAG_ACTION_EDIT         0x04
-#define FLAG_ACTION_ADD_SCENE    0x08
-#define FLAG_ACTION_REMOVE_SCENE 0x10
-#define FLAG_ACTION_COPY         0x20
-#define FLAG_ACTION_PASTE        0x40
-#define FLAG_ACTION_CUT          0x40
+#define FLAG_ACTION_ALL          0xFFFF
+#define FLAG_ACTION_ADD          0x0001
+#define FLAG_ACTION_REMOVE       0x0002
+#define FLAG_ACTION_PROPERTIES   0x0004
+#define FLAG_ACTION_ADD_SCENE    0x0008
+#define FLAG_ACTION_REMOVE_SCENE 0x0010
+#define FLAG_ACTION_COPY         0x0020
+#define FLAG_ACTION_PASTE        0x0040
+#define FLAG_ACTION_CUT          0x0080
+#define FLAG_ACTION_OPEN         0x0100
 
 #define FLAG_STATE_ALL           0xFF
 #define FLAG_STATE_NEWID         0x01

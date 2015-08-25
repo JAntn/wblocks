@@ -16,22 +16,27 @@ class C_Record : public C_Variant
 {
 public:
 
-    C_Record( QString id, QString name, QString value, C_Variant* parent = 0 );
+    C_Record( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_Record() override;
 
     virtual QString               Class() const = 0;
-    virtual QString               Script() const = 0;
-    virtual C_RecordStruct*       Struct() const = 0;
+    virtual void                  GetState( C_StateReader& state ) = 0;
+    virtual void                  SetState( C_StateWriter& state, C_RecordStruct* root = 0 ) = 0;
+    virtual void                  EditProperties( C_Document& document );
+    virtual void                  OpenInEditor( C_Document& document );
+
+    virtual C_RecordStruct*       Struct();
+    virtual QString               Script();
+    virtual QString               Html();
+
     virtual void                  SetValue( QString value );
-    virtual QString               Value() const;
-    virtual void                  GetState( C_StateReader& ) = 0;
-    virtual void                  SetState( C_StateWriter& ) = 0;
-    virtual void                  ShowEditor( C_Document& ) = 0;
+    virtual QString               Value();
+
     QString                       FullName() const;
 
-    M_VALUE                       ( Name,  QString)
-    M_VALUE                       ( Flags, long )
     M_CONST_VALUE                 ( Id,    QString )
+    M_VALUE                       ( Name,  QString )
+    M_VALUE                       ( Flags, long )
 
 protected:
 
@@ -42,8 +47,8 @@ class C_RecordFactory
 {
 public:
 
-    virtual C_Record*             CreateInstance( QString name, QString value, C_Variant* parent = 0 ) = 0;
-    virtual C_Record*             CreateInstance( C_StateWriter& state, C_Variant* parent = 0 ) = 0;
+    virtual C_Record*             CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) = 0;
+    virtual C_Record*             CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) = 0;
     virtual QString               RecordClass() const = 0;
 
     static QString                GenerateId();

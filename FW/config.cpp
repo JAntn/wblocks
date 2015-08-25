@@ -9,25 +9,32 @@ C_Config::C_Config( QString config_path, C_Variant* parent ):
     m_ConfigFileName = "config.cfg";
 }
 
+QString EMPTY_CONFIGURATION_TEXT()
+{
+    QStringList config_file_tokens;
+
+    config_file_tokens << "project_file=\n"
+                       << "project_path=\n";
+
+    return config_file_tokens.join( "" );
+}
+
 void C_Config::Load()
 {
-    QStringList cfg;
-    QString config_file = ConfigPath() + "/" + ConfigFileName();
+    QString config_file_name = ConfigFileName();
 
-    if( !QFileInfo( config_file ).exists() )
+    if( !ConfigPath().isEmpty() )
+        config_file_name.prepend( ConfigPath() + "/" );
+
+    if( !QFileInfo( config_file_name ).exists() )
+        C_Document::SaveTextFile( config_file_name , EMPTY_CONFIGURATION_TEXT() );
+
+    QStringList config_file_tokens;
+    config_file_tokens = C_Document::LoadTextFile( config_file_name ).split( "\n" );
+
+    for( QString token_row : config_file_tokens )
     {
-        cfg << "project_file=\n"
-            << "project_path=\n";
-
-        C_Document::SaveTextFile( config_file , cfg.join( "" ) );
-        cfg.clear();
-    }
-
-    cfg = C_Document::LoadTextFile( config_file ).split( "\n" );
-
-    for( QString row : cfg )
-    {
-        QStringList token = row.split( "=" );
+        QStringList token = token_row.split( "=" );
 
         if( token[0] == "project_path" )
             m_ProjectPath = token[1];
@@ -39,25 +46,38 @@ void C_Config::Load()
 
 void C_Config::Save()
 {
-    QStringList cfg;
-    QString config_file = ConfigPath() + "/" + ConfigFileName();
+    QStringList config_file_tokens;
+    QString config_file_name =  ConfigFileName();
 
-    cfg << "project_file=" << m_ProjectFileName << "\n";
-    cfg << "project_path=" << m_ProjectPath << "\n";
+    if( !ConfigPath().isEmpty() )
+        config_file_name.prepend( ConfigPath() + "/" );
+
+    config_file_tokens << "project_file=" << m_ProjectFileName << "\n";
+    config_file_tokens << "project_path=" << m_ProjectPath << "\n";
 
     C_Document::SaveTextFile(
-        config_file,
-        cfg.join( "" )
+        config_file_name,
+        config_file_tokens.join( "" )
     );
 }
 
 QString C_Config::ConfigFileFullName()
 {
-    return ConfigPath() + "/" + ConfigFileName();
+    QString config_file_name =  ConfigFileName();
+
+    if( !ConfigPath().isEmpty() )
+        config_file_name.prepend( ConfigPath() + "/" );
+
+    return config_file_name;
 }
 
 QString C_Config::ProjectFileFullName()
 {
-    return ProjectPath() + "/" + ProjectFileName();
+    QString project_file_name =  ProjectFileName();
+
+    if( !ProjectPath().isEmpty() )
+        project_file_name.prepend( ProjectPath() + "/" );
+
+    return project_file_name;
 }
 

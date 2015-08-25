@@ -3,21 +3,21 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/ui_struct_editor.h"
+#include "FW/UI/ui_struct_record_properties.h"
 
 #define CLASS_NAME "Struct"
 
-C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Variant* parent ):
-    C_Record( id, name, value, parent )
+C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
+    C_Record( id, name, value, parent, root )
 {
     m_Records = new C_RecordStruct( name, this );
 }
 
-C_StructRecord::C_StructRecord( C_StateWriter& state, C_Variant* parent ):
-    C_Record( "", "", "", parent )
+C_StructRecord::C_StructRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
+    C_Record( "", "", "", parent, root )
 {
     m_Records = new C_RecordStruct( "", this );
-    SetState( state );
+    SetState( state, root );
 }
 
 C_StructRecord::~C_StructRecord()
@@ -25,7 +25,7 @@ C_StructRecord::~C_StructRecord()
     // void
 }
 
-QString C_StructRecord::Value() const
+QString C_StructRecord::Value()
 {
     return QString::number( Records().Size() );
 }
@@ -40,18 +40,18 @@ QString C_StructRecord::Class() const
     return CLASS_NAME;
 }
 
-C_RecordStruct* C_StructRecord::Struct() const
+C_RecordStruct* C_StructRecord::Struct()
 {
     return m_Records;
 }
 
-QString C_StructRecord::Script() const
+QString C_StructRecord::Script()
 {
     QStringList script;
-    script << FullName() << " = {} ;";
+    script << ( "\n" + FullName() + " = {} ;" );
 
     for( C_Variant* variant : Records() )
-        script << "\n" << static_cast<C_Record*>( variant )->Script() ;
+        script << static_cast<C_Record*>( variant )->Script() ;
 
     return script.join( "" );
 }
@@ -72,7 +72,7 @@ void C_StructRecord::GetState( C_StateReader& state )
     }
 }
 
-void C_StructRecord::SetState( C_StateWriter& state )
+void C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
 {
     Records().Clear();
 
@@ -90,24 +90,24 @@ void C_StructRecord::SetState( C_StateWriter& state )
     long size = m_Value.toLong();
 
     for( long count = 0; count < size; ++count )
-        Records().CreateRecord( state );
+        Records().CreateRecord( state, -1, root );
 }
 
-void C_StructRecord::ShowEditor( C_Document& document )
+void C_StructRecord::EditProperties( C_Document& document )
 {
-    QWidget* dialog = new C_UiStructEditor( *this, document, &document.MainWindow() );
+    QWidget* dialog = new C_UiStructRecordProperties( *this, document, &document.MainWindow() );
     dialog->show();
 }
 
-C_Record* C_StructRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
+C_Record* C_StructRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root  )
 {
-    C_StructRecord* record = new C_StructRecord( C_RecordFactory::GenerateId(), name, value, parent );
+    C_StructRecord* record = new C_StructRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_StructRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent )
+C_Record* C_StructRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
 {
-    C_StructRecord* record = new C_StructRecord( state, parent );
+    C_StructRecord* record = new C_StructRecord( state, parent, root );
     return record;
 }
 

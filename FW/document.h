@@ -17,6 +17,7 @@ class C_Events;
 class C_UiMainWindow;
 class C_Context;
 class C_Clipboard;
+class C_Html;
 
 class C_Document : public C_Variant
 {
@@ -29,7 +30,7 @@ public:
     void                LoadFile( QFile& file );
     void                SaveSQL( QString file_name );
     void                LoadSQL( QString file_name );
-    void                UpdateScript();
+    void                UpdateHtmlDoc();
     void                UpdateScene();
     void                Clear();
 
@@ -43,11 +44,13 @@ public:
     M_POINTER           ( MainWindow, C_UiMainWindow )
     M_POINTER           ( Database,   C_Database )
     M_POINTER           ( Script,     C_Script )
+    M_POINTER           ( Html,       C_Html )
     M_POINTER           ( Events,     C_Events )
-    M_POINTER           ( Records,    C_RecordStruct )
+    M_POINTER           ( Root,       C_RecordStruct )
     M_POINTER           ( Scene,      C_Scene )
     M_POINTER           ( Context,    C_Context )
     M_POINTER           ( Clipboard,  C_Clipboard )
+    M_VALUE             ( HtmlDoc,    QString )
 };
 
 #include "context.h"

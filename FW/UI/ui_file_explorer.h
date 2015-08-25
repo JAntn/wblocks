@@ -37,7 +37,7 @@ public slots:
 
 private:
 
-    QString                       AbsolutePath();
+    QString                       FullPath();
 
     Ui::C_UiFileExplorer* ui;
 };

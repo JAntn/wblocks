@@ -24,7 +24,7 @@ public:
 
 public slots:
 
-    void                OnEdit();
+    void                OnEditRecordProperties();
     void                OnRemove();
     void                OnRemoveFromScene();
 

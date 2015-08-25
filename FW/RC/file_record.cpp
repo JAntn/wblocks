@@ -1,25 +1,23 @@
 #include "FW/RC/file_record.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/document.h"
+#include "FW/UI/ui_file_record_properties.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include "FW/document.h"
-#include <QFileDialog>
-#include <QMainWindow>
 
 #define CLASS_NAME "File"
 
-C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* parent ):
-    C_Record( id, name, value, parent )
+C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
+    C_Record( id, name, value, parent, root )
 {
     if( m_Value.isEmpty() )
         m_Value = "untitled";
 }
 
-C_FileRecord::C_FileRecord( C_StateWriter& state, C_Variant* parent ):
-    C_Record( "", "", "", parent )
+C_FileRecord::C_FileRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
+    C_Record( "", "", "", parent, root )
 {
-    SetState( state );
+    SetState( state, root );
 }
 
 C_FileRecord::~C_FileRecord()
@@ -27,14 +25,9 @@ C_FileRecord::~C_FileRecord()
     //void
 }
 
-QString C_FileRecord::Script() const
+QString C_FileRecord::Script()
 {
-    return FullName() + " = \"" + Value() + "\""  + ";";
-}
-
-C_RecordStruct* C_FileRecord::Struct() const
-{
-    return 0;
+    return "\n" + FullName() + " = \"" + Value() + "\""  + ";";
 }
 
 QString C_FileRecord::Class() const
@@ -42,20 +35,13 @@ QString C_FileRecord::Class() const
     return CLASS_NAME;
 }
 
-void C_FileRecord::ShowEditor( C_Document& document )
+void C_FileRecord::EditProperties( C_Document& document )
 {
-    QString file_name =
-        QFileDialog::getOpenFileName(
-            &document.MainWindow(), QFileDialog::tr( "Select file" ), Value(), "*.*" );
-
-    if( file_name.isEmpty() )
-        file_name = "untitled";
-
-    m_Value = file_name;
-    emit document.Events().RecordsChanged();
+    QWidget* dialog = new C_UiFileRecordProperties( *this, document, &document.MainWindow() );
+    dialog->show();
 }
 
-QString C_FileRecord::FileDir()
+QString C_FileRecord::FilePath()
 {
     QStringList string_list = Value().split( "/" );
     string_list.pop_back();
@@ -84,13 +70,13 @@ void C_FileRecord::GetState( C_StateReader& state )
     state.Read( row );
 }
 
-void C_FileRecord::SetState( C_StateWriter& state )
+void C_FileRecord::SetState( C_StateWriter& sate, C_RecordStruct* )
 {
     QStringList row;
 
-    state.Write( row );
+    sate.Write( row );
 
-    if( state.Flags() & FLAG_STATE_NEWID )
+    if( sate.Flags() & FLAG_STATE_NEWID )
         m_Id    = C_RecordFactory::GenerateId();
     else
         m_Id    = row[0];
@@ -99,15 +85,15 @@ void C_FileRecord::SetState( C_StateWriter& state )
     m_Value = row[2];
 }
 
-C_Record* C_FileRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
+C_Record* C_FileRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
 {
-    C_FileRecord* record = new C_FileRecord( C_RecordFactory::GenerateId(), name, value, parent );
+    C_FileRecord* record = new C_FileRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_FileRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent )
+C_Record* C_FileRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
 {
-    C_FileRecord* record = new C_FileRecord( state, parent );
+    C_FileRecord* record = new C_FileRecord( state, parent, root );
     return record;
 }
 

@@ -116,10 +116,7 @@ void C_UiAddRecord::OnButtonBoxAccepted()
             Document()
             .Context()
             .Records()
-            .CreateRecord( name, "", class_name, index );
-
-        if( class_name == "Reference" )
-            static_cast<C_ReferenceRecord*>( record )->SetDocument( Document() );
+            .CreateRecord( name, "", class_name, index, &Document().Root() );
 
         if( ui->CheckBox->isChecked() )
         {
@@ -167,7 +164,7 @@ void C_UiAddRecord::OnEditButtonClicked()
         }
 
         emit Document().Events().RecordsChanged();
-        record->ShowEditor( Document() );
+        record->EditProperties( Document() );
         close();
     }
 }

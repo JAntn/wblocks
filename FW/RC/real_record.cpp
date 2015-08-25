@@ -1,25 +1,25 @@
 
 #include "FW/RC/real_record.h"
-#include "FW/UI/ui_real_editor.h"
+#include "FW/UI/ui_real_record_properties.h"
 #include "FW/UI/ui_main_window.h"
-#include "ui_realeditor.h"
+#include "ui_realrecordproperties.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/document.h"
 
 #define CLASS_NAME "Real"
 
-C_RealRecord::C_RealRecord( QString id, QString name, QString value, C_Variant* parent ):
-    C_Record( id, name, value, parent )
+C_RealRecord::C_RealRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
+    C_Record( id, name, value, parent, root )
 {
     if( m_Value.isEmpty() )
         m_Value = "0";
 }
 
-C_RealRecord::C_RealRecord( C_StateWriter& state, C_Variant* parent ):
-    C_Record( "", "", "", parent )
+C_RealRecord::C_RealRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
+    C_Record( "", "", "", parent, root )
 {
-    SetState( state );
+    SetState( state, root );
 }
 
 C_RealRecord::~C_RealRecord()
@@ -27,14 +27,9 @@ C_RealRecord::~C_RealRecord()
     //void
 }
 
-QString C_RealRecord::Script() const
+QString C_RealRecord::Script()
 {
-    return  FullName() + " = " + Value() + ";";
-}
-
-C_RecordStruct* C_RealRecord::Struct() const
-{
-    return 0;
+    return  "\n" + FullName() + " = " + Value() + ";";
 }
 
 QString C_RealRecord::Class() const
@@ -42,9 +37,9 @@ QString C_RealRecord::Class() const
     return CLASS_NAME;
 }
 
-void C_RealRecord::ShowEditor( C_Document& document )
+void C_RealRecord::EditProperties( C_Document& document )
 {
-    QWidget* dialog = new C_UiRealEditor( *this, document, &document.MainWindow() );
+    QWidget* dialog = new C_UiRealRecordProperties( *this, document, &document.MainWindow() );
     dialog->show();
 }
 
@@ -58,7 +53,7 @@ void C_RealRecord::GetState( C_StateReader& state )
     state.Read( row );
 }
 
-void C_RealRecord::SetState( C_StateWriter& state )
+void C_RealRecord::SetState( C_StateWriter& state, C_RecordStruct* )
 {
     QStringList row;
     state.Write( row );
@@ -73,15 +68,15 @@ void C_RealRecord::SetState( C_StateWriter& state )
 }
 
 
-C_Record* C_RealRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent )
+C_Record* C_RealRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent , C_RecordStruct* root )
 {
-    C_RealRecord* record = new C_RealRecord( C_RecordFactory::GenerateId(), name, value, parent );
+    C_RealRecord* record = new C_RealRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_RealRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent )
+C_Record* C_RealRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
 {
-    C_RealRecord* record = new C_RealRecord( state, parent );
+    C_RealRecord* record = new C_RealRecord( state, parent, root );
     return record;
 }
 

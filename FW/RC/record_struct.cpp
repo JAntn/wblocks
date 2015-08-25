@@ -3,12 +3,14 @@
 #include "FW/RC/record_struct.h"
 #include "FW/RC/reference_record.h"
 #include "FW/RC/real_record.h"
+#include "FW/RC/script_file_record.h"
 #include "FW/RC/script_record.h"
 #include "FW/RC/string_record.h"
 #include "FW/RC/bool_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/RC/file_record.h"
+#include "FW/RC/html_record.h"
 
 ///////////////////////////////////////////////////////////////////////
 /// STATIC
@@ -24,9 +26,11 @@ void C_RecordStruct::InitFactoryList()
         m_FactoryList.append( &C_RealRecordFactory::Instance() );
         m_FactoryList.append( &C_StringRecordFactory::Instance() );
         m_FactoryList.append( &C_ScriptRecordFactory::Instance() );
+        m_FactoryList.append( &C_ScriptFileRecordFactory::Instance() );
         m_FactoryList.append( &C_StructRecordFactory::Instance() );
         m_FactoryList.append( &C_ReferenceRecordFactory::Instance() );
         m_FactoryList.append( &C_FileRecordFactory::Instance() );
+        m_FactoryList.append( &C_HtmlRecordFactory::Instance() );
 
         // Add more classes here or later
     }
@@ -62,7 +66,8 @@ C_RecordFactory* C_RecordStruct::FactoryFromName( QString class_name )
 
 C_RecordStruct::C_RecordStruct( QString name, C_Variant* parent ):
     C_VariantStruct( parent ),
-    m_Name( name ), m_Flags( FLAG_ACTION_ALL )
+    m_Name( name ),
+    m_Flags( FLAG_ACTION_ALL )
 {
     //void
 }
@@ -72,7 +77,7 @@ C_RecordStruct::~C_RecordStruct()
     Clear();
 }
 
-C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position )
+C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position, C_RecordStruct* root )
 {
     C_Record*           record = 0;
     QString             class_name = state.Data().at( 3 );
@@ -80,14 +85,14 @@ C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position 
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( state );
+        record = record_factory->CreateInstance( state, 0, root );
         Insert( position, *record );
     }
 
     return record;
 }
 
-C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, int position )
+C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, int position, C_RecordStruct* root )
 {
     C_Record*           record = 0;
     QString             class_name = state.Data().at( 3 );
@@ -95,7 +100,7 @@ C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, int position )
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( state );
+        record = record_factory->CreateInstance( state, 0, root );
 
         if( position > 0 )
             Insert( position, *record );
@@ -110,14 +115,15 @@ C_Record* C_RecordStruct::CreateRecord(
     QString name,
     QString value,
     QString class_name,
-    int position )
+    int position,
+    C_RecordStruct* root )
 {
     C_Record* record = 0;
     C_RecordFactory* record_factory = C_RecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( name, value );
+        record = record_factory->CreateInstance( name, value, 0, root );
 
         if( position > 0 )
             Insert( position, *record );
@@ -132,14 +138,15 @@ C_Record* C_RecordStruct::CreateRecord(
     QString name,
     QString value,
     QString class_name,
-    iterator position )
+    iterator position,
+    C_RecordStruct* root )
 {
     C_Record* record = 0;
     C_RecordFactory* record_factory = C_RecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( name, value );
+        record = record_factory->CreateInstance( name, value, 0, root );
         Insert( position, *record );
     }
 

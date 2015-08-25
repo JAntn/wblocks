@@ -112,7 +112,7 @@ void C_SceneItem::SetState( C_StateWriter& state )
     m_Record =
         Scene()
         .Document()
-        .Records()
+        .Root()
         .FromId( row[1], true );
 
     setPos( row[2].toFloat(), row[3].toFloat() );
@@ -121,7 +121,7 @@ void C_SceneItem::SetState( C_StateWriter& state )
 
 void C_SceneItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent* )
 {
-    Record().ShowEditor( Scene().Document() );
+    Record().EditProperties( Scene().Document() );
 }
 
 void C_SceneItem::contextMenuEvent( QGraphicsSceneContextMenuEvent* event )

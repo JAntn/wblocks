@@ -34,36 +34,37 @@ public slots:
     void                OnRecordsChanged();
     void                OnSceneChanged();
     void                OnClientScriptChanged();
-    void                OnCodeEditorContainerChanged();
+    void                OnTextEditorContainerChanged();
 
     void                OnActionRunClientScript();
     void                OnActionUpdateClientScript();
     void                OnActionSaveClientScript();
 
-    void                OnActionLoadFile();
-    void                OnActionSaveFile();
-    void                OnActionLoadSQL();
-    void                OnActionSaveSQL();
+    void                OnActionNewProjectFile();
+    void                OnActionLoadProjectFile();
+    void                OnActionSaveProjectFile();
+    void                OnActionLoadProjectSQL();
+    void                OnActionSaveProjectSQL();
 
     void                OnActionExit();
-    void                OnActionNewFile();
 
     void                OnActionAddRecord();
-    void                OnActionEditRecord();
+    void                OnActionEditRecordProperties();
     void                OnActionRemoveRecord();
     void                OnActionAddSceneItem();
     void                OnActionCopyRecord();
     void                OnActionPasteRecord();
     void                OnActionCutRecord();
+    void                OnActionOpenRecordInEditor();
 
     void                OnActionFindRecord();
 
-    void                OnActionNewEditorFile();
-    void                OnActionCloseEditorFile();
-    void                OnActionCloseAllEditorFiles();
-    void                OnActionSaveEditorFile();
-    void                OnActionSaveAllEditorFiles();
-    void                OnActionLoadEditorFile();
+    void                OnActionNewFile();
+    void                OnActionCloseFile();
+    void                OnActionCloseAllFiles();
+    void                OnActionSaveFile();
+    void                OnActionSaveAllFiles();
+    void                OnActionLoadFile();
 
 signals:
 
@@ -73,7 +74,7 @@ signals:
     void                RecordsChanged();
     void                SceneChanged();
     void                ClientScriptChanged();
-    void                CodeEditorContainerChanged();
+    void                TextEditorContainerChanged();
 
 };
 
