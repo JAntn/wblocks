@@ -27,12 +27,12 @@ C_Scene::C_Scene( C_Document& document, C_Variant* parent ) :
     m_Document( &document ),
     m_TopZ( 0 )
 {
-    m_GraphicsScene = new QGraphicsScene();
+    m_Graphics = new QGraphicsScene();
 }
 
 C_Scene::~C_Scene()
 {
-    delete m_GraphicsScene;
+    delete m_Graphics;
 }
 
 C_SceneItem* C_Scene::CreateItem( C_StateWriter& state )
@@ -65,7 +65,7 @@ QList<C_SceneItem*> C_Scene::FromRecord( C_Record& record ) const
 
 void C_Scene::Clear()
 {
-    GraphicsScene().clear();
+    Graphics().clear();
 }
 
 int C_Scene::Size()
@@ -94,7 +94,30 @@ void C_Scene::UpdateLines()
                 C_Record* record_target = &target->Record();
 
                 if( record_from->Referencee() == record_target )
-                    m_Lines.append( new C_SceneLine( *from, *target ) );
+                    m_Lines.append( new C_SceneLine( *from, *target, Qt::green) );
+            }
+        }
+        else if( from->Record().Struct() != 0 )
+        {
+            QList<C_ReferenceRecord*> reference_list;
+
+            for( C_Variant* variant : *from->Record().Struct() )
+            {
+                C_Record* reference = static_cast<C_Record*> ( variant );
+
+                if( reference->Class() == "Reference" )
+                    reference_list.append( static_cast<C_ReferenceRecord*> ( reference ) );
+            }
+
+            for( C_ReferenceRecord* record : reference_list )
+            {
+                for( C_SceneItem* target : Items() )
+                {
+                    C_Record* record_target = &target->Record();
+
+                    if( record->Referencee() == record_target )
+                        m_Lines.append( new C_SceneLine( *from, *target, Qt::blue) );
+                }
             }
         }
     }

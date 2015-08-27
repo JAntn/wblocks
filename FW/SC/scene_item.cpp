@@ -23,9 +23,9 @@ C_SceneItem::C_SceneItem( C_Scene& scene, C_StateWriter& state ) :
     m_Scene( &scene )
 {
     SetState( state );
-    Scene().m_Items.append( this );
     SetParent( &Record() );
-    Scene().m_GraphicsScene->addItem( this );
+    Scene().Items().append( this );
+    Scene().Graphics().addItem( this );
     setFlag( QGraphicsItem::ItemIsMovable );
 }
 
@@ -36,9 +36,9 @@ C_SceneItem::C_SceneItem( C_Scene& scene, C_Record& record, qreal x_val, qreal y
 
 {
     m_Id = Scene().GenerateId();
-    Scene().m_Items.append( this );
     SetParent( &Record() );
-    Scene().m_GraphicsScene->addItem( this );
+    Scene().Items().append( this );
+    Scene().Graphics().addItem( this );
     setFlag( QGraphicsItem::ItemIsMovable );
     setPos( x_val, y_val );
 
@@ -50,13 +50,13 @@ C_SceneItem::C_SceneItem( C_Scene& scene, C_Record& record, qreal x_val, qreal y
 
 C_SceneItem::~C_SceneItem()
 {
-    Scene().m_Items.removeOne( this );
+    Scene().Items().removeOne( this );
 }
 
 
 QString C_SceneItem::HeaderText() const
 {
-    return QString( Record().FullName() ).append( " : " ).append( Record().Class() );
+    return Record().FullName() + " : " + Record().Class();
 }
 
 QRectF C_SceneItem::boundingRect() const

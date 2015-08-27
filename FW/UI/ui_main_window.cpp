@@ -10,7 +10,7 @@
 #include "FW/UI/ui_file_explorer.h"
 #include "FW/config.h"
 #include "FW/clipboard.h"
-#include "FW/html.h"
+#include "FW/htmlbuilder.h"
 #include "ui_findrecord.h"
 #include "ui_record_context_menu.h"
 #include "ui_mainwindow.h"
@@ -23,10 +23,11 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ):
     QMainWindow( parent ),
     ui( new Ui::C_UiMainWindow )
 {
+    QFile project_file;
+
     m_RecordExplorer = 0;
     m_FileExplorer = 0;
     m_Document = 0;
-    QFile project_file;
 
     // ROOT OBJECT
 
@@ -70,14 +71,13 @@ C_UiMainWindow::C_UiMainWindow( QWidget* parent ):
     ui->setupUi( this );
 
     m_RecordExplorer = new C_UiRecordExplorer( Document(), this );
-    m_TextEditorContainer = new C_UiTextEditorContainer( this );
     m_FileExplorer = new C_UiFileExplorer( Document(), this );
+    m_TextEditorContainer = new C_UiTextEditorContainer( this );
 
     ui->RecordExplorerLayout->addWidget( m_RecordExplorer );
     ui->EditorLayout->addWidget( m_TextEditorContainer );
     ui->FileExplorerLayout->addWidget( m_FileExplorer );
-    ui->GraphicsView->setScene(
-        &Document().Context().Scene().GraphicsScene() );
+    ui->GraphicsView->setScene( &Document().Scene().Graphics() );
 
     QRect screen_size = QApplication::desktop()->availableGeometry( this );
     setFixedSize( QSize( screen_size.width() * 0.8, screen_size.height() * 0.8 ) );
@@ -96,11 +96,6 @@ C_UiMainWindow::~C_UiMainWindow()
     m_Config->Save();
     delete m_Config;
     delete ui;
-}
-
-void C_UiMainWindow::SetCurrentTab( int index )
-{
-    ui->TabWidget->setCurrentIndex( index );
 }
 
 void C_UiMainWindow::InitConnections()
@@ -141,19 +136,19 @@ void C_UiMainWindow::InitConnections()
         ui->ActionSaveClientScript,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionSaveClientScript );
+        C_Events::OnActionSaveHtmlCode );
 
     connect(
         ui->ActionUpdateClientScript,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionUpdateClientScript );
+        C_Events::OnActionUpdateHtmlCode );
 
     connect(
         ui->ActionRunClientScript,
         QAction::triggered,
         &Document().Events(),
-        C_Events::OnActionRunClientScript );
+        C_Events::OnActionRunHtmlCode );
 
     connect(
         ui->ActionAdd,
@@ -285,6 +280,11 @@ void C_UiMainWindow::SetTitle( QString title )
     setWindowTitle( "JSBlocks - " + title );
 }
 
+void C_UiMainWindow::SetCurrentTab( int index )
+{
+    ui->TabWidget->setCurrentIndex( index );
+}
+
 void C_UiMainWindow::UpdateRecordExplorer()
 {
     if( m_RecordExplorer != 0 )
@@ -297,10 +297,9 @@ void C_UiMainWindow::UpdateFileExplorer()
         m_FileExplorer->Update();
 }
 
-void C_UiMainWindow::UpdateHtmlDocView()
+void C_UiMainWindow::UpdateHtmlCodeView()
 {
-    Document().UpdateHtmlDoc();
-    ui->TextEdit->setPlainText( Document().HtmlDoc() );
+    ui->TextEdit->setPlainText( Document().Html() );
     ui->TextEdit->update();
 }
 
@@ -393,7 +392,8 @@ void C_UiMainWindow::UpdateMenubar()
 
 void C_UiMainWindow::UpdateWebView()
 {
-    Document().UpdateHtmlDoc();
-    ui->WebView->setHtml( Document().HtmlDoc() );
+    Document().UpdateHtml();
+
+    ui->WebView->setHtml( Document().Html() );
     ui->WebView->show();
 }

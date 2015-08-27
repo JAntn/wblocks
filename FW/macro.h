@@ -4,7 +4,6 @@
 
 #define SINGLETON_CLASS(__CLASS_NAME)     __CLASS_NAME(__CLASS_NAME const&) = delete;\
                                             void operator=(__CLASS_NAME const&)  = delete;\
-                                            __CLASS_NAME(){}\
                                             static __CLASS_NAME& Instance() { static __CLASS_NAME singleton; return singleton; }
 
 #define M_POINTER(__VAR_NAME,__VAR_TYPE)\

@@ -74,7 +74,7 @@ bool C_UiAddRecord::CheckFormData() const
 
     if ( ( index > index_max ) || ( index < 0 ) )
     {
-        Document().Message( tr( "Position out of bounds" ) );
+        C_Document::Message( tr( "Position out of bounds" ) );
         return false;
     }
 
@@ -82,13 +82,13 @@ bool C_UiAddRecord::CheckFormData() const
 
     if( name.isEmpty() )
     {
-        Document().Message( tr( "Name is empty" ) );
+        C_Document::Message( tr( "Name is empty" ) );
         return false;
     }
 
     if( !name.contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return false;
     }
 

@@ -1,5 +1,5 @@
 #include "FW/RC/script_record.h"
-#include "FW/UI/ui_script_record_properties.h"
+#include "FW/UI/PR/ui_script_record_properties.h"
 #include "FW/document.h"
 #include "FW/UI/ui_record_value_editor.h"
 #include "ui_scriptrecordproperties.h"
@@ -41,7 +41,7 @@ void C_UiScriptRecordProperties::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
@@ -52,7 +52,7 @@ void C_UiScriptRecordProperties::OnButtonBoxAccepted()
 
 void C_UiScriptRecordProperties::OnRemoveButtonClicked()
 {
-    if( C_Document::AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+    if( C_Document::AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

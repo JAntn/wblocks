@@ -17,7 +17,7 @@ class C_Events;
 class C_UiMainWindow;
 class C_Context;
 class C_Clipboard;
-class C_Html;
+class C_HtmlBuilder;
 
 class C_Document : public C_Variant
 {
@@ -30,8 +30,7 @@ public:
     void                LoadFile( QFile& file );
     void                SaveSQL( QString file_name );
     void                LoadSQL( QString file_name );
-    void                UpdateHtmlDoc();
-    void                UpdateScene();
+    void                UpdateHtml();
     void                Clear();
 
     static bool         AcceptMessage( QString msg );
@@ -39,22 +38,20 @@ public:
     static QString      LoadTextFile( QString file_name );
     static void         SaveTextFile( QString file_name, QString text );
 
-    M_VALUE             ( FileName,   QString )
-    M_VALUE             ( Path,       QString )
-    M_POINTER           ( MainWindow, C_UiMainWindow )
-    M_POINTER           ( Database,   C_Database )
-    M_POINTER           ( Script,     C_Script )
-    M_POINTER           ( Html,       C_Html )
-    M_POINTER           ( Events,     C_Events )
-    M_POINTER           ( Root,       C_RecordStruct )
-    M_POINTER           ( Scene,      C_Scene )
-    M_POINTER           ( Context,    C_Context )
-    M_POINTER           ( Clipboard,  C_Clipboard )
-    M_VALUE             ( HtmlDoc,    QString )
+    M_VALUE             ( Html,        QString)
+    M_VALUE             ( FileName,    QString )
+    M_VALUE             ( Path,        QString )
+    M_POINTER           ( MainWindow,  C_UiMainWindow )
+    M_POINTER           ( Database,    C_Database )
+    M_POINTER           ( HtmlBuilder, C_HtmlBuilder )
+    M_POINTER           ( Events,      C_Events )
+    M_POINTER           ( Root,        C_RecordStruct )
+    M_POINTER           ( Scene,       C_Scene )
+    M_POINTER           ( Context,     C_Context )
+    M_POINTER           ( Clipboard,   C_Clipboard )
 };
 
 #include "context.h"
-#include "script.h"
 #include "events.h"
 
 #endif // C_DOCUMENT_H

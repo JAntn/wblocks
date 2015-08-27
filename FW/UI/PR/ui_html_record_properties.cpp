@@ -1,17 +1,17 @@
-#include "FW/RC/string_record.h"
-#include "FW/UI/ui_string_record_properties.h"
+#include "FW/RC/HTML/html_record.h"
+#include "FW/UI/PR/ui_html_record_properties.h"
 #include "FW/document.h"
 #include "FW/UI/ui_record_value_editor.h"
-#include "ui_stringrecordproperties.h"
+#include "ui_htmlrecordproperties.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_text_editor_container.h"
 
 
-C_UiStringRecordProperties::C_UiStringRecordProperties( C_StringRecord& record, C_Document& document, QWidget* parent ):
+C_UiHtmlRecordProperties::C_UiHtmlRecordProperties( C_HtmlRecord& record, C_Document& document, QWidget* parent ):
     QDialog( parent ),
     m_Record( &record ),
     m_Document( &document ),
-    ui( new Ui::C_UiStringRecordProperties )
+    ui( new Ui::C_UiHtmlRecordProperties )
 {
     ui->setupUi( this );
     ui->NameLineEdit->setText( Record().Name() );
@@ -21,27 +21,27 @@ C_UiStringRecordProperties::C_UiStringRecordProperties( C_StringRecord& record, 
         ui->ButtonBox,
         QDialogButtonBox::accepted,
         this,
-        C_UiStringRecordProperties::OnButtonBoxAccepted
+        C_UiHtmlRecordProperties::OnButtonBoxAccepted
     );
 
     connect(
         ui->RemoveButton,
         QPushButton::clicked,
         this,
-        C_UiStringRecordProperties::OnRemoveButtonClicked
+        C_UiHtmlRecordProperties::OnRemoveButtonClicked
     );
 }
 
-C_UiStringRecordProperties::~C_UiStringRecordProperties()
+C_UiHtmlRecordProperties::~C_UiHtmlRecordProperties()
 {
     delete ui;
 }
 
-void C_UiStringRecordProperties::OnButtonBoxAccepted()
+void C_UiHtmlRecordProperties::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
@@ -50,9 +50,9 @@ void C_UiStringRecordProperties::OnButtonBoxAccepted()
     emit Document().Events().RecordsChanged();
 }
 
-void C_UiStringRecordProperties::OnRemoveButtonClicked()
+void C_UiHtmlRecordProperties::OnRemoveButtonClicked()
 {
-    if( C_Document::AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+    if( C_Document::AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

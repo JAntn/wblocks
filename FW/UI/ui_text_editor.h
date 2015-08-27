@@ -9,6 +9,8 @@ namespace Ui
 class C_UiTextEditor;
 }
 
+// THIS EDITOR CHANGES ARE STORED IN A RECORD
+
 class C_UiTextEditor : public QWidget
 {
     Q_OBJECT

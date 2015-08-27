@@ -57,7 +57,7 @@ void C_UiSceneItemContextMenu::OnEditRecordProperties()
 void C_UiSceneItemContextMenu::OnRemove()
 {
     if( C_Document::AcceptMessage(
-                tr( "Do you want to remove this record?" ) ) )
+                tr( "Remove this record?" ) ) )
     {
         delete & SceneItem().Record();
         emit SceneItem()
@@ -71,7 +71,7 @@ void C_UiSceneItemContextMenu::OnRemove()
 void C_UiSceneItemContextMenu::OnRemoveFromScene()
 {
     if( C_Document::AcceptMessage(
-                tr( "Do you want to remove this item from scene?" ) ) )
+                tr( "Remove this item from scene?" ) ) )
         delete & SceneItem();
 }
 

@@ -1,13 +1,12 @@
 #include "FW/document.h"
 #include "FW/RC/script_file_record.h"
-#include "FW/UI/ui_script_file_record_properties.h"
+#include "FW/UI/PR/ui_script_file_record_properties.h"
 #include "FW/RC/file_record.h"
 #include "FW/UI/ui_text_editor_container.h"
 #include "FW/RC/bool_record.h"
 #include "FW/RC/string_record.h"
 #include "FW/UI/ui_main_window.h"
 #include "ui_scriptfilerecordproperties.h"
-#include "ui_file_text_editor.h"
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
@@ -24,7 +23,7 @@ C_UiScriptFileRecordProperties::C_UiScriptFileRecordProperties( C_ScriptFileReco
 {
     ui->setupUi( this );
     ui->NameLineEdit->setText( Record().Name() );
-    ui->FileLineEdit->setText( Record().File().Value() );
+    ui->FileLineEdit->setText( Record().Value() );
 
     connect(
         ui->ButtonBox,
@@ -59,18 +58,18 @@ void C_UiScriptFileRecordProperties::OnButtonBoxAccepted()
 
     if( !script_name.contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
     Record().SetName( ui->NameLineEdit->text() );
-    Record().File().SetValue( ui->FileLineEdit->text() );
+    Record().SetValue( ui->FileLineEdit->text() );
     emit Document().Events().RecordsChanged();
 }
 
 void C_UiScriptFileRecordProperties::OnRemoveButtonClicked()
 {
-    if(  Document().AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+    if(  Document().AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();
@@ -82,7 +81,7 @@ void C_UiScriptFileRecordProperties::OnSelectButtonClicked()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
-            &Document().MainWindow(), QFileDialog::tr( "Select file" ), Record().File().FileFullName() );
+            &Document().MainWindow(), QFileDialog::tr( "Select file" ), Record().Value() );
 
     if( file_name.isEmpty() )
     {
@@ -90,6 +89,6 @@ void C_UiScriptFileRecordProperties::OnSelectButtonClicked()
         return;
     }
 
-    Record().File().SetValue( file_name );
+    Record().SetValue( file_name );
     ui->FileLineEdit->setText( file_name );
 }

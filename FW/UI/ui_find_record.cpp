@@ -165,7 +165,7 @@ void C_UiFindRecord::OnEditButtonClicked()
 
 void C_UiFindRecord::OnRemoveButtonClicked()
 {
-    if( C_Document::AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+    if( C_Document::AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

@@ -38,8 +38,7 @@ public:
 
 private:
 
-    static
-    QList<C_RecordFactory*>             m_FactoryList;
+    static QList<C_RecordFactory*>             m_FactoryList;
 };
 
 

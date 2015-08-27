@@ -16,11 +16,6 @@ public:
     C_FileRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_FileRecord() override;
 
-    QString             Class() const override;
-    QString             Script() override;
-
-    void 		        GetState( C_StateReader& state ) override;
-    void                SetState( C_StateWriter& sate, C_RecordStruct* root = 0 ) override;
     void                EditProperties( C_Document& document ) override;
 
     QString             FilePath();
@@ -39,7 +34,8 @@ public:
 
     SINGLETON_CLASS     ( C_FileRecordFactory )
 
-    QString             RecordClass() const override;
+    C_FileRecordFactory();
+
     C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
     C_Record*           CreateInstance(C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
 };

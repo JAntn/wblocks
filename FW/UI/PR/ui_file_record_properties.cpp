@@ -1,5 +1,5 @@
 #include "FW/document.h"
-#include "FW/UI/ui_file_record_properties.h"
+#include "FW/UI/PR/ui_file_record_properties.h"
 #include "ui_filerecordproperties.h"
 #include <QFileDialog>
 #include "FW/RC/file_record.h"
@@ -46,7 +46,7 @@ void C_UiFileRecordProperties::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
@@ -57,7 +57,7 @@ void C_UiFileRecordProperties::OnButtonBoxAccepted()
 
 void C_UiFileRecordProperties::OnRemoveButtonClicked()
 {
-    if( Document().AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+    if( Document().AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

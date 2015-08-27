@@ -3,7 +3,7 @@
 #include "FW/SC/scene.h"
 #include "FW/database.h"
 #include "FW/document.h"
-#include "FW/html.h"
+#include "FW/htmlbuilder.h"
 #include "FW/clipboard.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -17,6 +17,8 @@
 #include <QFileInfo>
 #include <QDir>
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+/// STATIC
 
 QString C_Document::LoadTextFile( QString file_name )
 {
@@ -48,71 +50,6 @@ void C_Document::SaveTextFile( QString file_name, QString text )
     file.close();
 }
 
-C_Document::C_Document( QString file_name, QString path, C_UiMainWindow& main_window, C_Variant* parent ):
-    C_Variant( parent ),
-    m_MainWindow( &main_window )
-{
-    C_RecordStruct::InitFactoryList();
-
-    m_FileName          = file_name;
-    m_Path              = path;
-    m_Root              = new C_RecordStruct( "root", this );
-    m_Scene             = new C_Scene( *this, this );
-    m_Context           = new C_Context( Root(), Scene(), this );
-    m_Script            = new C_Script( this );
-    m_Html              = new C_Html( this );
-    m_Database          = new C_Database( this );
-    m_Clipboard         = new C_Clipboard( this );
-    m_Events            = new C_Events( *this, main_window );
-}
-
-C_Document::~C_Document()
-{
-    // void
-}
-
-void C_Document::UpdateHtmlDoc()
-{
-    Script().Parse( Root() );
-    Html().Parse( Root() );
-
-    m_HtmlDoc =
-        ( QStringList()
-          << "\n<!DOCTYPE html>"
-          << "\n<html>"
-          << "\n<script>"
-          << Script().StringList().join( "" )
-          << "\n</script>"
-          << Html().StringList().join( "" )
-          << "\n</html>"
-        ).join( "" );
-}
-
-void C_Document::UpdateScene()
-{
-    MainWindow().UpdateSceneView();
-}
-
-void C_Document::Clear()
-{
-    Context().SetRecords( Root() );
-    Root().Clear();
-    Scene().Clear();
-    Clipboard().Clear();
-    emit Events().RecordsChanged();
-
-    // UPDATE CONFIG FILE
-
-    SetFileName( "" );
-    SetPath( "" );
-    MainWindow().Config().SetProjectFileName( "" );
-    MainWindow().Config().SetProjectPath( "" );
-    QDir().setCurrent( "" );
-    emit Events().DirectoryChanged();
-
-    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
-}
-
 bool C_Document::AcceptMessage( QString msg )
 {
     QMessageBox msgBox;
@@ -132,6 +69,63 @@ void C_Document::Message( QString msg )
     QMessageBox msgBox;
     msgBox.setText( msg );
     msgBox.exec();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+/// NON STATIC
+
+C_Document::C_Document( QString file_name, QString path, C_UiMainWindow& main_window, C_Variant* parent ):
+    C_Variant( parent ),
+    m_MainWindow( &main_window )
+{
+    C_RecordStruct::InitFactoryList();
+
+    m_FileName          = file_name;
+    m_Path              = path;
+    m_Root              = new C_RecordStruct( "root", this );
+    m_Scene             = new C_Scene( *this, this );
+    m_Context           = new C_Context( Root(), Scene(), this );
+    m_HtmlBuilder       = new C_HtmlBuilder( this );
+    m_Database          = new C_Database( this );
+    m_Clipboard         = new C_Clipboard( this );
+    m_Events            = new C_Events( *this, main_window );
+}
+
+C_Document::~C_Document()
+{
+    // void
+}
+
+
+void C_Document::UpdateHtml()
+{
+    HtmlBuilder().Build( Root() );
+    m_Html = HtmlBuilder().Html().join( "" );
+
+    emit Events().HtmlCodeChanged();
+}
+
+void C_Document::Clear()
+{
+    Context().SetRecords( Root() );
+    Root().Clear();
+    Scene().Clear();
+    Clipboard().Clear();
+    Html().clear();
+
+    emit Events().RecordsChanged();
+
+    // UPDATE CONFIG FILE
+
+    SetFileName( "" );
+    SetPath( "" );
+    MainWindow().Config().SetProjectFileName( "" );
+    MainWindow().Config().SetProjectPath( "" );
+    QDir().setCurrent( "" );
+
+    emit Events().DirectoryChanged();
+
+    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
 }
 
 void C_Document::SaveFile( QFile& file )
@@ -170,6 +164,7 @@ void C_Document::SaveFile( QFile& file )
     MainWindow().Config().SetProjectFileName( FileName() );
     MainWindow().Config().SetProjectPath( Path() );
     QDir().setCurrent( MainWindow().Config().ProjectPath() );
+
     emit Events().DirectoryChanged();
 
     MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
@@ -212,6 +207,7 @@ void C_Document::LoadFile( QFile& file )
     MainWindow().Config().SetProjectFileName( FileName() );
     MainWindow().Config().SetProjectPath( Path() );
     QDir().setCurrent( MainWindow().Config().ProjectPath() );
+
     emit Events().DirectoryChanged();
 
     MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
@@ -314,6 +310,5 @@ void C_Document::LoadSQL( QString file_name )
 
     Database().CloseDatabase();
     emit Events().RecordsChanged();
-
 }
 

@@ -10,7 +10,13 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/RC/file_record.h"
-#include "FW/RC/html_record.h"
+#include "FW/RC/HTML/html_record.h"
+
+#include "FW/RC/JS/js_bool_record.h"
+#include "FW/RC/JS/js_integer_record.h"
+#include "FW/RC/JS/js_real_record.h"
+#include "FW/RC/JS/js_reference_record.h"
+#include "FW/RC/JS/js_string_record.h"
 
 ///////////////////////////////////////////////////////////////////////
 /// STATIC
@@ -32,17 +38,14 @@ void C_RecordStruct::InitFactoryList()
         m_FactoryList.append( &C_FileRecordFactory::Instance() );
         m_FactoryList.append( &C_HtmlRecordFactory::Instance() );
 
+        m_FactoryList.append( &C_JsBoolRecordFactory::Instance() );
+        m_FactoryList.append( &C_JsIntegerRecordFactory::Instance() );
+        m_FactoryList.append( &C_JsRealRecordFactory::Instance() );
+        m_FactoryList.append( &C_JsStringRecordFactory::Instance() );
+        m_FactoryList.append( &C_JsReferenceRecordFactory::Instance() );
+
         // Add more classes here or later
     }
-}
-
-QString C_RecordStruct::FullName()
-{
-    if( Name() == "root" )
-        return "";
-
-    auto parent = this->Parent() ;
-    return static_cast<C_Record*>( parent )->FullName();
 }
 
 const QList<C_RecordFactory*>& C_RecordStruct::FactoryList()
@@ -77,6 +80,15 @@ C_RecordStruct::~C_RecordStruct()
     Clear();
 }
 
+QString C_RecordStruct::FullName()
+{
+    if( Name() == "root" )
+        return "";
+
+    auto parent = this->Parent() ;
+    return static_cast<C_Record*>( parent )->FullName();
+}
+
 C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position, C_RecordStruct* root )
 {
     C_Record*           record = 0;
@@ -95,7 +107,7 @@ C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position,
 C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, int position, C_RecordStruct* root )
 {
     C_Record*           record = 0;
-    QString             class_name = state.Data().at( 3 );
+    QString             class_name = state.Data()[3];
     C_RecordFactory*    record_factory = C_RecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )

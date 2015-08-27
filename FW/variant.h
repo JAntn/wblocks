@@ -16,13 +16,13 @@ class C_Variant
 {
 public:
 
-    C_Variant(C_Variant* parent=0);
+    C_Variant( C_Variant* parent = 0 );
     virtual ~C_Variant();
 
-    void                               SetParent(C_Variant* parent=0);
+    void                               SetParent( C_Variant* parent = 0 );
     C_Variant*                         Parent() const;
 
-    M_VALUE                            (Childreen, QList<C_Variant*>)
+    M_VALUE                            ( Childreen, QList<C_Variant*> )
 
 private:
 

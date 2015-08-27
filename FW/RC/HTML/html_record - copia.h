@@ -22,7 +22,8 @@ public:
 
     QString             Class() const override;
     C_RecordStruct*     Struct() override;
-    QString             Html() override;
+    QStringList         Script() override;
+    QStringList         Html() override;
 
     void                GetState( C_StateReader& state ) override;
     void                SetState( C_StateWriter& state, C_RecordStruct* root = 0 ) override;
@@ -36,7 +37,6 @@ public:
     M_POINTER           ( HtmlAtributes,  C_StructRecord )
     M_POINTER           ( HtmlTag,        C_StringRecord )
     M_POINTER           ( HtmlContent,    C_StringRecord )
-    M_VALUE             ( Code,           QString )
 
 
 private:

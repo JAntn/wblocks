@@ -1,15 +1,16 @@
 #include "FW/RC/file_record.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/document.h"
-#include "FW/UI/ui_file_record_properties.h"
+#include "FW/UI/PR/ui_file_record_properties.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 
-#define CLASS_NAME "File"
 
 C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
     C_Record( id, name, value, parent, root )
 {
+    m_Class = "File";
+
     if( m_Value.isEmpty() )
         m_Value = "untitled";
 }
@@ -17,22 +18,13 @@ C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* 
 C_FileRecord::C_FileRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
     C_Record( "", "", "", parent, root )
 {
+    m_Class = "File";
     SetState( state, root );
 }
 
 C_FileRecord::~C_FileRecord()
 {
     //void
-}
-
-QString C_FileRecord::Script()
-{
-    return "\n" + FullName() + " = \"" + Value() + "\""  + ";";
-}
-
-QString C_FileRecord::Class() const
-{
-    return CLASS_NAME;
 }
 
 void C_FileRecord::EditProperties( C_Document& document )
@@ -58,48 +50,19 @@ QString C_FileRecord::FileFullName()
     return Value();
 }
 
-void C_FileRecord::GetState( C_StateReader& state )
-{
-    QStringList row;
-
-    row.append( Id() );
-    row.append( Name() );
-    row.append( Value() );
-    row.append( Class() );
-
-    state.Read( row );
-}
-
-void C_FileRecord::SetState( C_StateWriter& sate, C_RecordStruct* )
-{
-    QStringList row;
-
-    sate.Write( row );
-
-    if( sate.Flags() & FLAG_STATE_NEWID )
-        m_Id    = C_RecordFactory::GenerateId();
-    else
-        m_Id    = row[0];
-
-    m_Name  = row[1];
-    m_Value = row[2];
-}
-
 C_Record* C_FileRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
 {
-    C_FileRecord* record = new C_FileRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
-    return record;
+    return new C_FileRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
 }
 
 C_Record* C_FileRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
 {
-    C_FileRecord* record = new C_FileRecord( state, parent, root );
-    return record;
+    return new C_FileRecord( state, parent, root );
 }
 
-QString C_FileRecordFactory::RecordClass() const
+C_FileRecordFactory::C_FileRecordFactory()
 {
-    return CLASS_NAME;
+    m_RecordClass = "File";
 }
 
 

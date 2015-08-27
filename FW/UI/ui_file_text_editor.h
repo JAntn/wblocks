@@ -6,6 +6,7 @@
 #include "FW/macro.h"
 #include "FW/UI/ui_text_editor.h"
 
+// THIS EDITOR CHANGES ARE STORED IN A FILE
 
 class C_UiFileTextEditor : public C_UiTextEditor
 {

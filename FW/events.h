@@ -33,12 +33,12 @@ public slots:
     void                OnFileExplorerChanged();
     void                OnRecordsChanged();
     void                OnSceneChanged();
-    void                OnClientScriptChanged();
+    void                OnHtmlCodeChanged();
     void                OnTextEditorContainerChanged();
 
-    void                OnActionRunClientScript();
-    void                OnActionUpdateClientScript();
-    void                OnActionSaveClientScript();
+    void                OnActionRunHtmlCode();
+    void                OnActionUpdateHtmlCode();
+    void                OnActionSaveHtmlCode();
 
     void                OnActionNewProjectFile();
     void                OnActionLoadProjectFile();
@@ -73,7 +73,7 @@ signals:
     void                FileExplorerChanged();
     void                RecordsChanged();
     void                SceneChanged();
-    void                ClientScriptChanged();
+    void                HtmlCodeChanged();
     void                TextEditorContainerChanged();
 
 };

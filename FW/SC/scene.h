@@ -22,21 +22,25 @@ public:
     static QString                GenerateId();
     static QString                IdCount();
 
-    C_SceneItem*                  CreateItem(C_StateWriter &state );
+    C_SceneItem*                  CreateItem( C_StateWriter& state );
     C_SceneItem*                  CreateItem( C_Record& record );
     C_SceneItem*                  CreateItem( C_Record& record, qreal x, qreal y, qreal z = -1 );
+
     QList<C_SceneItem*>           FromRecord( C_Record& record ) const;
+
     void                          Clear();
     int                           Size();
+
     void                          BringFront( C_SceneItem& sc );
+
     void                          UpdateLines();
     void                          ClearLines();
 
+    M_POINTER                     ( Graphics,       QGraphicsScene )
     M_POINTER                     ( Document,       C_Document )
-    M_POINTER                     ( GraphicsScene,  QGraphicsScene )
-    M_CONST_VALUE                 ( TopZ,           double )
-    M_CONST_VALUE                 ( Items,          QList<C_SceneItem*> )
-    M_CONST_VALUE                 ( Lines,          QList<C_SceneLine*>)
+    M_VALUE                       ( TopZ,           double )
+    M_VALUE                       ( Items,          QList<C_SceneItem*> )
+    M_VALUE                       ( Lines,          QList<C_SceneLine*> )
 
 private:
 

@@ -99,7 +99,7 @@ void C_UiFileExplorer::Activate( QString file_name )
 
     if( Document().MainWindow().TextEditorContainer().HasId( editor_id ) )
     {
-        if( C_Document::AcceptMessage( tr( "File already opened. Do you want to load again?" ) ) )
+        if( C_Document::AcceptMessage( tr( "File already opened. Load again?" ) ) )
         {
             Document().MainWindow().TextEditorContainer().Close( editor_id );
             Document().MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );

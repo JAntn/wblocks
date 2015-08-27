@@ -1,6 +1,6 @@
 #include "FW/RC/reference_record.h"
 #include "FW/document.h"
-#include "FW/UI/ui_reference_record_properties.h"
+#include "FW/UI/PR/ui_reference_record_properties.h"
 #include "ui_referencerecordproperties.h"
 
 C_UiReferenceRecordProperties::C_UiReferenceRecordProperties( C_ReferenceRecord& record, C_Document& document, QWidget* parent ):
@@ -44,13 +44,13 @@ void C_UiReferenceRecordProperties::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
     if( !ui->ReferenceLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Reference must not contain white spaces" ) );
+        C_Document::Message( tr( "Reference must not contain white spaces" ) );
         return;
     }
 
@@ -63,7 +63,7 @@ void C_UiReferenceRecordProperties::OnButtonBoxAccepted()
 void C_UiReferenceRecordProperties::OnRemoveButtonClicked()
 {
     if(  Document().AcceptMessage(
-                tr( "Do you want to remove this record?" ) ) )
+                tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();
@@ -76,7 +76,7 @@ void C_UiReferenceRecordProperties::OnReferenceLineEditReturnPressed()
 {
     if( !ui->ReferenceLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Reference must not contain white spaces" ) );
+        C_Document::Message( tr( "Reference must not contain white spaces" ) );
         return;
     }
 

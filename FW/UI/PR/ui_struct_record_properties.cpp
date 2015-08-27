@@ -1,6 +1,6 @@
 #include "FW/RC/struct_record.h"
 #include "FW/document.h"
-#include "FW/UI/ui_struct_record_properties.h"
+#include "FW/UI/PR/ui_struct_record_properties.h"
 #include "ui_structrecordproperties.h"
 
 C_UiStructRecordProperties::C_UiStructRecordProperties( C_StructRecord& record, C_Document& document, QWidget* parent ):
@@ -36,7 +36,7 @@ void C_UiStructRecordProperties::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
@@ -47,7 +47,7 @@ void C_UiStructRecordProperties::OnButtonBoxAccepted()
 
 void C_UiStructRecordProperties::OnRemoveButtonClicked()
 {
-    if(  Document().AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+    if(  Document().AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

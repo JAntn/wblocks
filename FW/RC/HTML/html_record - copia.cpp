@@ -26,7 +26,6 @@ C_HtmlRecord::C_HtmlRecord( QString id, QString name, QString value,  C_Variant*
     m_HtmlContent = static_cast<C_StringRecord*> ( Records().CreateRecord( "HtmlContent", "", "String", -1, root ) );
     HtmlContent().SetFlags( ~( FLAG_ACTION_REMOVE & FLAG_ACTION_CUT )  );
 
-    m_Code = "";
 }
 
 C_HtmlRecord::C_HtmlRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
@@ -47,7 +46,17 @@ C_HtmlRecord::C_HtmlRecord( C_StateWriter& state, C_Variant* parent, C_RecordStr
     SetState( state, root );
 }
 
-QString C_HtmlRecord::Html()
+C_HtmlRecord::~C_HtmlRecord()
+{
+    // void
+}
+
+C_RecordStruct* C_HtmlRecord::Struct()
+{
+    return m_Records;
+}
+
+QStringList C_HtmlRecord::Html()
 {
     QStringList html;
 
@@ -59,7 +68,7 @@ QString C_HtmlRecord::Html()
         html << "\n" << record->Name() << " = \"" << record->Value() << "\"";
     }
 
-    html << "\n>";
+    html << ">";
     html << HtmlContent().Value();
 
     int count = 0;
@@ -75,17 +84,26 @@ QString C_HtmlRecord::Html()
     }
 
     html << "\n</" << HtmlTag().Value() << ">";
-    return html.join("");
+    return html;
 }
 
-C_HtmlRecord::~C_HtmlRecord()
+QStringList C_HtmlRecord::Script()
 {
-    // void
-}
+    QStringList script;
 
-C_RecordStruct* C_HtmlRecord::Struct()
-{
-    return m_Records;
+    int count  = 0;
+
+    for( C_Variant* variant : Records() )
+    {
+        // SKIP DEFAULT MEMBERS
+        if( count < 3 )
+            ++count;
+
+        auto* record = static_cast<C_Record*>( variant );
+        script << record->Script();
+    }
+
+    return script;
 }
 
 QString C_HtmlRecord::Value()
@@ -102,8 +120,6 @@ QString C_HtmlRecord::Class() const
 {
     return CLASS_NAME;
 }
-
-
 
 void C_HtmlRecord::GetState( C_StateReader& state )
 {
@@ -148,8 +164,6 @@ void C_HtmlRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
 
     m_HtmlContent = static_cast<C_StringRecord*>( Records().FromName( "HtmlContent" ) );
     HtmlContent().SetFlags( ~( FLAG_ACTION_REMOVE & FLAG_ACTION_CUT ) );
-
-    m_Code = "";
 }
 
 /*

@@ -1,6 +1,6 @@
 #include "FW/RC/real_record.h"
 #include "FW/document.h"
-#include "FW/UI/ui_real_record_properties.h"
+#include "FW/UI/PR/ui_real_record_properties.h"
 #include "ui_realrecordproperties.h"
 
 C_UiRealRecordProperties::C_UiRealRecordProperties( C_RealRecord& record, C_Document& document, QWidget* parent ):
@@ -37,13 +37,13 @@ void C_UiRealRecordProperties::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        Document().Message( tr( "Name must not contain white spaces" ) );
+        C_Document::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
     if( !ui->ValueLineEdit->text().contains( QRegExp( "(^\\s*[-+]?\\d+(.\\d+)?([Ee][+-]?\\d+(.\\d+)?)?\\s*$)" ) ) )
     {
-        Document().Message( tr( "Bad real number string" ) );
+        C_Document::Message( tr( "Bad real number string" ) );
         return;
     }
 
@@ -54,7 +54,7 @@ void C_UiRealRecordProperties::OnButtonBoxAccepted()
 
 void C_UiRealRecordProperties::OnRemoveButtonClicked()
 {
-    if( Document().AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+    if( Document().AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Events().RecordsChanged();

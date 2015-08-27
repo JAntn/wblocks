@@ -22,7 +22,6 @@ HEADERS += \
     FW/config.h \
     FW/database.h \
     FW/context.h \
-    FW/script.h \
     FW/variant.h \
     FW/variant_struct.h \
     FW/clipboard.h \
@@ -61,18 +60,25 @@ HEADERS += \
     FW/UI/ui_file_text_editor.h \
     FW/RC/script_record.h \
     FW/UI/ui_record_value_editor.h \
-    FW/UI/ui_bool_record_properties.h \
     FW/UI/ui_record_properties.h \
-    FW/UI/ui_file_record_properties.h \
-    FW/UI/ui_integer_record_properties.h \
-    FW/UI/ui_real_record_properties.h \
-    FW/UI/ui_reference_record_properties.h \
-    FW/UI/ui_script_file_record_properties.h \
-    FW/UI/ui_script_record_properties.h \
-    FW/UI/ui_string_record_properties.h \
-    FW/UI/ui_struct_record_properties.h \
-    FW/html.h \
-    FW/RC/html_record.h
+    FW/htmlbuilder.h \
+    FW/UI/PR/ui_bool_record_properties.h \
+    FW/UI/PR/ui_file_record_properties.h \
+    FW/UI/PR/ui_integer_record_properties.h \
+    FW/UI/PR/ui_real_record_properties.h \
+    FW/UI/PR/ui_record_properties.h \
+    FW/UI/PR/ui_reference_record_properties.h \
+    FW/UI/PR/ui_script_file_record_properties.h \
+    FW/UI/PR/ui_script_record_properties.h \
+    FW/UI/PR/ui_string_record_properties.h \
+    FW/UI/PR/ui_struct_record_properties.h \
+    FW/RC/JS/js_bool_record.h \
+    FW/RC/JS/js_integer_record.h \
+    FW/RC/JS/js_real_record.h \
+    FW/RC/JS/js_reference_record.h \
+    FW/RC/JS/js_string_record.h \
+    FW/RC/HTML/html_record.h \
+    FW/UI/PR/ui_html_record_properties.h
 
 
 SOURCES += \
@@ -80,7 +86,6 @@ SOURCES += \
     FW/document.cpp \
     FW/database.cpp \
     FW/context.cpp \
-    FW/script.cpp \
     FW/variant.cpp \
     FW/config.cpp \
     FW/events.cpp \
@@ -120,18 +125,24 @@ SOURCES += \
     FW/UI/ui_file_text_editor.cpp \
     FW/RC/script_record.cpp \
     FW/UI/ui_record_value_editor.cpp \
-    FW/UI/ui_bool_record_properties.cpp \
-    FW/UI/ui_record_properties.cpp \
-    FW/UI/ui_file_record_properties.cpp \
-    FW/UI/ui_integer_record_properties.cpp \
-    FW/UI/ui_real_record_properties.cpp \
-    FW/UI/ui_reference_record_properties.cpp \
-    FW/UI/ui_script_file_record_properties.cpp \
-    FW/UI/ui_script_record_properties.cpp \
-    FW/UI/ui_string_record_properties.cpp \
-    FW/UI/ui_struct_record_properties.cpp \
-    FW/html.cpp \
-    FW/RC/html_record.cpp
+    FW/htmlbuilder.cpp \
+    FW/UI/PR/ui_bool_record_properties.cpp \
+    FW/UI/PR/ui_file_record_properties.cpp \
+    FW/UI/PR/ui_integer_record_properties.cpp \
+    FW/UI/PR/ui_real_record_properties.cpp \
+    FW/UI/PR/ui_record_properties.cpp \
+    FW/UI/PR/ui_reference_record_properties.cpp \
+    FW/UI/PR/ui_script_file_record_properties.cpp \
+    FW/UI/PR/ui_script_record_properties.cpp \
+    FW/UI/PR/ui_string_record_properties.cpp \
+    FW/UI/PR/ui_struct_record_properties.cpp \
+    FW/RC/JS/js_bool_record.cpp \
+    FW/RC/JS/js_integer_record.cpp \
+    FW/RC/JS/js_real_record.cpp \
+    FW/RC/JS/js_reference_record.cpp \
+    FW/RC/JS/js_string_record.cpp \
+    FW/RC/HTML/html_record.cpp \
+    FW/UI/PR/ui_html_record_properties.cpp
 
 FORMS += \
     FW/UI/addrecord.ui \
@@ -140,16 +151,17 @@ FORMS += \
     FW/UI/fileexplorer.ui \
     FW/UI/recordexplorer.ui \
     FW/UI/texteditor.ui \
-    FW/UI/boolrecordproperties.ui \
-    FW/UI/filerecordproperties.ui \
-    FW/UI/recordproperties.ui \
-    FW/UI/realrecordproperties.ui \
-    FW/UI/integerrecordproperties.ui \
-    FW/UI/referencerecordproperties.ui \
-    FW/UI/scriptfilerecordproperties.ui \
-    FW/UI/scriptrecordproperties.ui \
-    FW/UI/stringrecordproperties.ui \
-    FW/UI/structrecordproperties.ui
+    FW/UI/PR/boolrecordproperties.ui \
+    FW/UI/PR/filerecordproperties.ui \
+    FW/UI/PR/integerrecordproperties.ui \
+    FW/UI/PR/realrecordproperties.ui \
+    FW/UI/PR/recordproperties.ui \
+    FW/UI/PR/referencerecordproperties.ui \
+    FW/UI/PR/scriptfilerecordproperties.ui \
+    FW/UI/PR/scriptrecordproperties.ui \
+    FW/UI/PR/stringrecordproperties.ui \
+    FW/UI/PR/structrecordproperties.ui \
+    FW/UI/PR/htmlrecordproperties.ui
 
 DISTFILES += \
     format_code.astylerc

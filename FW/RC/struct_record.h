@@ -17,18 +17,18 @@ public:
     C_StructRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_StructRecord() override;
 
-    QString             Class()  const override;
     C_RecordStruct*     Struct() override;
-    QString             Script() override;
+    QStringList         Script() override;
+    QStringList         Html() override;
 
     void                GetState( C_StateReader& state ) override;
-    void                SetState(C_StateWriter& state , C_RecordStruct* root = 0) override;
+    void                SetState( C_StateWriter& state , C_RecordStruct* root = 0 ) override;
     void                EditProperties( C_Document& document ) override;
 
-    QString             Value() override;
-    void                SetValue( QString ) override;
-
     M_POINTER           ( Records, C_RecordStruct )
+
+    QString             Value() override;
+    void                SetValue(QString) override;
 
 private:
 
@@ -42,10 +42,11 @@ public:
 
     SINGLETON_CLASS   ( C_StructRecordFactory )
 
-    C_Record*           CreateInstance(QString name, QString value, C_Variant* parent = 0 , C_RecordStruct* root = 0) override;
+    C_StructRecordFactory();
+
+    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0 , C_RecordStruct* root = 0 ) override;
     C_Record*           CreateInstance( C_StateWriter& table, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
 
-    QString             RecordClass() const override;
 };
 
 #endif // C_STRUCT_RECORD_H

@@ -28,20 +28,21 @@ public:
 
     void                          UpdateRecordExplorer();
     void                          UpdateFileExplorer();
-    void                          UpdateHtmlDocView();
+    void                          UpdateHtmlCodeView();
+    void                          UpdateWebView();
     void                          UpdateSceneView();
     void                          UpdateMenubar();
-    void                          UpdateWebView();
+
     void                          InitConnections();
-    void                          SetCurrentTab(int index);
-    void                          closeEvent(QCloseEvent *) override;
-    void                          SetTitle(QString title);
+    void                          closeEvent( QCloseEvent* ) override;
+    void                          SetTitle( QString title );
+    void                          SetCurrentTab( int index );
 
     M_POINTER                     ( Config,              C_Config )
     M_POINTER                     ( Document,            C_Document )
     M_POINTER                     ( RecordExplorer,      C_UiRecordExplorer )
-    M_POINTER                     ( TextEditorContainer, C_UiTextEditorContainer )
     M_POINTER                     ( FileExplorer,        C_UiFileExplorer )
+    M_POINTER                     ( TextEditorContainer, C_UiTextEditorContainer )
     M_VALUE                       ( BinPath,             QString )
 
 private:

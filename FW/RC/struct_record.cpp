@@ -3,19 +3,19 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/ui_struct_record_properties.h"
-
-#define CLASS_NAME "Struct"
+#include "FW/UI/PR/ui_struct_record_properties.h"
 
 C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
     C_Record( id, name, value, parent, root )
 {
+    m_Class = "Struct";
     m_Records = new C_RecordStruct( name, this );
 }
 
 C_StructRecord::C_StructRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
     C_Record( "", "", "", parent, root )
 {
+    m_Class = "Struct";
     m_Records = new C_RecordStruct( "", this );
     SetState( state, root );
 }
@@ -27,25 +27,32 @@ C_StructRecord::~C_StructRecord()
 
 QString C_StructRecord::Value()
 {
-    return QString::number( Records().Size() );
+    m_Value = QString::number( Records().Size() );
+    return m_Value;
 }
 
 void C_StructRecord::SetValue( QString )
 {
-    // void
+    qDebug() << "Setting Struct value is not allowed";
 }
 
-QString C_StructRecord::Class() const
-{
-    return CLASS_NAME;
-}
 
 C_RecordStruct* C_StructRecord::Struct()
 {
     return m_Records;
 }
 
-QString C_StructRecord::Script()
+QStringList C_StructRecord::Html()
+{
+    QStringList html;
+
+    for( C_Variant* variant : Records() )
+        html << static_cast<C_Record*>( variant )->Html() ;
+
+    return html;
+}
+
+QStringList C_StructRecord::Script()
 {
     QStringList script;
     script << ( "\n" + FullName() + " = {} ;" );
@@ -53,16 +60,16 @@ QString C_StructRecord::Script()
     for( C_Variant* variant : Records() )
         script << static_cast<C_Record*>( variant )->Script() ;
 
-    return script.join( "" );
+    return script;
 }
 
 void C_StructRecord::GetState( C_StateReader& state )
 {
     QStringList row;
-    row.append( Id() );
-    row.append( Name() );
-    row.append( Value() );
-    row.append( Class() );
+    row.append( m_Id );
+    row.append( m_Name );
+    row.append( Value() ); // VALUE NEEDS TO BE UPDATED , do not use m_Value
+    row.append( m_Class );
     state.Read( row );
 
     for( C_Variant* variant : Records() )
@@ -85,8 +92,10 @@ void C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
         m_Id    = row[0];
 
     m_Name  = row[1];
-    m_Value = row[2];
-    Records().SetName( Name() );
+    m_Value = row[2]; // GETTING PREVIOUS VALUE
+    m_Class = row[3];
+
+    Records().SetName( m_Name );
     long size = m_Value.toLong();
 
     for( long count = 0; count < size; ++count )
@@ -97,6 +106,11 @@ void C_StructRecord::EditProperties( C_Document& document )
 {
     QWidget* dialog = new C_UiStructRecordProperties( *this, document, &document.MainWindow() );
     dialog->show();
+}
+
+C_StructRecordFactory::C_StructRecordFactory()
+{
+    m_RecordClass = "Struct";
 }
 
 C_Record* C_StructRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root  )
@@ -111,7 +125,3 @@ C_Record* C_StructRecordFactory::CreateInstance( C_StateWriter& state, C_Variant
     return record;
 }
 
-QString C_StructRecordFactory::RecordClass() const
-{
-    return CLASS_NAME;
-}

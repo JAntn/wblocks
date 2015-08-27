@@ -48,9 +48,9 @@ void C_Events::InitConnections()
 
     connect(
         this,
-        C_Events::ClientScriptChanged,
+        C_Events::HtmlCodeChanged,
         this,
-        C_Events::OnClientScriptChanged );
+        C_Events::OnHtmlCodeChanged );
 
     connect(
         this,
@@ -89,13 +89,14 @@ void C_Events::OnFileExplorerChanged()
 void C_Events::OnRecordsChanged()
 {
     MainWindow().UpdateRecordExplorer();
-    Document().UpdateHtmlDoc();
-    Document().UpdateScene();
+    MainWindow().UpdateSceneView();
+
+    Document().UpdateHtml();
 }
 
-void C_Events::OnClientScriptChanged()
+void C_Events::OnHtmlCodeChanged()
 {
-    MainWindow().UpdateHtmlDocView();
+    MainWindow().UpdateHtmlCodeView();
 }
 
 void C_Events::OnTextEditorContainerChanged()
@@ -126,7 +127,6 @@ void C_Events::OnActionLoadProjectFile()
 
     QFile file( file_name );
     Document().LoadFile( file );
-
 }
 
 void C_Events::OnActionSaveProjectFile()
@@ -147,6 +147,8 @@ void C_Events::OnActionSaveProjectFile()
 
     QFile file( file_name );
     Document().SaveFile( file );
+
+    MainWindow().UpdateFileExplorer();
 }
 
 void C_Events::OnActionLoadProjectSQL()
@@ -185,16 +187,18 @@ void C_Events::OnActionSaveProjectSQL()
     }
 
     Document().SaveSQL( file_name );
+
+    MainWindow().UpdateFileExplorer();
 }
 
-void C_Events::OnActionSaveClientScript()
+void C_Events::OnActionSaveHtmlCode()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
             &Document().MainWindow(),
-            tr( "Save Java Script File" ),
-            tr( "untitled.js" ),
-            tr( "JS Files (*.js)" )
+            tr( "Save Html File" ),
+            tr( "untitled.html" ),
+            tr( "Html Files (*.html)" )
         );
 
     if( file_name.isEmpty() )
@@ -203,12 +207,14 @@ void C_Events::OnActionSaveClientScript()
         return;
     }
 
-    Document().Script().Parse( Document().Root() );
-    emit Document().Events().ClientScriptChanged();
+    Document().UpdateHtml();
+
     C_Document::SaveTextFile(
         file_name,
-        Document().Script().StringList().join( "" )
+        Document().Html()
     );
+
+    MainWindow().UpdateFileExplorer();
 }
 
 void C_Events::OnActionEditRecordProperties()
@@ -275,7 +281,7 @@ void C_Events::OnActionRemoveRecord()
 
         if( selection_list.size() == 1 )
         {
-            if( !C_Document::AcceptMessage( tr( "Do you want to remove this record?" ) ) )
+            if( !C_Document::AcceptMessage( tr( "Remove Record?" ) ) )
                 return;
         }
         else
@@ -390,8 +396,8 @@ void C_Events::OnActionAddSceneItem()
             .CreateItem( *record );
         }
 
-        emit Document().Events().SceneChanged();
         MainWindow().SetCurrentTab( MAINWINDOW_TAB_SCENE );
+        emit Document().Events().SceneChanged();
     }
     else
     {
@@ -622,19 +628,29 @@ void C_Events::OnActionNewFile()
     if( file_name.isEmpty() )
         return;
 
+    if( QFileInfo( file_name ).exists() )
+    {
+        if( !C_Document::AcceptMessage( tr("File already exists. Overwrite?") ) )
+            return;
+    }
+
     C_Document::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
 
     QString editor_id = "FILE:TEXT:" + file_name;
 
     MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
-    emit TextEditorContainerChanged();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+    emit FileExplorerChanged();
+    emit TextEditorContainerChanged();
 }
 
 void C_Events::OnActionCloseFile()
 {
     if( C_Document::AcceptMessage( tr( "Save changes?" ) ) )
+    {
         MainWindow().TextEditorContainer().SaveStateCurrent();
+        emit FileExplorerChanged();
+    }
 
     MainWindow().TextEditorContainer().CloseCurrent();
     emit TextEditorContainerChanged();
@@ -643,9 +659,13 @@ void C_Events::OnActionCloseFile()
 void C_Events::OnActionCloseAllFiles()
 {
     if( C_Document::AcceptMessage( tr( "Save changes?" ) ) )
+    {
         MainWindow().TextEditorContainer().SaveStateAll();
+        emit FileExplorerChanged();
+    }
 
     MainWindow().TextEditorContainer().CloseAll();
+
     emit TextEditorContainerChanged();
 }
 
@@ -691,8 +711,9 @@ void C_Events::OnActionLoadFile()
     }
 
     MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
-    emit TextEditorContainerChanged();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+
+    emit TextEditorContainerChanged();
 }
 
 void C_Events::OnActionExit()
@@ -700,15 +721,19 @@ void C_Events::OnActionExit()
     MainWindow().close();
 }
 
-void C_Events::OnActionRunClientScript()
+void C_Events::OnActionRunHtmlCode()
 {
+    Document().UpdateHtml();
+
     MainWindow().UpdateWebView();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_OUTPUT );
 }
 
-void C_Events::OnActionUpdateClientScript()
+void C_Events::OnActionUpdateHtmlCode()
 {
-    MainWindow().UpdateHtmlDocView();
+    Document().UpdateHtml();
+
+    MainWindow().UpdateHtmlCodeView();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_CLIENT );
 }
 

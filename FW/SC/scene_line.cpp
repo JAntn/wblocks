@@ -2,16 +2,17 @@
 #include "FW/SC/scene.h"
 #include <QGraphicsItem>
 
-C_SceneLine::C_SceneLine( C_SceneItem& from, C_SceneItem& target )
+C_SceneLine::C_SceneLine( C_SceneItem& from, C_SceneItem& target , Qt::GlobalColor color )
     : QGraphicsLineItem( &from )
 {
     SetFrom( from );
     SetTarget( target );
+    SetColor( color );
 }
 
 C_SceneLine::~C_SceneLine()
 {
-    From().Scene().m_Lines.removeOne( this );
+    From().Scene().Lines().removeOne( this );
 }
 
 void C_SceneLine::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
@@ -37,7 +38,7 @@ void C_SceneLine::paint( QPainter* painter, const QStyleOptionGraphicsItem* opti
             setLine( 100, From().boundingRect().height(), x2 - x1 + 100, y2 - y1 );
     }
 
-    setPen( QPen( Qt::green, 1 ) );
+    setPen( QPen( Color(), 1 ) );
     this->QGraphicsLineItem::paint( painter, option, widget );
 }
 
