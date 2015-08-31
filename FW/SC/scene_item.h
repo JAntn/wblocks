@@ -1,22 +1,22 @@
-#ifndef C_SCENE_ITEM_H
-#define C_SCENE_ITEM_H
+#ifndef TypeSCENE_ITEM_H
+#define TypeSCENE_ITEM_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
 #include <QGraphicsItem>
 
-class C_Record;
-class C_Scene;
-class C_StateReader;
-class C_StateWriter;
+class TypeRecord;
+class TypeScene;
+class TypeStateReader;
+class TypeStateWriter;
 
-class C_SceneItem : public C_Variant, public QGraphicsItem
+class TypeSceneItem : public TypeVariant, public QGraphicsItem
 {
 public:
 
-    C_SceneItem(C_Scene& scene, C_StateWriter &state);
-    C_SceneItem(C_Scene& scene, C_Record& record, qreal x_val, qreal y_val, qreal z_val = -1);
-    ~C_SceneItem() override;
+    TypeSceneItem(TypeScene& scene, TypeStateWriter &state);
+    TypeSceneItem(TypeScene& scene, TypeRecord& record, qreal x_val, qreal y_val, qreal z_val = -1);
+    ~TypeSceneItem() override;
 
     QRectF              boundingRect() const override;
     void                paint(QPainter* painter,
@@ -27,18 +27,18 @@ public:
     void                mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
     QString             HeaderText() const;
-    virtual bool        GetState(C_StateReader& state);
-    virtual bool        SetState(C_StateWriter& state);
+    virtual bool        GetState(TypeStateReader& state);
+    virtual bool        SetState(TypeStateWriter& state);
 
-    M_POINTER           (Record,    C_Record)
-    M_POINTER           (Scene,     C_Scene)
+    M_POINTER           (Record,    TypeRecord)
+    M_POINTER           (Scene,     TypeScene)
     M_CONST_VALUE       (Id,        QString)
 
 private:
 
-    friend class        C_Scene;
+    friend class        TypeScene;
 };
 
-#endif // C_SCENE_ITEM_H
+#endif // TypeSCENE_ITEM_H
 
 

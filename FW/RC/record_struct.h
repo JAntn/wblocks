@@ -1,36 +1,36 @@
-#ifndef C_RECORD_STRUCT_H
-#define C_RECORD_STRUCT_H
+#ifndef TypeRECORD_STRUCT_H
+#define TypeRECORD_STRUCT_H
 
 #include "FW/variant.h"
 #include "FW/macro.h"
 
-class C_Record;
-class C_RecordFactory;
-class C_StateReader;
-class C_StateWriter;
+class TypeRecord;
+class TypeRecordFactory;
+class TypeStateReader;
+class TypeStateWriter;
 
-class C_RecordStruct : public C_VariantStruct
+class TypeRecordStruct : public TypeVariantStruct
 {
 public:
 
-    explicit C_RecordStruct( QString name, C_Variant* parent = 0 );
-    ~C_RecordStruct() override;
+    explicit TypeRecordStruct( QString name, TypeVariant* parent = 0 );
+    ~TypeRecordStruct() override;
 
-    C_Record*                          CreateRecord( C_StateWriter& state, int position = -1, C_RecordStruct* root = 0 );
-    C_Record*                          CreateRecord( QString name, QString value, QString class_name, int position = -1, C_RecordStruct* root = 0 );
-    C_Record*                          CreateRecord( C_StateWriter& state, iterator position, C_RecordStruct* root = 0 );
-    C_Record*                          CreateRecord( QString name, QString value, QString class_name, iterator position, C_RecordStruct* root = 0 );
+    TypeRecord*                          CreateRecord( TypeStateWriter& state, int position = -1, TypeRecordStruct* root = 0 );
+    TypeRecord*                          CreateRecord( QString name, QString value, QString class_name, int position = -1, TypeRecordStruct* root = 0 );
+    TypeRecord*                          CreateRecord( TypeStateWriter& state, iterator position, TypeRecordStruct* root = 0 );
+    TypeRecord*                          CreateRecord( QString name, QString value, QString class_name, iterator position, TypeRecordStruct* root = 0 );
 
-    C_Record*                          FromIndex( int row ) const;
-    C_Record*                          FromName( QString name , bool deep = false ) const;
-    C_Record*                          FromId( QString record_id, bool deep = false ) const;
+    TypeRecord*                          FromIndex( int row ) const;
+    TypeRecord*                          FromName( QString name , bool deep = false ) const;
+    TypeRecord*                          FromId( QString record_id, bool deep = false ) const;
 
-    int                                GetIndex( C_Record* record ) const;
-    C_Record*                          FromFullName( QString name ) const;
+    int                                GetIndex( TypeRecord* record ) const;
+    TypeRecord*                          FromFullName( QString name ) const;
     QString                            FullName();
 
-    static C_RecordFactory*                   FactoryFromName( QString class_name );
-    static const QList<C_RecordFactory*>&     FactoryList() ;
+    static TypeRecordFactory*                   FactoryFromName( QString class_name );
+    static const QList<TypeRecordFactory*>&     FactoryList() ;
     static void                               InitFactoryList();
 
     M_VALUE                            ( Name, QString )
@@ -38,8 +38,8 @@ public:
 
 private:
 
-    static QList<C_RecordFactory*>             m_FactoryList;
+    static QList<TypeRecordFactory*>             m_FactoryList;
 };
 
 
-#endif // C_RECORD_STRUCT_H
+#endif // TypeRECORD_STRUCT_H

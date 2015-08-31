@@ -1,22 +1,22 @@
-#ifndef C_FILE_RECORD_H
-#define C_FILE_RECORD_H
+#ifndef TypeFILE_RECORD_H
+#define TypeFILE_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
 
-class C_StateReader;
-class C_StateWriter;
+class TypeStateReader;
+class TypeStateWriter;
 
-class C_FileRecord : public C_Record
+class TypeFileRecord : public TypeRecord
 {
 
 public:
 
-    explicit C_FileRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_FileRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_FileRecord() override;
+    explicit TypeFileRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeFileRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeFileRecord() override;
 
-    QWidget*            PropertyWidget( C_Controller& controller ) override;
+    QWidget*            PropertyWidget( TypeController& controller ) override;
 
     QString             FilePath();
     QString             FileName();
@@ -24,19 +24,19 @@ public:
 
 private:
 
-    friend class        C_FileRecordFactory;
+    friend class        TypeFileRecordFactory;
 };
 
-class C_FileRecordFactory : public C_RecordFactory
+class TypeFileRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS     ( C_FileRecordFactory )
+    SINGLETON_CLASS     ( TypeFileRecordFactory )
 
-    C_FileRecordFactory();
+    TypeFileRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance(C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance(TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_FILE_RECORD_H
+#endif // TypeFILE_RECORD_H

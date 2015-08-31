@@ -1,7 +1,7 @@
 #include "FW/ST/state_writer_table.h"
 
-C_StateWriterTable::C_StateWriterTable( QList<QStringList>& table, long flags, C_Variant* parent )
-    : C_StateWriter( flags, parent )
+TypeStateWriterTable::TypeStateWriterTable( QList<QStringList>& table, long flags, TypeVariant* parent )
+    : TypeStateWriter( flags, parent )
 {
     m_Table = &table;
     m_Iter = table.begin();
@@ -15,7 +15,7 @@ C_StateWriterTable::C_StateWriterTable( QList<QStringList>& table, long flags, C
     m_Data = *m_Iter;
 }
 
-void C_StateWriterTable::Next()
+void TypeStateWriterTable::Next()
 {
     if( AtEnd() )
         return;

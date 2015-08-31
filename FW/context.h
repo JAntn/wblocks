@@ -1,23 +1,23 @@
-#ifndef C_CONTEXT_H
-#define C_CONTEXT_H
+#ifndef TypeCONTEXT_H
+#define TypeCONTEXT_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
 
-class C_RecordStruct;
-class C_Scene;
+class TypeRecordStruct;
+class TypeScene;
 
-class C_Context : public C_Variant
+class TypeContext : public TypeVariant
 {
 public:
 
-    C_Context( C_RecordStruct& records, C_Scene& scene, C_RecordStruct* root = 0, C_Variant* parent = 0 );
-    ~C_Context() override;
+    TypeContext( TypeRecordStruct& records, TypeScene& scene, TypeRecordStruct* root = 0, TypeVariant* parent = 0 );
+    ~TypeContext() override;
 
-    M_POINTER           ( Records, C_RecordStruct )
-    M_POINTER           ( Scene,   C_Scene )
-    M_POINTER           ( Root,    C_RecordStruct )
+    M_POINTER           ( Records, TypeRecordStruct )
+    M_POINTER           ( Scene,   TypeScene )
+    M_POINTER           ( Root,    TypeRecordStruct )
 
 };
 
-#endif // C_CONTEXT_H
+#endif // TypeCONTEXT_H

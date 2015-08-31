@@ -1,9 +1,9 @@
 #include "FW/UI/PR/ui_string_property.h"
 #include "ui_stringproperty.h"
 
-C_UiStringProperty::C_UiStringProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
-    C_UiProperty( on_changed, parent ),
-    ui( new Ui::C_UiStringProperty )
+TypeUiStringProperty::TypeUiStringProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+    TypeUiProperty( on_changed, parent ),
+    ui( new Ui::TypeUiStringProperty )
 {
     ui->setupUi( this );
     ui->Label->setText( tag_name );
@@ -13,28 +13,28 @@ C_UiStringProperty::C_UiStringProperty( QString tag_name, QString value, on_chan
         ui->ApplyButton,
         QPushButton::clicked,
         this,
-        C_UiStringProperty::OnApplyButtonClicked
+        TypeUiStringProperty::OnApplyButtonClicked
     );
 
 }
 
-C_UiStringProperty::~C_UiStringProperty()
+TypeUiStringProperty::~TypeUiStringProperty()
 {
     delete ui;
 }
 
-void C_UiStringProperty::SetValue( QString value )
+void TypeUiStringProperty::SetValue( QString value )
 {
     ui->PlainTextEdit->setPlainText( value );
 }
 
-QString C_UiStringProperty::Value()
+QString TypeUiStringProperty::Value()
 {
     return ui->PlainTextEdit->toPlainText();
 }
 
 
-void C_UiStringProperty::OnApplyButtonClicked()
+void TypeUiStringProperty::OnApplyButtonClicked()
 {
     OnApplyChanges();
 }

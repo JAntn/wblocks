@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>C_UiFileExplorer</class>
- <widget class="QWidget" name="C_UiFileExplorer">
+ <class>TypeUiFileExplorer</class>
+ <widget class="QWidget" name="TypeUiFileExplorer">
   <property name="geometry">
    <rect>
     <x>0</x>

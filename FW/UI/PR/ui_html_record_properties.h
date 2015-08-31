@@ -1,30 +1,30 @@
-#ifndef C_UIHTMLRECORDPROPERTIES_H
-#define C_UIHTMLRECORDPROPERTIES_H
+#ifndef TypeUIHTMLRECORDPROPERTIES_H
+#define TypeUIHTMLRECORDPROPERTIES_H
 
 #include "FW/macro.h"
 #include <QDialog>
 #include "FW/UI/PR/ui_property.h"
 
-class C_Record;
-class C_HtmlRecord;
-class C_Document;
+class TypeRecord;
+class TypeHtmlRecord;
+class TypeDocument;
 
 namespace Ui
 {
-class C_UiHtmlRecordProperties;
+class TypeUiHtmlRecordProperties;
 }
 
-class C_UiHtmlRecordProperties : public QDialog
+class TypeUiHtmlRecordProperties : public QDialog
 {
     Q_OBJECT
 
 public:
 
-    C_UiHtmlRecordProperties( C_HtmlRecord& record, C_Document& document, QWidget* parent = 0 );
-    ~C_UiHtmlRecordProperties() override;
+    TypeUiHtmlRecordProperties( TypeHtmlRecord& record, TypeDocument& document, QWidget* parent = 0 );
+    ~TypeUiHtmlRecordProperties() override;
 
-    M_POINTER                    ( Record,   C_HtmlRecord )
-    M_POINTER                    ( Document, C_Document )
+    M_POINTER                    ( Record,   TypeHtmlRecord )
+    M_POINTER                    ( Document, TypeDocument )
 
 private slots:
 
@@ -33,7 +33,7 @@ private slots:
 
 private:
 
-    Ui::C_UiHtmlRecordProperties*         ui;
+    Ui::TypeUiHtmlRecordProperties*         ui;
 };
 
-#endif // C_UIHTMLRECORDPROPERTIES_H
+#endif // TypeUIHTMLRECORDPROPERTIES_H

@@ -1,17 +1,17 @@
-#ifndef C_STATEWRITERSTREAM_H
-#define C_STATEWRITERSTREAM_H
+#ifndef TypeSTATEWRITERSTREAM_H
+#define TypeSTATEWRITERSTREAM_H
 
 #include "FW/ST/state_writer.h"
 
-class C_StateWriterStream : public C_StateWriter
+class TypeStateWriterStream : public TypeStateWriter
 {
 public:
 
-    C_StateWriterStream( QDataStream& data_stream, long flags = 0, C_Variant* parent = 0 );
+    TypeStateWriterStream( QDataStream& data_stream, long flags = 0, TypeVariant* parent = 0 );
     void                Next() override;
 
     M_CONST_POINTER     ( DataStream, QDataStream )
 
 };
 
-#endif // C_STATEWRITERSTREAM_H
+#endif // TypeSTATEWRITERSTREAM_H

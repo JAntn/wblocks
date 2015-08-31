@@ -4,41 +4,41 @@
 #include "FW/ST/state_writer.h"
 
 
-C_JsRealRecord::C_JsRealRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
-    C_RealRecord( id, name, value, parent, root )
+TypeJsRealRecord::TypeJsRealRecord( QString id, QString name, QString value, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRealRecord( id, name, value, parent, root )
 {
     m_Class = "JsReal" ;
 }
 
-C_JsRealRecord::C_JsRealRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_RealRecord( state, parent, root )
+TypeJsRealRecord::TypeJsRealRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRealRecord( state, parent, root )
 {
     m_Class = "JsReal" ;
 }
 
-C_JsRealRecord::~C_JsRealRecord()
+TypeJsRealRecord::~TypeJsRealRecord()
 {
     //void
 }
 
-QStringList C_JsRealRecord::Script()
+QStringList TypeJsRealRecord::Script()
 {
     return  QStringList( "\n" + FullName() + " = " + Value() + ";" );
 }
 
-C_JsRealRecordFactory::C_JsRealRecordFactory()
+TypeJsRealRecordFactory::TypeJsRealRecordFactory()
 {
     m_RecordClass = "JsReal";
 }
 
-C_Record* C_JsRealRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeJsRealRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_JsRealRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeJsRealRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_JsRealRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeJsRealRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_JsRealRecord( state, parent, root );
+    return new TypeJsRealRecord( state, parent, root );
 }
 
 

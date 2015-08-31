@@ -7,18 +7,18 @@
 #include <QMessageBox>
 #include <QStringListModel>
 
-C_UiAddRecord::C_UiAddRecord( C_Controller& controller, C_Context& context, int index, QWidget* parent ) :
+TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& context, int index, QWidget* parent ) :
     QDialog( parent ),
     m_Context( &context ),
     m_Controller( &controller ),
-    ui( new Ui::C_UiAddRecord )
+    ui( new Ui::TypeUiAddRecord )
 {
     ui->setupUi( this );
 
     QStringListModel* model = new QStringListModel( this );
     QStringList class_list;
 
-    for( C_RecordFactory* record_factory : C_RecordStruct::FactoryList() )
+    for( TypeRecordFactory* record_factory : TypeRecordStruct::FactoryList() )
         class_list << record_factory->RecordClass();
 
     model->setStringList( class_list );
@@ -33,44 +33,44 @@ C_UiAddRecord::C_UiAddRecord( C_Controller& controller, C_Context& context, int 
         ui->ButtonBox,
         QDialogButtonBox::accepted,
         this,
-        C_UiAddRecord::OnButtonBoxAccepted );
+        TypeUiAddRecord::OnButtonBoxAccepted );
 
     connect(
         ui->ButtonBox,
         QDialogButtonBox::rejected,
         this,
-        C_UiAddRecord::OnButtonBoxRejected );
+        TypeUiAddRecord::OnButtonBoxRejected );
 }
 
-C_UiAddRecord::~C_UiAddRecord()
+TypeUiAddRecord::~TypeUiAddRecord()
 {
     delete ui;
 }
 
-bool C_UiAddRecord::CheckFormData() const
+bool TypeUiAddRecord::CheckFormData() const
 {
     int index = ui->SpinBox->value();
 
     if ( ( index > Context().Records().Size() ) || ( index < 0 ) )
     {
-        C_Controller::Message( tr( "Position out of bounds" ) );
+        TypeController::Message( tr( "Position out of bounds" ) );
         return false;
     }
 
     if( !QRegExp( "[A-Za-z][\\w.]+" ).exactMatch( ui->LineEdit->text() ) )
     {
-        C_Controller::Message( tr( "Bad record name" ) );
+        TypeController::Message( tr( "Bad record name" ) );
         return false;
     }
 
     return true;
 }
 
-void C_UiAddRecord::OnButtonBoxAccepted()
+void TypeUiAddRecord::OnButtonBoxAccepted()
 {
     if( CheckFormData() )
     {
-        auto iter = C_RecordStruct::FactoryList().begin();
+        auto iter = TypeRecordStruct::FactoryList().begin();
         int count = 0;
 
         while( count < ui->ListView->currentIndex().row() )
@@ -83,7 +83,7 @@ void C_UiAddRecord::OnButtonBoxAccepted()
         QString name = ui->LineEdit->text();
         int index = ui->SpinBox->value();
 
-        C_Record* record = Context().Records().CreateRecord(
+        TypeRecord* record = Context().Records().CreateRecord(
                                name, "", class_name, index, &Context().Root() );
 
         if( ui->CheckBox->isChecked() )
@@ -96,7 +96,7 @@ void C_UiAddRecord::OnButtonBoxAccepted()
 }
 
 
-void C_UiAddRecord::OnButtonBoxRejected()
+void TypeUiAddRecord::OnButtonBoxRejected()
 {
     close();
 }

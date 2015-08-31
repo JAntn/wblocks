@@ -1,38 +1,38 @@
-#ifndef C_JS_REFERENCE_RECORD_H
-#define C_JS_REFERENCE_RECORD_H
+#ifndef TypeJS_REFERENCE_RECORD_H
+#define TypeJS_REFERENCE_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/reference_record.h"
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_JsReferenceRecord : public C_ReferenceRecord
+class TypeJsReferenceRecord : public TypeReferenceRecord
 {
 
 public:
 
-    explicit C_JsReferenceRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_JsReferenceRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_JsReferenceRecord() override;
+    explicit TypeJsReferenceRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeJsReferenceRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeJsReferenceRecord() override;
 
     QStringList         Script() override;
 
 private:
 
-    friend class        C_JsReferenceRecordFactory;
+    friend class        TypeJsReferenceRecordFactory;
 };
 
-class C_JsReferenceRecordFactory : public C_RecordFactory
+class TypeJsReferenceRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS( C_JsReferenceRecordFactory )
+    SINGLETON_CLASS( TypeJsReferenceRecordFactory )
 
-    C_JsReferenceRecordFactory();
+    TypeJsReferenceRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_JS_REFERENCE_RECORD_H
+#endif // TypeJS_REFERENCE_RECORD_H

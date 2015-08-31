@@ -1,37 +1,37 @@
-#ifndef C_JS_BOOL_RECORD_H
-#define C_JS_BOOL_RECORD_H
+#ifndef TypeJS_BOOL_RECORD_H
+#define TypeJS_BOOL_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/bool_record.h"
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_JsBoolRecord : public C_BoolRecord
+class TypeJsBoolRecord : public TypeBoolRecord
 {
 public:
 
-    explicit C_JsBoolRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_JsBoolRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_JsBoolRecord() override;
+    explicit TypeJsBoolRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeJsBoolRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeJsBoolRecord() override;
 
     QStringList         Script()    override;
 
 private:
 
-    friend class        C_JsBoolRecordFactory;
+    friend class        TypeJsBoolRecordFactory;
 };
 
-class C_JsBoolRecordFactory : public C_RecordFactory
+class TypeJsBoolRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS     ( C_JsBoolRecordFactory )
+    SINGLETON_CLASS     ( TypeJsBoolRecordFactory )
 
-    C_JsBoolRecordFactory();
+    TypeJsBoolRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance(C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance(TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_JS_BOOL_RECORD_H
+#endif // TypeJS_BOOL_RECORD_H

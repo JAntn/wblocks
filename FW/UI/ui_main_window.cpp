@@ -17,10 +17,10 @@
 #include <QGraphicsView>
 #include <QtWebKitWidgets>
 
-C_UiMainWindow::C_UiMainWindow( C_Controller& controller, QWidget* parent ):
+TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent ):
     QMainWindow( parent ),
     m_Controller( &controller ),
-    ui( new Ui::C_UiMainWindow )
+    ui( new Ui::TypeUiMainWindow )
 {
     controller.SetMainWindow( *this );
 
@@ -33,9 +33,9 @@ C_UiMainWindow::C_UiMainWindow( C_Controller& controller, QWidget* parent ):
 
     ui->setupUi( this );
 
-    m_RecordExplorer = new C_UiRecordExplorer( controller.Document().Context(), Controller(), this );
-    m_FileExplorer = new C_UiFileExplorer( controller, this );
-    m_TextEditorContainer = new C_UiEditorContainer( controller, this );
+    m_RecordExplorer = new TypeUiRecordExplorer( controller.Document().Context(), Controller(), this );
+    m_FileExplorer = new TypeUiFileExplorer( controller, this );
+    m_TextEditorContainer = new TypeUiEditorContainer( controller, this );
 
     ui->RecordExplorerLayout->addWidget( m_RecordExplorer );
     ui->EditorLayout->addWidget( m_TextEditorContainer );
@@ -52,7 +52,7 @@ C_UiMainWindow::C_UiMainWindow( C_Controller& controller, QWidget* parent ):
     SetCurrentTab( MAINWINDOW_TAB_SCENE );
 }
 
-C_UiMainWindow::~C_UiMainWindow()
+TypeUiMainWindow::~TypeUiMainWindow()
 {
     Controller().Config().SetProjectFileName( Controller().Document().FileName() );
     Controller().Config().SetProjectPath( Controller().Document().Path() );
@@ -60,7 +60,7 @@ C_UiMainWindow::~C_UiMainWindow()
     delete ui;
 }
 
-void C_UiMainWindow::InitConnections()
+void TypeUiMainWindow::InitConnections()
 {
     Controller().ConnectSlots();
 
@@ -68,144 +68,144 @@ void C_UiMainWindow::InitConnections()
         ui->ActionExit,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionExit );
+        TypeController::OnActionExit );
 
     connect(
         ui->ActionFileLoad,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionLoadProjectFile );
+        TypeController::OnActionLoadProjectFile );
 
     connect(
         ui->ActionFileSave,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionSaveProjectFile );
+        TypeController::OnActionSaveProjectFile );
 
     connect(
         ui->ActionSQLLoad,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionLoadProjectSQL );
+        TypeController::OnActionLoadProjectSQL );
 
     connect(
         ui->ActionSQLSave,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionSaveProjectSQL );
+        TypeController::OnActionSaveProjectSQL );
 
     connect(
         ui->ActionSaveClientScript,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionSaveHtmlCode );
+        TypeController::OnActionSaveHtmlCode );
 
     connect(
         ui->ActionUpdateClientScript,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionUpdateHtmlCode );
+        TypeController::OnActionUpdateHtmlCode );
 
     connect(
         ui->ActionRunClientScript,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionRunHtmlCode );
+        TypeController::OnActionRunHtmlCode );
 
     connect(
         ui->ActionAdd,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionAddRecord );
+        TypeController::OnActionAddRecord );
 
     connect(
         ui->ActionAdd_to_scene,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionAddSceneItem );
+        TypeController::OnActionAddSceneItem );
 
     connect(
         ui->ActionProperties,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionChangePropertyWidget );
+        TypeController::OnActionChangePropertyWidget );
 
     connect(
         ui->ActionOpen_In_Editor,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionOpenRecordInEditor );
+        TypeController::OnActionOpenRecordInEditor );
 
     connect(
         ui->ActionRemove,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionRemoveRecord );
+        TypeController::OnActionRemoveRecord );
 
     connect(
         ui->ActionCopy,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionCopyRecord );
+        TypeController::OnActionCopyRecord );
 
     connect(
         ui->ActionCut,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionCutRecord );
+        TypeController::OnActionCutRecord );
 
     connect(
         ui->ActionPaste,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionPasteRecord );
+        TypeController::OnActionPasteRecord );
 
     connect(
         ui->ActionNew,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionNewProjectFile );
+        TypeController::OnActionNewProjectFile );
 
     connect(
         ui->ActionNewEditorFile,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionNewFile );
+        TypeController::OnActionNewFile );
 
     connect(
         ui->ActionCloseEditorFile,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionCloseFile );
+        TypeController::OnActionCloseFile );
 
     connect(
         ui->ActionCloseAllEditorFiles,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionCloseAllFiles );
+        TypeController::OnActionCloseAllFiles );
 
     connect(
         ui->ActionSaveEditorFile,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionSaveFile );
+        TypeController::OnActionSaveFile );
 
     connect(
         ui->ActionSaveAllEditorFiles,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionSaveAllFiles );
+        TypeController::OnActionSaveAllFiles );
 
     connect(
         ui->ActionLoadEditorFile,
         QAction::triggered,
         &Controller(),
-        C_Controller::OnActionLoadFile );
+        TypeController::OnActionLoadFile );
 }
 
-void C_UiMainWindow::closeEvent( QCloseEvent* )
+void TypeUiMainWindow::closeEvent( QCloseEvent* )
 {
-    if( C_Controller::AcceptMessage( "Save project changes?" ) )
+    if( TypeController::AcceptMessage( "Save project changes?" ) )
     {
         QString file_name = Controller().Document().FileName();
 
@@ -234,7 +234,7 @@ void C_UiMainWindow::closeEvent( QCloseEvent* )
     }
 }
 
-void C_UiMainWindow::SetTitle( QString title )
+void TypeUiMainWindow::SetTitle( QString title )
 {
     if( !title.isEmpty() )
         title.prepend( " - " );
@@ -242,12 +242,12 @@ void C_UiMainWindow::SetTitle( QString title )
     setWindowTitle( "JSBlocks" + title );
 }
 
-void C_UiMainWindow::SetCurrentTab( int index )
+void TypeUiMainWindow::SetCurrentTab( int index )
 {
     ui->TabWidget->setCurrentIndex( index );
 }
 
-void C_UiMainWindow::SetPropertyWidget( QWidget* widget )
+void TypeUiMainWindow::SetPropertyWidget( QWidget* widget )
 {
     if( m_PropertiesWidget != 0 )
         delete m_PropertiesWidget;
@@ -257,36 +257,36 @@ void C_UiMainWindow::SetPropertyWidget( QWidget* widget )
     ui->PropertiesLayout->addWidget( widget );
 }
 
-void C_UiMainWindow::OpenEditorWidget( C_UiEditor* widget )
+void TypeUiMainWindow::OpenEditorWidget( TypeUiEditor* widget )
 {
     TextEditorContainer().Append( widget );
     SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
-void C_UiMainWindow::UpdateRecordExplorer()
+void TypeUiMainWindow::UpdateRecordExplorer()
 {
     if( m_RecordExplorer != 0 )
         m_RecordExplorer->Update();
 }
 
-void C_UiMainWindow::UpdateFileExplorer()
+void TypeUiMainWindow::UpdateFileExplorer()
 {
     if( m_FileExplorer != 0 )
         m_FileExplorer->Update();
 }
 
-void C_UiMainWindow::UpdateHtmlCodeView()
+void TypeUiMainWindow::UpdateHtmlCodeView()
 {
     ui->TextEdit->setPlainText( Controller().Document().Html() );
     ui->TextEdit->update();
 }
 
-void C_UiMainWindow::UpdateSceneView()
+void TypeUiMainWindow::UpdateSceneView()
 {
     Controller().Document().Scene().UpdateLines();
 }
 
-void C_UiMainWindow::UpdateMenubar()
+void TypeUiMainWindow::UpdateMenubar()
 {
     // Update Record menu
     {
@@ -360,7 +360,7 @@ void C_UiMainWindow::UpdateMenubar()
     }
 }
 
-void C_UiMainWindow::UpdateWebView()
+void TypeUiMainWindow::UpdateWebView()
 {
     Controller().Document().UpdateHtml();
 

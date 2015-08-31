@@ -1,29 +1,29 @@
-#ifndef C_VARIANTSTRUCT_H
-#define C_VARIANTSTRUCT_H
+#ifndef TypeVARIANTSTRUCT_H
+#define TypeVARIANTSTRUCT_H
 
 #include "FW/variant.h"
 #include "FW/macro.h"
 
-class C_VariantStruct : public C_Variant
+class TypeVariantStruct : public TypeVariant
 {
 public:
 
-    typedef QList<C_Variant*>::const_iterator const_iterator;
-    typedef QList<C_Variant*>::iterator iterator;
+    typedef QList<TypeVariant*>::const_iterator const_iterator;
+    typedef QList<TypeVariant*>::iterator iterator;
 
-     C_VariantStruct(C_Variant* parent=0);
-    ~C_VariantStruct() override;
+     TypeVariantStruct(TypeVariant* parent=0);
+    ~TypeVariantStruct() override;
 
-    void                                Append(C_Variant& variant);
-    void                                Insert(int position, C_Variant& variant);
-    void                                Insert(iterator position, C_Variant& variant);
+    void                                Append(TypeVariant& variant);
+    void                                Insert(int position, TypeVariant& variant);
+    void                                Insert(iterator position, TypeVariant& variant);
     int                                 Size() const;
     void                                Clear();
 
-    QList<C_Variant*>::iterator         begin();
-    QList<C_Variant*>::iterator         end();
-    QList<C_Variant*>::const_iterator   begin() const;
-    QList<C_Variant*>::const_iterator   end() const;
+    QList<TypeVariant*>::iterator         begin();
+    QList<TypeVariant*>::iterator         end();
+    QList<TypeVariant*>::const_iterator   begin() const;
+    QList<TypeVariant*>::const_iterator   end() const;
 };
 
-#endif // C_VARIANTSTRUCT_H
+#endif // TypeVARIANTSTRUCT_H

@@ -1,37 +1,37 @@
-#ifndef C_BOOL_RECORD_H
-#define C_BOOL_RECORD_H
+#ifndef TypeBOOL_RECORD_H
+#define TypeBOOL_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_BoolRecord : public C_Record
+class TypeBoolRecord : public TypeRecord
 {
 public:
 
-    explicit C_BoolRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_BoolRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_BoolRecord() override;
+    explicit TypeBoolRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeBoolRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeBoolRecord() override;
 
-    QWidget*            PropertyWidget(C_Controller& controller ) override;
+    QWidget*            PropertyWidget(TypeController& controller ) override;
 
 private:
 
-    friend class        C_BoolRecordFactory;
+    friend class        TypeBoolRecordFactory;
 };
 
-class C_BoolRecordFactory : public C_RecordFactory
+class TypeBoolRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS     ( C_BoolRecordFactory )
+    SINGLETON_CLASS     ( TypeBoolRecordFactory )
 
-    C_BoolRecordFactory();
+    TypeBoolRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance(C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance(TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_BOOL_RECORD_H
+#endif // TypeBOOL_RECORD_H

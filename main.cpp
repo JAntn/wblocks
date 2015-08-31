@@ -13,18 +13,18 @@ int main( int argc, char* argv[] )
     // Controller is an interface between user interface
     // and model data framework
 
-    C_Controller controller;
+    TypeController controller;
 
     // Config loads and saves scurrent app configuration
 
-    C_Config config( QDir().canonicalPath(), &controller );
+    TypeConfig config( QDir().canonicalPath(), &controller );
     controller.SetConfig( config );
     controller.Config().Load();
 
     // Document is the frame for all work related to model
     // data
 
-    C_Document document( controller, "", "", &controller );
+    TypeDocument document( controller, "", "", &controller );
     controller.SetDocument( document );
 
     // We check config is ok
@@ -40,7 +40,7 @@ int main( int argc, char* argv[] )
         controller.Config().SetProjectPath( "");
         controller.Config().SetProjectFileName( "" );
 
-        C_Record* string_record =
+        TypeRecord* string_record =
             controller.Document().Root().CreateRecord(
                 "SampleString",
                 "Welcome to JS Blocks.\nThis is a sample string",
@@ -64,7 +64,7 @@ int main( int argc, char* argv[] )
 
     // Main window
 
-    C_UiMainWindow window( controller );
+    TypeUiMainWindow window( controller );
     window.show();
 
     return a.exec();

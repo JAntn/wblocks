@@ -3,9 +3,9 @@
 #include "FW/controller.h"
 
 
-C_UiRealProperty::C_UiRealProperty( QString tag_name, double value, on_changed_t on_changed, QWidget* parent ):
-    C_UiProperty( on_changed, parent ),
-    ui( new Ui::C_UiRealProperty )
+TypeUiRealProperty::TypeUiRealProperty( QString tag_name, double value, on_changed_t on_changed, QWidget* parent ):
+    TypeUiProperty( on_changed, parent ),
+    ui( new Ui::TypeUiRealProperty )
 {
     ui->setupUi( this );
     ui->Label->setText( tag_name );
@@ -15,32 +15,32 @@ C_UiRealProperty::C_UiRealProperty( QString tag_name, double value, on_changed_t
         ui->LineEdit,
         QLineEdit::returnPressed,
         this,
-        C_UiRealProperty::OnReturnPressed
+        TypeUiRealProperty::OnReturnPressed
     );
 
 }
 
-C_UiRealProperty::~C_UiRealProperty()
+TypeUiRealProperty::~TypeUiRealProperty()
 {
     delete ui;
 }
 
 
-void C_UiRealProperty::SetValue( double value )
+void TypeUiRealProperty::SetValue( double value )
 {
     ui->LineEdit->setText( QString::number( value ) );
 }
 
-double C_UiRealProperty::Value()
+double TypeUiRealProperty::Value()
 {
     return ui->LineEdit->text().toDouble();
 }
 
-void C_UiRealProperty::OnReturnPressed()
+void TypeUiRealProperty::OnReturnPressed()
 {
     if( !QRegExp( "\\s*[-+]?\\d+(.\\d+)?([Ee][+-]?\\d+(.\\d+)?)?\\s*" ).exactMatch( ui->LineEdit->text() ) )
     {
-        C_Controller::Message( tr( "Bad real number string" ) );
+        TypeController::Message( tr( "Bad real number string" ) );
         return;
     }
 

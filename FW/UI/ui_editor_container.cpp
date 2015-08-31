@@ -3,7 +3,7 @@
 #include "FW/UI/ED/ui_editor.h"
 #include <QVBoxLayout>
 
-C_UiEditorContainer::C_UiEditorContainer( C_Controller& controller, QWidget* parent ):
+TypeUiEditorContainer::TypeUiEditorContainer( TypeController& controller, QWidget* parent ):
     QWidget( parent ),
     m_Controller( &controller )
 {
@@ -19,21 +19,21 @@ C_UiEditorContainer::C_UiEditorContainer( C_Controller& controller, QWidget* par
         m_TabWidget,
         QTabWidget::tabCloseRequested,
         this,
-        C_UiEditorContainer::OnCloseTabRequested
+        TypeUiEditorContainer::OnCloseTabRequested
     );
 }
 
-void C_UiEditorContainer::Append( C_UiEditor* editor )
+void TypeUiEditorContainer::Append( TypeUiEditor* editor )
 {
     m_TabWidget->addTab( editor, editor->TabName() );
     emit Controller().TextEditorContainerChanged();
 }
 
-void C_UiEditorContainer::SetCurrent( QString id )
+void TypeUiEditorContainer::SetCurrent( QString id )
 {
     for( int index = 0; index < m_TabWidget->count(); ++index )
     {
-        C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+        TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
 
         if( editor->Id() == id )
         {
@@ -43,16 +43,16 @@ void C_UiEditorContainer::SetCurrent( QString id )
     }
 }
 
-void C_UiEditorContainer::SetCurrent( int index )
+void TypeUiEditorContainer::SetCurrent( int index )
 {
     m_TabWidget->setCurrentIndex( index );
 }
 
-void C_UiEditorContainer::Close( QString id )
+void TypeUiEditorContainer::Close( QString id )
 {
     for( int index = 0; index < m_TabWidget->count(); ++index )
     {
-        C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+        TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
 
         if( editor->Id() == id )
         {
@@ -63,37 +63,37 @@ void C_UiEditorContainer::Close( QString id )
     }
 }
 
-void C_UiEditorContainer::Close( int index )
+void TypeUiEditorContainer::Close( int index )
 {
     m_TabWidget->removeTab( index );
     emit Controller().TextEditorContainerChanged();
     return;
 }
 
-void C_UiEditorContainer::CloseCurrent()
+void TypeUiEditorContainer::CloseCurrent()
 {
     int index = m_TabWidget->currentIndex();
     m_TabWidget->removeTab( index );
     emit Controller().TextEditorContainerChanged();
 }
 
-void C_UiEditorContainer::CloseAll()
+void TypeUiEditorContainer::CloseAll()
 {
     m_TabWidget->clear();
     emit Controller().TextEditorContainerChanged();
 }
 
-void C_UiEditorContainer::Save( int index )
+void TypeUiEditorContainer::Save( int index )
 {
-    C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+    TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
     editor->OnActionSave();
 }
 
-void C_UiEditorContainer::Save( QString id )
+void TypeUiEditorContainer::Save( QString id )
 {
     for( int index = 0; index < m_TabWidget->count(); ++index )
     {
-        C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+        TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
 
         if( editor->Id() == id )
         {
@@ -103,27 +103,27 @@ void C_UiEditorContainer::Save( QString id )
     }
 }
 
-void C_UiEditorContainer::SaveAll()
+void TypeUiEditorContainer::SaveAll()
 {
     for( int index = 0; index < m_TabWidget->count(); ++index )
     {
-        C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+        TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
         editor->OnActionSave();
     }
 }
 
-void C_UiEditorContainer::SaveCurrent()
+void TypeUiEditorContainer::SaveCurrent()
 {
     int index = m_TabWidget->currentIndex();
-    C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+    TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
     editor->OnActionSave();
 }
 
-bool C_UiEditorContainer::HasId( QString id )
+bool TypeUiEditorContainer::HasId( QString id )
 {
     for( int index = 0; index < m_TabWidget->count(); ++index )
     {
-        C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+        TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
 
         if( editor->Id() == id )
             return true;
@@ -132,17 +132,17 @@ bool C_UiEditorContainer::HasId( QString id )
     return false;
 }
 
-int C_UiEditorContainer::Size()
+int TypeUiEditorContainer::Size()
 {
     return m_TabWidget->count();
 }
 
-void C_UiEditorContainer::OnCloseTabRequested( int index )
+void TypeUiEditorContainer::OnCloseTabRequested( int index )
 {
-    C_UiEditor* editor = static_cast<C_UiEditor*>( m_TabWidget->widget( index ) );
+    TypeUiEditor* editor = static_cast<TypeUiEditor*>( m_TabWidget->widget( index ) );
 
     if( editor->HasChanged() )
-        if( C_Controller::AcceptMessage( tr( "Save changes?" ) ) )
+        if( TypeController::AcceptMessage( tr( "Save changes?" ) ) )
             editor->OnActionSave();
 
     Close( index );

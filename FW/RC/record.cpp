@@ -2,32 +2,24 @@
 #include "FW/UI/PR/ui_record_name_property.h"
 #include "FW/UI/PR/ui_line_text_property.h"
 #include <QVBoxLayout>
-
-
-#include <QCoreApplication>
 #include "FW/UI/ui_editor_container.h"
-#include "FW/UI/ED/ui_text_editor.h"
-#include "FW/document.h"
-
-#include "FW/UI/ui_main_window.h"
-
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-
+#include "FW/UI/ED/ui_text_editor.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////
 /// STATIC
 
-long C_RecordFactory::m_IdCount = 0;
+long TypeRecordFactory::m_IdCount = 0;
 
 
-QString C_RecordFactory::GenerateId()
+QString TypeRecordFactory::GenerateId()
 {
     return QString::number( m_IdCount++ );
 }
 
-QString C_RecordFactory::IdCount()
+QString TypeRecordFactory::IdCount()
 {
     return QString::number( m_IdCount );
 }
@@ -35,8 +27,8 @@ QString C_RecordFactory::IdCount()
 /////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
 
-C_Record::C_Record( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* ) :
-    C_Variant( parent ),
+TypeRecord::TypeRecord( QString id, QString name, QString value, TypeVariant* parent, TypeRecordStruct* ) :
+    TypeVariant( parent ),
     m_Id( id ),
     m_Name( name ),
     m_Class( "Record" ),
@@ -45,29 +37,29 @@ C_Record::C_Record( QString id, QString name, QString value, C_Variant* parent, 
     SetFlags( FLAG_ACTION_ALL );
 }
 
-C_Record::C_Record( C_StateWriter& state, C_Variant* parent, C_RecordStruct* ):
-    C_Record( "", "", "", parent )
+TypeRecord::TypeRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* ):
+    TypeRecord( "", "", "", parent )
 {
     SetState( state );
 }
 
-C_Record::~C_Record()
+TypeRecord::~TypeRecord()
 {
     // void
 }
 
-void C_Record::SetValue( QString value )
+void TypeRecord::SetValue( QString value )
 {
     m_Value = value;
 }
 
-QString C_Record::Value()
+QString TypeRecord::Value()
 {
     return m_Value;
 }
 
 
-bool C_Record::GetState( C_StateReader& state )
+bool TypeRecord::GetState( TypeStateReader& state )
 {
     QStringList row;
     row.append( m_Id );
@@ -79,13 +71,13 @@ bool C_Record::GetState( C_StateReader& state )
     return true;
 }
 
-bool C_Record::SetState( C_StateWriter& state, C_RecordStruct* )
+bool TypeRecord::SetState( TypeStateWriter& state, TypeRecordStruct* )
 {
     QStringList row;
     state.Write( row );
 
     if( state.Flags() & FLAG_STATE_NEWID )
-        m_Id    = C_RecordFactory::GenerateId();
+        m_Id    = TypeRecordFactory::GenerateId();
     else
         m_Id    = row[0];
 
@@ -96,14 +88,14 @@ bool C_Record::SetState( C_StateWriter& state, C_RecordStruct* )
     return true;
 }
 
-QWidget* C_Record::PropertyWidget( C_Controller& controller )
+QWidget* TypeRecord::PropertyWidget( TypeController& controller )
 {
 
     QWidget* name_widget;
 
-    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
 
@@ -111,9 +103,9 @@ QWidget* C_Record::PropertyWidget( C_Controller& controller )
 
     QWidget* value_widget;
 
-    value_widget = new C_UiLineTextProperty( "Value", Value(), [&controller, this]( C_UiProperty & property_base )
+    value_widget = new TypeUiLineTextProperty( "Value", Value(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiLineTextProperty&>( property_base );
+        auto& property = static_cast<TypeUiLineTextProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
     } );
@@ -129,13 +121,13 @@ QWidget* C_Record::PropertyWidget( C_Controller& controller )
     return widget;
 }
 
-C_UiEditor* C_Record::EditorWidget( QString id, C_Controller& controller )
+TypeUiEditor* TypeRecord::EditorWidget( QString id, TypeController& controller )
 {
-    C_UiTextEditor* text_editor;
+    TypeUiTextEditor* text_editor;
 
-    text_editor = new C_UiTextEditor( id, Name(), Name().split( "." ).back(), [&controller, this]( C_UiEditor & editor_base )
+    text_editor = new TypeUiTextEditor( id, Name(), Name().split( "." ).back(), [&controller, this]( TypeUiEditor & editor_base )
     {
-        C_UiTextEditor& editor = static_cast<C_UiTextEditor&>( editor_base );
+        TypeUiTextEditor& editor = static_cast<TypeUiTextEditor&>( editor_base );
         SetValue( editor.Text() );
         emit controller.RecordsChanged();
     } );
@@ -145,48 +137,48 @@ C_UiEditor* C_Record::EditorWidget( QString id, C_Controller& controller )
     return text_editor;
 }
 
-C_RecordStruct* C_Record::Struct()
+TypeRecordStruct* TypeRecord::Struct()
 {
     return 0;
 }
 
-QStringList C_Record::Script()
+QStringList TypeRecord::Script()
 {
     return QStringList();
 }
 
-QStringList C_Record::Html()
+QStringList TypeRecord::Html()
 {
     return QStringList();
 }
 
-QString C_Record::FullName() const
+QString TypeRecord::FullName() const
 {
-    auto* record_struct = static_cast<C_RecordStruct*>( Parent() );
+    auto* record_struct = static_cast<TypeRecordStruct*>( Parent() );
 
     if( record_struct->Name() != "root" )
     {
-        C_Record* record = static_cast<C_Record*>( record_struct->Parent() );
+        TypeRecord* record = static_cast<TypeRecord*>( record_struct->Parent() );
         return record->FullName() + "." + Name();
     }
 
     return Name();
 }
 
-C_RecordFactory::C_RecordFactory() :
+TypeRecordFactory::TypeRecordFactory() :
     m_RecordClass( "Record" )
 {
     // void
 }
 
-C_Record* C_RecordFactory::CreateInstance( QString name, QString value, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_Record( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_RecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_Record( state, parent, root );
+    return new TypeRecord( state, parent, root );
 }
 
 

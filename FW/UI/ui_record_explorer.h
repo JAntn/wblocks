@@ -7,33 +7,33 @@
 
 namespace Ui
 {
-class C_UiRecordExplorer;
+class TypeUiRecordExplorer;
 }
 
-class C_UiRecordTableModel;
-class C_RecordStruct;
-class C_Controller;
-class C_Record;
-class C_Context;
+class TypeUiRecordTableModel;
+class TypeRecordStruct;
+class TypeController;
+class TypeRecord;
+class TypeContext;
 
-class C_UiRecordExplorer : public QWidget
+class TypeUiRecordExplorer : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit C_UiRecordExplorer( C_Context& context, C_Controller& controller, QWidget* parent = 0 );
-    ~C_UiRecordExplorer() override;
+    explicit TypeUiRecordExplorer( TypeContext& context, TypeController& controller, QWidget* parent = 0 );
+    ~TypeUiRecordExplorer() override;
 
     void                          Update();
 
-    M_POINTER                     ( Context,          C_Context )
-    M_POINTER                     ( Controller,       C_Controller )
-    M_POINTER                     ( RecordTableModel, C_UiRecordTableModel )
+    M_POINTER                     ( Context,          TypeContext )
+    M_POINTER                     ( Controller,       TypeController )
+    M_POINTER                     ( RecordTableModel, TypeUiRecordTableModel )
 
-    QList<C_Record*>              Selection();
+    QList<TypeRecord*>              Selection();
     void                          ClearSelection();
     bool                          HasSelection();
-    void                          Activate( C_Record* record );
+    void                          Activate( TypeRecord* record );
 public slots:
 
     void                          OnCustomContextMenuRequested( const QPoint& point );
@@ -44,7 +44,7 @@ public slots:
     void                          OnLineEditReturnPressed();
 private:
 
-    Ui::C_UiRecordExplorer*  ui;
+    Ui::TypeUiRecordExplorer*  ui;
 };
 
 #endif // UIRECORDTABLEVIEW_H

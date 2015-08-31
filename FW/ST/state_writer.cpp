@@ -1,25 +1,25 @@
 #include "FW/ST/state_writer.h"
 
 
-C_StateWriter::C_StateWriter( long flags, C_Variant* parent )
-    : C_Variant( parent )
+TypeStateWriter::TypeStateWriter( long flags, TypeVariant* parent )
+    : TypeVariant( parent )
 {
     m_Flags = flags;
     m_Count = 0;
 }
 
-C_StateWriter::~C_StateWriter()
+TypeStateWriter::~TypeStateWriter()
 {
     // void
 }
 
-void C_StateWriter::Stop()
+void TypeStateWriter::Stop()
 {
     m_Flags |= FLAG_STATE_ATEND;
 }
 
 
-void C_StateWriter::C_StateWriter::Write(QStringList &data, bool next)
+void TypeStateWriter::TypeStateWriter::Write(QStringList &data, bool next)
 {
     if( AtEnd() )
         return;
@@ -30,7 +30,7 @@ void C_StateWriter::C_StateWriter::Write(QStringList &data, bool next)
         this->Next();
 }
 
-bool C_StateWriter::AtEnd()
+bool TypeStateWriter::AtEnd()
 {
     return Flags() & FLAG_STATE_ATEND;
 }

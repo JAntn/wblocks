@@ -9,65 +9,65 @@
 #include "ui_mainwindow.h"
 #include "ui_recordexplorer.h"
 
-C_UiRecordExplorer::C_UiRecordExplorer( C_Context& context, C_Controller& controller, QWidget* parent ) :
+TypeUiRecordExplorer::TypeUiRecordExplorer( TypeContext& context, TypeController& controller, QWidget* parent ) :
     QWidget( parent ),
     m_Context( &context ),
     m_Controller( &controller ),
-    ui( new Ui::C_UiRecordExplorer )
+    ui( new Ui::TypeUiRecordExplorer )
 {
     ui->setupUi( this );
-    m_RecordTableModel = new C_UiRecordTableModel( Controller().Document(), this );
+    m_RecordTableModel = new TypeUiRecordTableModel( Controller().Document(), this );
     ui->TableView->setModel( m_RecordTableModel );
 
     connect(
         ui->TableView,
         QTableView::doubleClicked,
         this,
-        C_UiRecordExplorer::OnDoubleClicked
+        TypeUiRecordExplorer::OnDoubleClicked
     );
 
     connect(
         ui->RootButton,
         QPushButton::clicked,
         this,
-        C_UiRecordExplorer::OnRootButtonClicked
+        TypeUiRecordExplorer::OnRootButtonClicked
     );
 
     connect(
         ui->UpButton,
         QPushButton::clicked,
         this,
-        C_UiRecordExplorer::OnUpButtonClicked
+        TypeUiRecordExplorer::OnUpButtonClicked
     );
 
     connect(
         ui->TableView,
         QTableView::customContextMenuRequested,
         this,
-        C_UiRecordExplorer::OnCustomContextMenuRequested
+        TypeUiRecordExplorer::OnCustomContextMenuRequested
     );
 
     connect(
         ui->TableView->selectionModel(),
         QItemSelectionModel::selectionChanged,
         this,
-        C_UiRecordExplorer::OnSelectionChanged
+        TypeUiRecordExplorer::OnSelectionChanged
     );
 
     connect(
         ui->LineEdit,
         QLineEdit::returnPressed,
         this,
-        C_UiRecordExplorer::OnLineEditReturnPressed
+        TypeUiRecordExplorer::OnLineEditReturnPressed
     );
 }
 
-C_UiRecordExplorer::~C_UiRecordExplorer()
+TypeUiRecordExplorer::~TypeUiRecordExplorer()
 {
     delete ui;
 }
 
-void C_UiRecordExplorer::Update()
+void TypeUiRecordExplorer::Update()
 {
     ui->LineEdit->setText( Context().Records().FullName() );
     m_RecordTableModel->layoutChanged();
@@ -75,14 +75,14 @@ void C_UiRecordExplorer::Update()
 }
 
 
-QList<C_Record*> C_UiRecordExplorer::Selection()
+QList<TypeRecord*> TypeUiRecordExplorer::Selection()
 {
     QModelIndexList index_list = ui->TableView->selectionModel()->selectedRows();
-    QList<C_Record*> record_list;
+    QList<TypeRecord*> record_list;
 
     for( auto index : index_list )
     {
-        C_Record* record = Context().Records().FromIndex( index.row() );
+        TypeRecord* record = Context().Records().FromIndex( index.row() );
 
         record_list.append( record );
     }
@@ -90,17 +90,17 @@ QList<C_Record*> C_UiRecordExplorer::Selection()
     return record_list;
 }
 
-void C_UiRecordExplorer::ClearSelection()
+void TypeUiRecordExplorer::ClearSelection()
 {
     ui->TableView->selectionModel()->clearSelection();
 }
 
-bool C_UiRecordExplorer::HasSelection()
+bool TypeUiRecordExplorer::HasSelection()
 {
     return ui->TableView->selectionModel()->hasSelection();
 }
 
-void C_UiRecordExplorer::Activate( C_Record* record )
+void TypeUiRecordExplorer::Activate( TypeRecord* record )
 {
     if( record == 0 )
         return;
@@ -112,12 +112,12 @@ void C_UiRecordExplorer::Activate( C_Record* record )
         return;
     }
 
-    Context().SetRecords( *static_cast<C_RecordStruct*>( record->Parent() ) );
+    Context().SetRecords( *static_cast<TypeRecordStruct*>( record->Parent() ) );
     Update();
     Controller().SetPropertyWidgetRecord( *record );
 }
 
-void C_UiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
+void TypeUiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
 {
     QPoint global_point = ui->TableView->viewport()->mapToGlobal( point );
     QModelIndex index = ui->TableView->indexAt( point );
@@ -125,37 +125,37 @@ void C_UiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
     if( index.row() >= 0 )
         ui->TableView->selectionModel()->setCurrentIndex( index, QItemSelectionModel::Select );
 
-    C_UiRecordContextMenu context_menu( Controller(), global_point );
+    TypeUiRecordContextMenu context_menu( Controller(), global_point );
 }
 
-void C_UiRecordExplorer::OnDoubleClicked( const QModelIndex& index )
+void TypeUiRecordExplorer::OnDoubleClicked( const QModelIndex& index )
 {
     Activate( Context().Records().FromIndex( index.row() ) );
 }
 
-void C_UiRecordExplorer::OnRootButtonClicked()
+void TypeUiRecordExplorer::OnRootButtonClicked()
 {
     Context().SetRecords( Controller().Document().Root() );
     Update();
 }
 
-void C_UiRecordExplorer::OnUpButtonClicked()
+void TypeUiRecordExplorer::OnUpButtonClicked()
 {
     if( ( & Context().Records() ) != ( & Controller().Document().Root() ) )
     {
-        C_Record* record = static_cast<C_Record*>( Context().Records().Parent() );
-        C_RecordStruct* parent = static_cast<C_RecordStruct*>( record->Parent() );
+        TypeRecord* record = static_cast<TypeRecord*>( Context().Records().Parent() );
+        TypeRecordStruct* parent = static_cast<TypeRecordStruct*>( record->Parent() );
         Context().SetRecords( *parent );
         Update();
     }
 }
 
-void C_UiRecordExplorer::OnSelectionChanged( const QItemSelection&, const QItemSelection&  )
+void TypeUiRecordExplorer::OnSelectionChanged( const QItemSelection&, const QItemSelection&  )
 {
     Controller().MainWindow().UpdateMenubar();
 }
 
-void C_UiRecordExplorer::OnLineEditReturnPressed()
+void TypeUiRecordExplorer::OnLineEditReturnPressed()
 {
     QString full_name = ui->LineEdit->text();
 

@@ -1,25 +1,25 @@
-#ifndef C_CLIPBOARD_H
-#define C_CLIPBOARD_H
+#ifndef TypeCLIPBOARD_H
+#define TypeCLIPBOARD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
 
 #include <QString>
 
-class C_Clipboard : public C_Variant
+class TypeClipboard : public TypeVariant
 {
 public:
 
-    explicit C_Clipboard( C_Variant* parent = 0 );
+    explicit TypeClipboard( TypeVariant* parent = 0 );
 
     void                Clear();
-    void                Paste( C_RecordStruct& record_struct, int position );
-    void                Cut( const QList<C_Record*>& records );
-    void                Copy( const QList<C_Record*>& records );
+    void                Paste( TypeRecordStruct& record_struct, int position );
+    void                Cut( const QList<TypeRecord*>& records );
+    void                Copy( const QList<TypeRecord*>& records );
     bool                Empty();
 
-    M_CONST_VALUE       ( Data, QList<C_Record*> )
+    M_CONST_VALUE       ( Data, QList<TypeRecord*> )
     M_CONST_VALUE       ( Flags, long )
 };
 
-#endif // C_CLIPBOARD_H
+#endif // TypeCLIPBOARD_H

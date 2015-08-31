@@ -2,7 +2,7 @@
 #include <QWidget>
 
 
-C_UiEditor::C_UiEditor(QString id, QString name, QString tab_name, save_callback_t save_callback, QWidget* parent ) :
+TypeUiEditor::TypeUiEditor(QString id, QString name, QString tab_name, save_callback_t save_callback, QWidget* parent ) :
     QWidget( parent ),
     m_Id( id ),
     m_Name( name ),
@@ -15,12 +15,12 @@ C_UiEditor::C_UiEditor(QString id, QString name, QString tab_name, save_callback
         m_TabName = m_Name;
 }
 
-C_UiEditor::~C_UiEditor()
+TypeUiEditor::~TypeUiEditor()
 {
     // void
 }
 
-void C_UiEditor::OnActionSave()
+void TypeUiEditor::OnActionSave()
 {
     m_SaveCallBack( *this );
 }

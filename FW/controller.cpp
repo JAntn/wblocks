@@ -20,7 +20,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// STATIC
 
-QString C_Controller::LoadTextFile( QString file_name )
+QString TypeController::LoadTextFile( QString file_name )
 {
     QFile file( file_name );
 
@@ -35,7 +35,7 @@ QString C_Controller::LoadTextFile( QString file_name )
     return text;
 }
 
-void C_Controller::SaveTextFile( QString file_name, QString text )
+void TypeController::SaveTextFile( QString file_name, QString text )
 {
     QFile file( file_name );
 
@@ -50,7 +50,7 @@ void C_Controller::SaveTextFile( QString file_name, QString text )
     file.close();
 }
 
-bool C_Controller::AcceptMessage( QString msg )
+bool TypeController::AcceptMessage( QString msg )
 {
     QMessageBox msgBox;
     msgBox.setText( msg );
@@ -64,7 +64,7 @@ bool C_Controller::AcceptMessage( QString msg )
     return true;
 }
 
-void C_Controller::Message( QString msg )
+void TypeController::Message( QString msg )
 {
     QMessageBox msgBox;
     msgBox.setText( msg );
@@ -74,75 +74,75 @@ void C_Controller::Message( QString msg )
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
 
-C_Controller::C_Controller(): C_Variant()
+TypeController::TypeController(): TypeVariant()
 {
-    m_HtmlBuilder       = new C_HtmlBuilder( this );
-    m_Database          = new C_Database( this );
-    m_Clipboard         = new C_Clipboard( this );
+    m_HtmlBuilder       = new TypeHtmlBuilder( this );
+    m_Database          = new TypeDatabase( this );
+    m_Clipboard         = new TypeClipboard( this );
 }
 
-C_Controller::~C_Controller()
+TypeController::~TypeController()
 {
     // void
 }
 
-void C_Controller::ConnectSlots()
+void TypeController::ConnectSlots()
 {
     connect(
         this,
-        C_Controller::DirectoryChanged,
+        TypeController::DirectoryChanged,
         this,
-        C_Controller::OnDirectoryChanged );
+        TypeController::OnDirectoryChanged );
 
     connect(
         this,
-        C_Controller::RecordsChanged,
+        TypeController::RecordsChanged,
         this,
-        C_Controller::OnRecordsChanged );
+        TypeController::OnRecordsChanged );
 
     connect(
         this,
-        C_Controller::SceneChanged,
+        TypeController::SceneChanged,
         this,
-        C_Controller::OnSceneChanged );
+        TypeController::OnSceneChanged );
 
     connect(
         this,
-        C_Controller::HtmlCodeChanged,
+        TypeController::HtmlCodeChanged,
         this,
-        C_Controller::OnHtmlCodeChanged );
+        TypeController::OnHtmlCodeChanged );
 
     connect(
         this,
-        C_Controller::RecordExplorerChanged,
+        TypeController::RecordExplorerChanged,
         this,
-        C_Controller::OnRecordExplorerChanged );
+        TypeController::OnRecordExplorerChanged );
 
     connect(
         this,
-        C_Controller::FileExplorerChanged,
+        TypeController::FileExplorerChanged,
         this,
-        C_Controller::OnFileExplorerChanged );
+        TypeController::OnFileExplorerChanged );
 
     connect(
         this,
-        C_Controller::TextEditorContainerChanged,
+        TypeController::TextEditorContainerChanged,
         this,
-        C_Controller::OnEditorContainerChanged );
+        TypeController::OnEditorContainerChanged );
 }
 
-void C_Controller::SetPropertyWidgetRecord( C_Record& record )
+void TypeController::SetPropertyWidgetRecord( TypeRecord& record )
 {
     MainWindow().SetPropertyWidget( record.PropertyWidget( *this ) );
 }
 
-void C_Controller::OpenRecordEditorWidget( C_Record& record )
+void TypeController::OpenRecordEditorWidget( TypeRecord& record )
 {
     QString id = "RECORD:" + record.Id();
 
     if( MainWindow().TextEditorContainer().HasId( id ) )
     {
-        if( C_Controller::AcceptMessage( QCoreApplication::translate( "C_Controller", "Record already opened.\n\nLoad again?" ) ) )
+        if( TypeController::AcceptMessage( QCoreApplication::translate( "TypeController", "Record already opened.\n\nLoad again?" ) ) )
         {
             MainWindow().TextEditorContainer().Close( id );
             MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
@@ -154,25 +154,25 @@ void C_Controller::OpenRecordEditorWidget( C_Record& record )
     MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
 }
 
-void C_Controller::OpenFileEditorWidget( QString file_name )
+void TypeController::OpenFileEditorWidget( QString file_name )
 {
 
     QString id = "FILE:" + file_name;
 
     if( MainWindow().TextEditorContainer().HasId( id ) )
     {
-        if( !C_Controller::AcceptMessage( tr( "File already open. Load again?" ) ) )
+        if( !TypeController::AcceptMessage( tr( "File already open. Load again?" ) ) )
             return;
 
         MainWindow().TextEditorContainer().Close( id );
     }
 
-    C_UiTextEditor* text_editor;
+    TypeUiTextEditor* text_editor;
 
-    text_editor = new C_UiTextEditor( id, file_name, file_name.split( "/" ).back(), [file_name]( C_UiEditor & editor_base )
+    text_editor = new TypeUiTextEditor( id, file_name, file_name.split( "/" ).back(), [file_name]( TypeUiEditor & editor_base )
     {
-        C_UiTextEditor& editor = static_cast<C_UiTextEditor&>( editor_base );
-        C_Controller::SaveTextFile( file_name, editor.Text() );
+        TypeUiTextEditor& editor = static_cast<TypeUiTextEditor&>( editor_base );
+        TypeController::SaveTextFile( file_name, editor.Text() );
     } );
 
     MainWindow().TextEditorContainer().Append( text_editor );
@@ -181,22 +181,22 @@ void C_Controller::OpenFileEditorWidget( QString file_name )
 }
 
 
-void C_Controller::OnDirectoryChanged()
+void TypeController::OnDirectoryChanged()
 {
     MainWindow().UpdateFileExplorer();
 }
 
-void C_Controller::OnRecordExplorerChanged()
+void TypeController::OnRecordExplorerChanged()
 {
     MainWindow().UpdateMenubar();
 }
 
-void C_Controller::OnFileExplorerChanged()
+void TypeController::OnFileExplorerChanged()
 {
     MainWindow().UpdateMenubar();
 }
 
-void C_Controller::OnRecordsChanged()
+void TypeController::OnRecordsChanged()
 {
     MainWindow().UpdateRecordExplorer();
     MainWindow().UpdateSceneView();
@@ -204,22 +204,22 @@ void C_Controller::OnRecordsChanged()
     Document().UpdateHtml();
 }
 
-void C_Controller::OnHtmlCodeChanged()
+void TypeController::OnHtmlCodeChanged()
 {
     MainWindow().UpdateHtmlCodeView();
 }
 
-void C_Controller::OnEditorContainerChanged()
+void TypeController::OnEditorContainerChanged()
 {
     MainWindow().UpdateMenubar();
 }
 
-void C_Controller::OnSceneChanged()
+void TypeController::OnSceneChanged()
 {
     MainWindow().UpdateSceneView();
 }
 
-void C_Controller::OnActionLoadProjectFile()
+void TypeController::OnActionLoadProjectFile()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
@@ -253,7 +253,7 @@ void C_Controller::OnActionLoadProjectFile()
     qDebug() << "Load project error. Code " << error;
 }
 
-void C_Controller::OnActionSaveProjectFile()
+void TypeController::OnActionSaveProjectFile()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -288,7 +288,7 @@ void C_Controller::OnActionSaveProjectFile()
     qDebug() << "Save project error. Code " << error;
 }
 
-void C_Controller::OnActionLoadProjectSQL()
+void TypeController::OnActionLoadProjectSQL()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
@@ -322,7 +322,7 @@ void C_Controller::OnActionLoadProjectSQL()
     qDebug() << "Load project SQL error. Code " << error;
 }
 
-void C_Controller::OnActionSaveProjectSQL()
+void TypeController::OnActionSaveProjectSQL()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -357,7 +357,7 @@ void C_Controller::OnActionSaveProjectSQL()
     qDebug() << "Load project SQL error. Code " << error;
 }
 
-void C_Controller::OnActionSaveHtmlCode()
+void TypeController::OnActionSaveHtmlCode()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -375,7 +375,7 @@ void C_Controller::OnActionSaveHtmlCode()
 
     Document().UpdateHtml();
 
-    C_Controller::SaveTextFile(
+    TypeController::SaveTextFile(
         file_name,
         Document().Html()
     );
@@ -383,15 +383,15 @@ void C_Controller::OnActionSaveHtmlCode()
     MainWindow().UpdateFileExplorer();
 }
 
-void C_Controller::OnActionChangePropertyWidget()
+void TypeController::OnActionChangePropertyWidget()
 {
     long action_flags = Document().Context().Records().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
     if( ( action_flags & FLAG_ACTION_PROPERTIES ) && has_selection )
     {
-        C_Record* record =
-            static_cast<C_Record*>(
+        TypeRecord* record =
+            static_cast<TypeRecord*>(
                 *MainWindow().RecordExplorer().Selection().begin()
             );
 
@@ -402,16 +402,25 @@ void C_Controller::OnActionChangePropertyWidget()
             return;
         }
 
-        record->PropertyWidget( *this );
+        SetPropertyWidgetRecord( *record );
+
     }
     else
     {
-        qDebug() << "FLAG_ACTION_PROPERTIES is disabled on Struct:"
-                 << Document().Context().Records().Name();
+        if( has_selection )
+        {
+            qDebug() << "FLAG_ACTION_PROPERTIES is disabled on Struct:"
+                     << Document().Context().Records().Name();
+        }
+        else
+        {
+            qDebug() << "Change record properties: nothing selected"
+                     << Document().Context().Records().Name();
+        }
     }
 }
 
-void C_Controller::OnActionRemoveRecord()
+void TypeController::OnActionRemoveRecord()
 {
     long action_flags = Document().Context().Records().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
@@ -422,16 +431,16 @@ void C_Controller::OnActionRemoveRecord()
 
         if( selection_list.size() == 1 )
         {
-            if( !C_Controller::AcceptMessage( tr( "Remove Record?" ) ) )
+            if( !TypeController::AcceptMessage( tr( "Remove Record?" ) ) )
                 return;
         }
         else
         {
-            if( !C_Controller::AcceptMessage( tr( "Do you want to remove these records?" ) ) )
+            if( !TypeController::AcceptMessage( tr( "Do you want to remove these records?" ) ) )
                 return;
         }
 
-        for( C_Record* record : selection_list )
+        for( TypeRecord* record : selection_list )
         {
             if( !( record->Flags() & FLAG_ACTION_REMOVE ) )
             {
@@ -441,7 +450,7 @@ void C_Controller::OnActionRemoveRecord()
             }
         }
 
-        for( C_Record* record : selection_list )
+        for( TypeRecord* record : selection_list )
             delete record;
 
         emit RecordsChanged();
@@ -453,7 +462,7 @@ void C_Controller::OnActionRemoveRecord()
     }
 }
 
-void C_Controller::OnActionAddRecord()
+void TypeController::OnActionAddRecord()
 {
     long action_flags = Document().Context().Records().Flags() ;
 
@@ -468,7 +477,7 @@ void C_Controller::OnActionAddRecord()
 
     if ( MainWindow().RecordExplorer().HasSelection() )
     {
-        C_Record* front = MainWindow().RecordExplorer().Selection().front();
+        TypeRecord* front = MainWindow().RecordExplorer().Selection().front();
         position = Document().Context().Records().GetIndex( front );
     }
 
@@ -476,16 +485,16 @@ void C_Controller::OnActionAddRecord()
 
     if( position >= 0 )
     {
-        dialog = new C_UiAddRecord( *this, Document().Context(), position, &MainWindow() );
+        dialog = new TypeUiAddRecord( *this, Document().Context(), position, &MainWindow() );
         dialog->show();
         return;
     }
 
-    dialog = new C_UiAddRecord( *this, Document().Context(), -1,  &MainWindow() );
+    dialog = new TypeUiAddRecord( *this, Document().Context(), -1,  &MainWindow() );
     dialog->show();
 }
 
-void C_Controller::OnActionAddSceneItem()
+void TypeController::OnActionAddSceneItem()
 {
     long action_flags = Document().Context().Records().Flags();
 
@@ -494,7 +503,7 @@ void C_Controller::OnActionAddSceneItem()
     {
         auto selection_list = MainWindow().RecordExplorer().Selection();
 
-        for( C_Record* record : selection_list )
+        for( TypeRecord* record : selection_list )
         {
             if( !( record->Flags() & FLAG_ACTION_ADD_SCENE ) )
             {
@@ -504,7 +513,7 @@ void C_Controller::OnActionAddSceneItem()
             }
         }
 
-        for( C_Record* record : selection_list )
+        for( TypeRecord* record : selection_list )
             Document().Context().Scene().CreateItem( *record );
 
         MainWindow().SetCurrentTab( MAINWINDOW_TAB_SCENE );
@@ -518,7 +527,7 @@ void C_Controller::OnActionAddSceneItem()
     }
 }
 
-void C_Controller::OnActionCopyRecord()
+void TypeController::OnActionCopyRecord()
 {
     long action_flags = Document().Context().Records().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
@@ -527,7 +536,7 @@ void C_Controller::OnActionCopyRecord()
     {
         auto selection_list = MainWindow().RecordExplorer().Selection();
 
-        for( C_Record* record : selection_list )
+        for( TypeRecord* record : selection_list )
         {
             if( !( record->Flags() & FLAG_ACTION_CUT ) )
             {
@@ -548,7 +557,7 @@ void C_Controller::OnActionCopyRecord()
     }
 }
 
-void C_Controller::OnActionPasteRecord()
+void TypeController::OnActionPasteRecord()
 {
     long action_flags = Document().Context().Records().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
@@ -558,7 +567,7 @@ void C_Controller::OnActionPasteRecord()
     {
         if( has_selection )
         {
-            QList<C_Record*> selection_list = MainWindow().RecordExplorer().Selection();
+            QList<TypeRecord*> selection_list = MainWindow().RecordExplorer().Selection();
             position = Document().Context().Records().GetIndex( selection_list.front() );
         }
 
@@ -578,16 +587,16 @@ void C_Controller::OnActionPasteRecord()
     }
 }
 
-void C_Controller::OnActionCutRecord()
+void TypeController::OnActionCutRecord()
 {
     long action_flags = Document().Context().Records().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
     if( ( action_flags & FLAG_ACTION_CUT ) && has_selection )
     {
-        QList<C_Record*> selection_list = MainWindow().RecordExplorer().Selection();
+        QList<TypeRecord*> selection_list = MainWindow().RecordExplorer().Selection();
 
-        for( C_Record* record : selection_list )
+        for( TypeRecord* record : selection_list )
         {
             if( !( record->Flags() & FLAG_ACTION_CUT ) )
             {
@@ -597,7 +606,7 @@ void C_Controller::OnActionCutRecord()
             }
         }
 
-        for( C_Record* record : selection_list )
+        for( TypeRecord* record : selection_list )
         {
             record->SetParent( 0 );
 
@@ -618,15 +627,15 @@ void C_Controller::OnActionCutRecord()
     }
 }
 
-void C_Controller::OnActionOpenRecordInEditor()
+void TypeController::OnActionOpenRecordInEditor()
 {
     long action_flags = Document().Context().Records().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
     if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection )
     {
-        C_Record* record =
-            static_cast<C_Record*>(
+        TypeRecord* record =
+            static_cast<TypeRecord*>(
                 *MainWindow().RecordExplorer().Selection().begin()
             );
 
@@ -646,13 +655,13 @@ void C_Controller::OnActionOpenRecordInEditor()
     }
 }
 
-void C_Controller::OnActionNewProjectFile()
+void TypeController::OnActionNewProjectFile()
 {
     Document().Clear();
-    MainWindow().SetTitle("");
+    MainWindow().SetTitle( "" );
 }
 
-void C_Controller::OnActionNewFile()
+void TypeController::OnActionNewFile()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -667,19 +676,19 @@ void C_Controller::OnActionNewFile()
 
     if( QFileInfo( file_name ).exists() )
     {
-        if( !C_Controller::AcceptMessage( tr( "File already exists. Overwrite?" ) ) )
+        if( !TypeController::AcceptMessage( tr( "File already exists. Overwrite?" ) ) )
             return;
     }
 
-    C_Controller::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
+    TypeController::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
     emit FileExplorerChanged();
 
     OpenFileEditorWidget( file_name );
 }
 
-void C_Controller::OnActionCloseFile()
+void TypeController::OnActionCloseFile()
 {
-    if( C_Controller::AcceptMessage( tr( "Save changes?" ) ) )
+    if( TypeController::AcceptMessage( tr( "Save changes?" ) ) )
     {
         MainWindow().TextEditorContainer().SaveCurrent();
         emit FileExplorerChanged();
@@ -689,9 +698,9 @@ void C_Controller::OnActionCloseFile()
     emit TextEditorContainerChanged();
 }
 
-void C_Controller::OnActionCloseAllFiles()
+void TypeController::OnActionCloseAllFiles()
 {
-    if( C_Controller::AcceptMessage( tr( "Save changes?" ) ) )
+    if( TypeController::AcceptMessage( tr( "Save changes?" ) ) )
     {
         MainWindow().TextEditorContainer().SaveAll();
         emit FileExplorerChanged();
@@ -701,17 +710,17 @@ void C_Controller::OnActionCloseAllFiles()
     emit TextEditorContainerChanged();
 }
 
-void C_Controller::OnActionSaveFile()
+void TypeController::OnActionSaveFile()
 {
     MainWindow().TextEditorContainer().SaveCurrent();
 }
 
-void C_Controller::OnActionSaveAllFiles()
+void TypeController::OnActionSaveAllFiles()
 {
     MainWindow().TextEditorContainer().SaveAll();
 }
 
-void C_Controller::OnActionLoadFile()
+void TypeController::OnActionLoadFile()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
@@ -723,19 +732,19 @@ void C_Controller::OnActionLoadFile()
 
     if( !QFileInfo( file_name ).exists() )
     {
-        C_Controller::Message( tr( "File doesn't exists" ) );
+        TypeController::Message( tr( "File doesn't exists" ) );
         return;
     }
 
     OpenFileEditorWidget( file_name );
 }
 
-void C_Controller::OnActionExit()
+void TypeController::OnActionExit()
 {
     MainWindow().close();
 }
 
-void C_Controller::OnActionRunHtmlCode()
+void TypeController::OnActionRunHtmlCode()
 {
     Document().UpdateHtml();
 
@@ -743,7 +752,7 @@ void C_Controller::OnActionRunHtmlCode()
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_OUTPUT );
 }
 
-void C_Controller::OnActionUpdateHtmlCode()
+void TypeController::OnActionUpdateHtmlCode()
 {
     Document().UpdateHtml();
 

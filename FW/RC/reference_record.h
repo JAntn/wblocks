@@ -1,50 +1,50 @@
-#ifndef C_REFERENCE_RECORD_H
-#define C_REFERENCE_RECORD_H
+#ifndef TypeREFERENCE_RECORD_H
+#define TypeREFERENCE_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
 #include "QString"
 #include "FW/document.h"
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_ReferenceRecord : public C_Record
+class TypeReferenceRecord : public TypeRecord
 {
 
 public:
 
-    explicit C_ReferenceRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_ReferenceRecord() override;
+    explicit TypeReferenceRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeReferenceRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeReferenceRecord() override;
 
-    bool                GetState( C_StateReader& state ) override;
-    bool                SetState( C_StateWriter& state, C_RecordStruct* root = 0) override;
-    QWidget*            PropertyWidget(C_Controller& controller ) override;
+    bool                GetState( TypeStateReader& state ) override;
+    bool                SetState( TypeStateWriter& state, TypeRecordStruct* root = 0) override;
+    QWidget*            PropertyWidget(TypeController& controller ) override;
 
     QString             Value() override;
     void                SetValue(QString full_name) override;
 
-    C_Record*           Referencee();
+    TypeRecord*           Referencee();
 
-    M_POINTER           ( Root,  C_RecordStruct )
+    M_POINTER           ( Root,  TypeRecordStruct )
 
 private:
 
-    friend class        C_UiReferenceEditor;
-    friend class        C_ReferenceRecordFactory;
+    friend class        TypeUiReferenceEditor;
+    friend class        TypeReferenceRecordFactory;
 };
 
-class C_ReferenceRecordFactory : public C_RecordFactory
+class TypeReferenceRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS( C_ReferenceRecordFactory )
+    SINGLETON_CLASS( TypeReferenceRecordFactory )
 
-    C_ReferenceRecordFactory();
+    TypeReferenceRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_REFERENCE_RECORD_H
+#endif // TypeREFERENCE_RECORD_H

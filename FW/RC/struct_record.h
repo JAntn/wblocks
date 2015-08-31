@@ -1,52 +1,52 @@
-#ifndef C_STRUCT_RECORD_H
-#define C_STRUCT_RECORD_H
+#ifndef TypeSTRUCT_RECORD_H
+#define TypeSTRUCT_RECORD_H
 
 #include "FW/RC/record.h"
 #include "FW/macro.h"
 
-class C_RecordStruct;
+class TypeRecordStruct;
 
-class C_StateWriter;
-class C_StateReader;
-class C_Controller;
-class C_StructRecord : public C_Record
+class TypeStateWriter;
+class TypeStateReader;
+class TypeController;
+class TypeStructRecord : public TypeRecord
 {
 public:
 
-    explicit C_StructRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_StructRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_StructRecord() override;
+    explicit TypeStructRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeStructRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeStructRecord() override;
 
-    C_RecordStruct*     Struct() override;
+    TypeRecordStruct*     Struct() override;
     QStringList         Script() override;
     QStringList         Html() override;
 
-    bool                GetState( C_StateReader& state ) override;
-    bool                SetState( C_StateWriter& state , C_RecordStruct* root = 0 ) override;
-    QWidget*            PropertyWidget( C_Controller& controller ) override;
+    bool                GetState( TypeStateReader& state ) override;
+    bool                SetState( TypeStateWriter& state , TypeRecordStruct* root = 0 ) override;
+    QWidget*            PropertyWidget( TypeController& controller ) override;
 
-    M_POINTER           ( Records, C_RecordStruct )
+    M_POINTER           ( Records, TypeRecordStruct )
 
     QString             Value() override;
     void                SetValue( QString ) override;
 
 private:
 
-    friend class        C_UiStructEditor;
-    friend class        C_StructRecordFactory;
+    friend class        TypeUiStructEditor;
+    friend class        TypeStructRecordFactory;
 };
 
-class C_StructRecordFactory : public C_RecordFactory
+class TypeStructRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS   ( C_StructRecordFactory )
+    SINGLETON_CLASS   ( TypeStructRecordFactory )
 
-    C_StructRecordFactory();
+    TypeStructRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0 , C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& table, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0 , TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& table, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 
 };
 
-#endif // C_STRUCT_RECORD_H
+#endif // TypeSTRUCT_RECORD_H

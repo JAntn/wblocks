@@ -1,7 +1,7 @@
 #include "FW/variant.h"
 #include <QDebug>
 
-C_Variant::C_Variant( C_Variant* parent )
+TypeVariant::TypeVariant( TypeVariant* parent )
 {
     if( parent != 0 )
         parent->m_Childreen.append( this );
@@ -9,7 +9,7 @@ C_Variant::C_Variant( C_Variant* parent )
     m_Parent = parent;
 }
 
-C_Variant::~C_Variant()
+TypeVariant::~TypeVariant()
 {
     if( m_Parent != 0 )
     {
@@ -19,14 +19,14 @@ C_Variant::~C_Variant()
 
     for( auto iter = m_Childreen.begin(); iter != m_Childreen.end();  )
     {
-        C_Variant* variant = *iter;
+        TypeVariant* variant = *iter;
         variant->m_Parent = 0;
         delete variant;
         iter = m_Childreen.erase(iter);
     }
 }
 
-void C_Variant::SetParent( C_Variant* parent )
+void TypeVariant::SetParent( TypeVariant* parent )
 {
     if( m_Parent != 0 )
         m_Parent->m_Childreen.removeOne( this );
@@ -37,7 +37,7 @@ void C_Variant::SetParent( C_Variant* parent )
     m_Parent = parent;
 }
 
-C_Variant* C_Variant::Parent() const
+TypeVariant* TypeVariant::Parent() const
 {
     return m_Parent;
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>C_UiHtmlRecordProperties</class>
- <widget class="QDialog" name="C_UiHtmlRecordProperties">
+ <class>TypeUiHtmlRecordProperties</class>
+ <widget class="QDialog" name="TypeUiHtmlRecordProperties">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -174,7 +174,7 @@
   <connection>
    <sender>ButtonBox</sender>
    <signal>accepted()</signal>
-   <receiver>C_UiHtmlRecordProperties</receiver>
+   <receiver>TypeUiHtmlRecordProperties</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -190,7 +190,7 @@
   <connection>
    <sender>ButtonBox</sender>
    <signal>rejected()</signal>
-   <receiver>C_UiHtmlRecordProperties</receiver>
+   <receiver>TypeUiHtmlRecordProperties</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -1,41 +1,37 @@
 #include "FW/RC/reference_record.h"
 #include "FW/UI/PR/ui_record_name_property.h"
-
-#include "FW/UI/ui_main_window.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include "FW/document.h"
-
 #include <QVBoxLayout>
 
 
-C_ReferenceRecord::C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
-    C_Record( id, name, value, parent, root )
+TypeReferenceRecord::TypeReferenceRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeRecord( id, name, value, parent, root )
 {
     m_Class = "Reference";
     m_Root = root;
 }
 
-C_ReferenceRecord::C_ReferenceRecord( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root ):
-    C_Record( "", "", "", parent, root )
+TypeReferenceRecord::TypeReferenceRecord( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeRecord( "", "", "", parent, root )
 {
     m_Class = "Reference";
     m_Root = root;
     SetState( state, root );
 }
 
-C_ReferenceRecord::~C_ReferenceRecord()
+TypeReferenceRecord::~TypeReferenceRecord()
 {
     // void
 }
 
-QWidget* C_ReferenceRecord::PropertyWidget( C_Controller& controller )
+QWidget* TypeReferenceRecord::PropertyWidget( TypeController& controller )
 {
     QWidget* name_widget;
 
-    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
 
@@ -43,9 +39,9 @@ QWidget* C_ReferenceRecord::PropertyWidget( C_Controller& controller )
 
     QWidget* value_widget;
 
-    value_widget = new C_UiRecordNameProperty( "Reference", Value(), [&controller, this]( C_UiProperty & property_base )
+    value_widget = new TypeUiRecordNameProperty( "Reference", Value(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
     } );
@@ -61,12 +57,12 @@ QWidget* C_ReferenceRecord::PropertyWidget( C_Controller& controller )
     return widget;
 }
 
-QString C_ReferenceRecord::Value()
+QString TypeReferenceRecord::Value()
 {
     if( m_Value.isEmpty() )
         return "";
 
-    C_Record* record = Referencee();
+    TypeRecord* record = Referencee();
 
     if( record != 0 )
         return record->FullName();
@@ -75,9 +71,9 @@ QString C_ReferenceRecord::Value()
     return "";
 }
 
-void C_ReferenceRecord::SetValue( QString full_name )
+void TypeReferenceRecord::SetValue( QString full_name )
 {
-    C_Record* record =  Root().FromFullName( full_name );
+    TypeRecord* record =  Root().FromFullName( full_name );
 
     if( record != 0 )
     {
@@ -88,12 +84,12 @@ void C_ReferenceRecord::SetValue( QString full_name )
     m_Value = "";
 }
 
-C_Record* C_ReferenceRecord::Referencee()
+TypeRecord* TypeReferenceRecord::Referencee()
 {
     return Root().FromId( m_Value, true );
 }
 
-bool C_ReferenceRecord::GetState( C_StateReader& state )
+bool TypeReferenceRecord::GetState( TypeStateReader& state )
 {
     QStringList row;
     row.append( m_Id );
@@ -105,7 +101,7 @@ bool C_ReferenceRecord::GetState( C_StateReader& state )
     return true;
 }
 
-bool C_ReferenceRecord::SetState( C_StateWriter& state , C_RecordStruct* root )
+bool TypeReferenceRecord::SetState( TypeStateWriter& state , TypeRecordStruct* root )
 {
     m_Root = root;
 
@@ -113,7 +109,7 @@ bool C_ReferenceRecord::SetState( C_StateWriter& state , C_RecordStruct* root )
     state.Write( row );
 
     if( state.Flags() & FLAG_STATE_NEWID )
-        m_Id    = C_RecordFactory::GenerateId();
+        m_Id    = TypeRecordFactory::GenerateId();
     else
         m_Id    = row[0];
 
@@ -124,19 +120,19 @@ bool C_ReferenceRecord::SetState( C_StateWriter& state , C_RecordStruct* root )
     return true;
 }
 
-C_ReferenceRecordFactory::C_ReferenceRecordFactory()
+TypeReferenceRecordFactory::TypeReferenceRecordFactory()
 {
     m_RecordClass = "Reference";
 }
 
-C_Record* C_ReferenceRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeReferenceRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_ReferenceRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeReferenceRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_ReferenceRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeReferenceRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_ReferenceRecord( state, parent, root );
+    return new TypeReferenceRecord( state, parent, root );
 }
 
 

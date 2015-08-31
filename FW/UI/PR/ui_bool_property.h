@@ -1,5 +1,5 @@
-#ifndef C_UIBOOLPROPERTY_H
-#define C_UIBOOLPROPERTY_H
+#ifndef TypeUIBOOLPROPERTY_H
+#define TypeUIBOOLPROPERTY_H
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -7,17 +7,17 @@
 
 namespace Ui
 {
-class C_UiBoolProperty;
+class TypeUiBoolProperty;
 }
 
-class C_UiBoolProperty : public C_UiProperty
+class TypeUiBoolProperty : public TypeUiProperty
 {
     Q_OBJECT
 
 public:
 
-    C_UiBoolProperty( QString tag_name, bool value, on_changed_t on_changed, QWidget* parent  = 0 );
-    ~C_UiBoolProperty() override;
+    TypeUiBoolProperty( QString tag_name, bool value, on_changed_t on_changed, QWidget* parent  = 0 );
+    ~TypeUiBoolProperty() override;
 
     bool        Value();
     void        SetValue( bool value );
@@ -28,7 +28,7 @@ public slots:
 
 private:
 
-    Ui::C_UiBoolProperty* ui;
+    Ui::TypeUiBoolProperty* ui;
 };
 
-#endif // C_UIBOOLPROPERTY_H
+#endif // TypeUIBOOLPROPERTY_H

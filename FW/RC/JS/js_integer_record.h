@@ -1,37 +1,37 @@
-#ifndef C_JS_INTEGER_RECORD_H
-#define C_JS_INTEGER_RECORD_H
+#ifndef TypeJS_INTEGER_RECORD_H
+#define TypeJS_INTEGER_RECORD_H
 
 #include "FW/RC/integer_record.h"
 #include "FW/macro.h"
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_JsIntegerRecord : public C_IntegerRecord
+class TypeJsIntegerRecord : public TypeIntegerRecord
 {
 public:
 
-    explicit C_JsIntegerRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_JsIntegerRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_JsIntegerRecord() override;
+    explicit TypeJsIntegerRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeJsIntegerRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeJsIntegerRecord() override;
 
     QStringList         Script()    override;
 
 private:
 
-    friend class        C_JsIntegerRecordFactory;
+    friend class        TypeJsIntegerRecordFactory;
 };
 
-class C_JsIntegerRecordFactory : public C_RecordFactory
+class TypeJsIntegerRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS    ( C_JsIntegerRecordFactory )
+    SINGLETON_CLASS    ( TypeJsIntegerRecordFactory )
 
-    C_JsIntegerRecordFactory();
+    TypeJsIntegerRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_JS_INTEGER_RECORD_H
+#endif // TypeJS_INTEGER_RECORD_H

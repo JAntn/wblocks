@@ -1,15 +1,15 @@
-#ifndef C_CONFIG_H
-#define C_CONFIG_H
+#ifndef TypeCONFIG_H
+#define TypeCONFIG_H
 
 #include "FW/variant.h"
 #include "FW/macro.h"
 #include "FW/document.h"
 
-class C_Config : public C_Variant
+class TypeConfig : public TypeVariant
 {
 public:
 
-    explicit C_Config( QString config_path, C_Variant* parent = 0 );
+    explicit TypeConfig( QString config_path, TypeVariant* parent = 0 );
 
     void                Load();
     void                Save();
@@ -24,4 +24,4 @@ public:
 
 };
 
-#endif // C_CONFIG_H
+#endif // TypeCONFIG_H

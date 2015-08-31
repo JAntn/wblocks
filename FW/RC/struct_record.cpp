@@ -1,73 +1,69 @@
-#include "FW/document.h"
 #include "FW/RC/struct_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include "FW/UI/ui_main_window.h"
 #include "FW/UI/PR/ui_record_name_property.h"
-
 #include <QVBoxLayout>
-
 #include <FW/UI/PR/ui_string_property.h>
 
-C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
-    C_Record( id, name, value, parent, root )
+TypeStructRecord::TypeStructRecord( QString id, QString name, QString value, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRecord( id, name, value, parent, root )
 {
     m_Class = "Struct";
-    m_Records = new C_RecordStruct( name, this );
+    m_Records = new TypeRecordStruct( name, this );
 }
 
-C_StructRecord::C_StructRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_Record( "", "", "", parent, root )
+TypeStructRecord::TypeStructRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRecord( "", "", "", parent, root )
 {
     m_Class = "Struct";
-    m_Records = new C_RecordStruct( "", this );
+    m_Records = new TypeRecordStruct( "", this );
     SetState( state, root );
 }
 
-C_StructRecord::~C_StructRecord()
+TypeStructRecord::~TypeStructRecord()
 {
     // void
 }
 
-QString C_StructRecord::Value()
+QString TypeStructRecord::Value()
 {
     m_Value = QString::number( Records().Size() );
     return m_Value;
 }
 
-void C_StructRecord::SetValue( QString )
+void TypeStructRecord::SetValue( QString )
 {
     qDebug() << "Setting Struct value is not allowed";
 }
 
 
-C_RecordStruct* C_StructRecord::Struct()
+TypeRecordStruct* TypeStructRecord::Struct()
 {
     return m_Records;
 }
 
-QStringList C_StructRecord::Html()
+QStringList TypeStructRecord::Html()
 {
     QStringList html;
 
-    for( C_Variant* variant : Records() )
-        html << static_cast<C_Record*>( variant )->Html() ;
+    for( TypeVariant* variant : Records() )
+        html << static_cast<TypeRecord*>( variant )->Html() ;
 
     return html;
 }
 
-QStringList C_StructRecord::Script()
+QStringList TypeStructRecord::Script()
 {
     QStringList script;
     script << ( "\n" + FullName() + " = {} ;" );
 
-    for( C_Variant* variant : Records() )
-        script << static_cast<C_Record*>( variant )->Script() ;
+    for( TypeVariant* variant : Records() )
+        script << static_cast<TypeRecord*>( variant )->Script() ;
 
     return script;
 }
 
-bool C_StructRecord::GetState( C_StateReader& state )
+bool TypeStructRecord::GetState( TypeStateReader& state )
 {
     QStringList row;
     row.append( m_Id );
@@ -76,16 +72,16 @@ bool C_StructRecord::GetState( C_StateReader& state )
     row.append( m_Class );
     state.Read( row );
 
-    for( C_Variant* variant : Records() )
+    for( TypeVariant* variant : Records() )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
         record->GetState( state );
     }
 
     return true;
 }
 
-bool C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
+bool TypeStructRecord::SetState( TypeStateWriter& state, TypeRecordStruct* root )
 {
     Records().Clear();
 
@@ -93,7 +89,7 @@ bool C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
     state.Write( row );
 
     if( state.Flags() & FLAG_STATE_NEWID )
-        m_Id    = C_RecordFactory::GenerateId();
+        m_Id    = TypeRecordFactory::GenerateId();
     else
         m_Id    = row[0];
 
@@ -110,14 +106,14 @@ bool C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
     return true;
 }
 
-QWidget* C_StructRecord::PropertyWidget( C_Controller& controller )
+QWidget* TypeStructRecord::PropertyWidget( TypeController& controller )
 {
 
     QWidget* name_widget;
 
-    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
 
@@ -132,20 +128,20 @@ QWidget* C_StructRecord::PropertyWidget( C_Controller& controller )
     return widget;
 }
 
-C_StructRecordFactory::C_StructRecordFactory()
+TypeStructRecordFactory::TypeStructRecordFactory()
 {
     m_RecordClass = "Struct";
 }
 
-C_Record* C_StructRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root  )
+TypeRecord* TypeStructRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root  )
 {
-    C_StructRecord* record = new C_StructRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    TypeStructRecord* record = new TypeStructRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_StructRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeStructRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
-    C_StructRecord* record = new C_StructRecord( state, parent, root );
+    TypeStructRecord* record = new TypeStructRecord( state, parent, root );
     return record;
 }
 

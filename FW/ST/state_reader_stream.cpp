@@ -1,16 +1,16 @@
 #include "FW/ST/state_reader_stream.h"
 #include <QDataStream>
 
-C_StateReaderStream::C_StateReaderStream(
+TypeStateReaderStream::TypeStateReaderStream(
     QDataStream& data_stream,
     long flags,
-    C_Variant* parent ):
-    C_StateReader( flags, parent )
+    TypeVariant* parent ):
+    TypeStateReader( flags, parent )
 {
     m_DataStream = &data_stream;
 }
 
-void C_StateReaderStream::Read( QStringList& data )
+void TypeStateReaderStream::Read( QStringList& data )
 {
     if( AtEnd() )
         return;
@@ -20,7 +20,7 @@ void C_StateReaderStream::Read( QStringList& data )
     ++m_Count;
 }
 
-void C_StateReaderStream::Stop()
+void TypeStateReaderStream::Stop()
 {
     if( AtEnd() )
         return;

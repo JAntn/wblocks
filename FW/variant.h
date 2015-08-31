@@ -1,10 +1,10 @@
-#ifndef C_VARIANT_H
-#define C_VARIANT_H
+#ifndef TypeVARIANT_H
+#define TypeVARIANT_H
 
 #include "FW/macro.h"
 #include <QString>
 
-class C_VariantStruct;
+class TypeVariantStruct;
 
 // REGLAS GENERALES
 // Los objetos son eliminados mediante delete.
@@ -12,24 +12,24 @@ class C_VariantStruct;
 // No implementar funciones Remove..
 // No usar templates, directamente convertir desde este generico con static_cast
 
-class C_Variant
+class TypeVariant
 {
 public:
 
-    C_Variant( C_Variant* parent = 0 );
-    virtual ~C_Variant();
+    TypeVariant( TypeVariant* parent = 0 );
+    virtual ~TypeVariant();
 
-    void                               SetParent( C_Variant* parent = 0 );
-    C_Variant*                         Parent() const;
+    void                               SetParent( TypeVariant* parent = 0 );
+    TypeVariant*                         Parent() const;
 
-    M_VALUE                            ( Childreen, QList<C_Variant*> )
+    M_VALUE                            ( Childreen, QList<TypeVariant*> )
 
 private:
 
-    C_Variant*                         m_Parent;
-    friend class                       C_VariantStruct;
+    TypeVariant*                         m_Parent;
+    friend class                       TypeVariantStruct;
 };
 
-#endif // C_VARIANT_H
+#endif // TypeVARIANT_H
 
 #include "FW/variant_struct.h"

@@ -11,29 +11,29 @@ QString HORIZONTAL_HEADER_TEXT[] =
     "Class"
 };
 
-int C_UiRecordTableModel::columnCount( const QModelIndex& ) const
+int TypeUiRecordTableModel::columnCount( const QModelIndex& ) const
 {
     return 3;
 }
 
-C_UiRecordTableModel::C_UiRecordTableModel( C_Document& document, QObject* parent ):
+TypeUiRecordTableModel::TypeUiRecordTableModel( TypeDocument& document, QObject* parent ):
     QAbstractTableModel( parent ),
     m_Document( &document )
 {
     // void
 }
 
-C_UiRecordTableModel::~C_UiRecordTableModel()
+TypeUiRecordTableModel::~TypeUiRecordTableModel()
 {
     // void
 }
 
-int C_UiRecordTableModel::rowCount( const QModelIndex& ) const
+int TypeUiRecordTableModel::rowCount( const QModelIndex& ) const
 {
     return Records().Size();
 }
 
-QVariant C_UiRecordTableModel::data( const QModelIndex& index, int role ) const
+QVariant TypeUiRecordTableModel::data( const QModelIndex& index, int role ) const
 {
     if ( !index.isValid() )
         return QVariant();
@@ -45,7 +45,7 @@ QVariant C_UiRecordTableModel::data( const QModelIndex& index, int role ) const
 
     if ( role == Qt::DisplayRole )
     {
-        C_Record* record = Records().FromIndex( index.row() );
+        TypeRecord* record = Records().FromIndex( index.row() );
 
         if( index.column() == 2 )
             return record->Class();
@@ -65,7 +65,7 @@ QVariant C_UiRecordTableModel::data( const QModelIndex& index, int role ) const
     return QVariant();
 }
 
-QVariant C_UiRecordTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
+QVariant TypeUiRecordTableModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
     if ( role != Qt::DisplayRole )
         return QVariant();
@@ -76,7 +76,7 @@ QVariant C_UiRecordTableModel::headerData( int section, Qt::Orientation orientat
         return section;
 }
 
-C_RecordStruct& C_UiRecordTableModel::Records() const
+TypeRecordStruct& TypeUiRecordTableModel::Records() const
 {
     return Document().Context().Records();
 }

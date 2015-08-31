@@ -6,41 +6,41 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 
-C_Clipboard::C_Clipboard( C_Variant* parent ):
-    C_Variant( parent )
+TypeClipboard::TypeClipboard( TypeVariant* parent ):
+    TypeVariant( parent )
 {
     // void
 }
 
-void C_Clipboard::Clear()
+void TypeClipboard::Clear()
 {
     m_Data.clear();
     m_Flags = 0;
 }
 
-void C_Clipboard::Copy( const QList<C_Record*>& records )
+void TypeClipboard::Copy( const QList<TypeRecord*>& records )
 {
     Clear();
     m_Data = records;
     m_Flags = FLAG_STATE_NEWID;
 }
 
-bool C_Clipboard::Empty()
+bool TypeClipboard::Empty()
 {
     return m_Data.empty();
 }
 
-void C_Clipboard::Cut( const QList<C_Record*>& records )
+void TypeClipboard::Cut( const QList<TypeRecord*>& records )
 {
     Clear();
     m_Data = records;
     m_Flags = 0;
 }
 
-void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
+void TypeClipboard::Paste( TypeRecordStruct& record_struct, int position )
 {
     QList<QStringList> table;
-    QList<C_Variant*>::iterator iter;
+    QList<TypeVariant*>::iterator iter;
 
     if ( position < 0 )
         iter = record_struct.end();
@@ -52,12 +52,12 @@ void C_Clipboard::Paste( C_RecordStruct& record_struct, int position )
             ++iter;
     }
 
-    C_StateReaderTable reader( table );
+    TypeStateReaderTable reader( table );
 
-    for( C_Record* record : Data() )
+    for( TypeRecord* record : Data() )
         record->GetState( reader );
 
-    C_StateWriterTable writer( table, m_Flags );
+    TypeStateWriterTable writer( table, m_Flags );
 
     while( !writer.AtEnd() )
         record_struct.CreateRecord( writer, iter );

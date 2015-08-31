@@ -1,5 +1,5 @@
-#ifndef C_CONTROLLER_H
-#define C_CONTROLLER_H
+#ifndef TypeCONTROLLER_H
+#define TypeCONTROLLER_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
@@ -7,40 +7,40 @@
 #include <QObject>
 #include <QStringList>
 
-class C_Record;
-class C_UiMainWindow;
-class C_Document;
-class C_StateWriter;
-class C_Config;
-class C_Database;
-class C_Clipboard;
-class C_HtmlBuilder;
+class TypeRecord;
+class TypeUiMainWindow;
+class TypeDocument;
+class TypeStateWriter;
+class TypeConfig;
+class TypeDatabase;
+class TypeClipboard;
+class TypeHtmlBuilder;
 
-class C_Controller : public QObject, public C_Variant
+class TypeController : public QObject, public TypeVariant
 {
     Q_OBJECT
 
 public:
 
-    C_Controller();
-    ~C_Controller() override;
+    TypeController();
+    ~TypeController() override;
 
     static bool         AcceptMessage( QString msg );
     static void         Message( QString msg );
     static QString      LoadTextFile( QString file_name );
     static void         SaveTextFile( QString file_name, QString text );
 
-    M_POINTER           ( Document,    C_Document )
-    M_POINTER           ( MainWindow,  C_UiMainWindow )
-    M_POINTER           ( Config,      C_Config )
-    M_POINTER           ( Database,    C_Database )
-    M_POINTER           ( HtmlBuilder, C_HtmlBuilder )
-    M_POINTER           ( Clipboard,   C_Clipboard )
+    M_POINTER           ( Document,    TypeDocument )
+    M_POINTER           ( MainWindow,  TypeUiMainWindow )
+    M_POINTER           ( Config,      TypeConfig )
+    M_POINTER           ( Database,    TypeDatabase )
+    M_POINTER           ( HtmlBuilder, TypeHtmlBuilder )
+    M_POINTER           ( Clipboard,   TypeClipboard )
 
     void                ConnectSlots();
 
-    void                SetPropertyWidgetRecord( C_Record& record );
-    void                OpenRecordEditorWidget( C_Record& record );
+    void                SetPropertyWidgetRecord( TypeRecord& record );
+    void                OpenRecordEditorWidget( TypeRecord& record );
     void                OpenFileEditorWidget( QString file_name );
 
 public slots:
@@ -94,4 +94,4 @@ signals:
 
 };
 
-#endif // C_CONTROLLER_H
+#endif // TypeCONTROLLER_H

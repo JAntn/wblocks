@@ -1,37 +1,37 @@
-#ifndef C_INTEGER_RECORD_H
-#define C_INTEGER_RECORD_H
+#ifndef TypeINTEGER_RECORD_H
+#define TypeINTEGER_RECORD_H
 
 #include "FW/RC/record.h"
 #include "FW/macro.h"
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_IntegerRecord : public C_Record
+class TypeIntegerRecord : public TypeRecord
 {
 public:
 
-    explicit C_IntegerRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_IntegerRecord() override;
+    explicit TypeIntegerRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeIntegerRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeIntegerRecord() override;
 
-    QWidget*            PropertyWidget( C_Controller& controller ) override;
+    QWidget*            PropertyWidget( TypeController& controller ) override;
 
 private:
 
-    friend class        C_IntegerRecordFactory;
+    friend class        TypeIntegerRecordFactory;
 };
 
-class C_IntegerRecordFactory : public C_RecordFactory
+class TypeIntegerRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS   ( C_IntegerRecordFactory )
+    SINGLETON_CLASS   ( TypeIntegerRecordFactory )
 
-    C_IntegerRecordFactory();
+    TypeIntegerRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_INTEGER_RECORD_H
+#endif // TypeINTEGER_RECORD_H

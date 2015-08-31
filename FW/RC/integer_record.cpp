@@ -2,15 +2,12 @@
 #include "FW/UI/PR/ui_integer_property.h"
 #include "FW/UI/PR/ui_record_name_property.h"
 #include <QVBoxLayout>
-
-#include "FW/UI/ui_main_window.h"
 #include <FW/ST/state_writer.h>
 #include <FW/ST/state_reader.h>
-#include <FW/document.h>
 
 
-C_IntegerRecord::C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
-    C_Record( id, name, value, parent, root )
+TypeIntegerRecord::TypeIntegerRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeRecord( id, name, value, parent, root )
 {
     m_Class = "Integer";
 
@@ -18,25 +15,25 @@ C_IntegerRecord::C_IntegerRecord( QString id, QString name, QString value, C_Var
         m_Value = "0";
 }
 
-C_IntegerRecord::C_IntegerRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_Record( "", "", "", parent, root )
+TypeIntegerRecord::TypeIntegerRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRecord( "", "", "", parent, root )
 {
     m_Class = "Integer";
     SetState( state, root );
 }
 
-C_IntegerRecord::~C_IntegerRecord()
+TypeIntegerRecord::~TypeIntegerRecord()
 {
     // void
 }
 
-QWidget* C_IntegerRecord::PropertyWidget( C_Controller& controller )
+QWidget* TypeIntegerRecord::PropertyWidget( TypeController& controller )
 {
     QWidget* name_widget;
 
-    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
     } );
@@ -44,9 +41,9 @@ QWidget* C_IntegerRecord::PropertyWidget( C_Controller& controller )
 
     QWidget* value_widget;
 
-    value_widget = new C_UiIntegerProperty( "Integer", Value().toLong(), [&controller, this]( C_UiProperty & property_base )
+    value_widget = new TypeUiIntegerProperty( "Integer", Value().toLong(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiIntegerProperty&>( property_base );
+        auto& property = static_cast<TypeUiIntegerProperty&>( property_base );
         SetValue( QString::number( property.Value() ) );
         emit controller.RecordsChanged();
     } );
@@ -61,19 +58,19 @@ QWidget* C_IntegerRecord::PropertyWidget( C_Controller& controller )
     return widget;
 }
 
-C_IntegerRecordFactory::C_IntegerRecordFactory()
+TypeIntegerRecordFactory::TypeIntegerRecordFactory()
 {
     m_RecordClass = "Integer";
 }
 
-C_Record* C_IntegerRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeIntegerRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_IntegerRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeIntegerRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_IntegerRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeIntegerRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_IntegerRecord( state, parent, root );
+    return new TypeIntegerRecord( state, parent, root );
 }
 
 

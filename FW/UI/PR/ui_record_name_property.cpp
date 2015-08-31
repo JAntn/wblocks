@@ -2,9 +2,9 @@
 #include "ui_recordnameproperty.h"
 #include "FW/controller.h"
 
-C_UiRecordNameProperty::C_UiRecordNameProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
-    C_UiProperty( on_changed, parent ),
-    ui( new Ui::C_UiRecordNameProperty )
+TypeUiRecordNameProperty::TypeUiRecordNameProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+    TypeUiProperty( on_changed, parent ),
+    ui( new Ui::TypeUiRecordNameProperty )
 {
     ui->setupUi( this );
     ui->Label->setText( tag_name );
@@ -14,32 +14,32 @@ C_UiRecordNameProperty::C_UiRecordNameProperty( QString tag_name, QString value,
         ui->LineEdit,
         QLineEdit::returnPressed,
         this,
-        C_UiRecordNameProperty::OnReturnPressed
+        TypeUiRecordNameProperty::OnReturnPressed
     );
 
 }
 
-C_UiRecordNameProperty::~C_UiRecordNameProperty()
+TypeUiRecordNameProperty::~TypeUiRecordNameProperty()
 {
     delete ui;
 }
 
-void C_UiRecordNameProperty::SetValue( QString value )
+void TypeUiRecordNameProperty::SetValue( QString value )
 {
     ui->LineEdit->setText( value );
 }
 
-QString C_UiRecordNameProperty::Value()
+QString TypeUiRecordNameProperty::Value()
 {
     return ui->LineEdit->text();
 }
 
 
-void C_UiRecordNameProperty::OnReturnPressed()
+void TypeUiRecordNameProperty::OnReturnPressed()
 {
     if( !QRegExp( "[A-Za-z][\\w.]+" ).exactMatch( ui->LineEdit->text() ) )
     {
-        C_Controller::Message( tr( "Bad record name" ) );
+        TypeController::Message( tr( "Bad record name" ) );
         return;
     }
 

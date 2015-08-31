@@ -4,9 +4,9 @@
 #include <QRegExp>
 #include "FW/controller.h"
 
-C_UiIntegerProperty::C_UiIntegerProperty( QString tag_name, long value, C_UiProperty::on_changed_t on_changed, QWidget* parent ):
-    C_UiProperty( on_changed, parent ),
-    ui( new Ui::C_UiIntegerProperty )
+TypeUiIntegerProperty::TypeUiIntegerProperty( QString tag_name, long value, TypeUiProperty::on_changed_t on_changed, QWidget* parent ):
+    TypeUiProperty( on_changed, parent ),
+    ui( new Ui::TypeUiIntegerProperty )
 {
     ui->setupUi( this );
     ui->Label->setText( tag_name );
@@ -16,31 +16,31 @@ C_UiIntegerProperty::C_UiIntegerProperty( QString tag_name, long value, C_UiProp
         ui->LineEdit,
         QLineEdit::returnPressed,
         this,
-        C_UiIntegerProperty::OnReturnPressed
+        TypeUiIntegerProperty::OnReturnPressed
     );
 
 }
 
-C_UiIntegerProperty::~C_UiIntegerProperty()
+TypeUiIntegerProperty::~TypeUiIntegerProperty()
 {
     delete ui;
 }
 
-void C_UiIntegerProperty::SetValue(long value )
+void TypeUiIntegerProperty::SetValue(long value )
 {
     ui->LineEdit->setText( QString::number(value) );
 }
 
-long C_UiIntegerProperty::Value()
+long TypeUiIntegerProperty::Value()
 {
     return ui->LineEdit->text().toLong();
 }
 
-void C_UiIntegerProperty::OnReturnPressed()
+void TypeUiIntegerProperty::OnReturnPressed()
 {
     if( !QRegExp( "\\s*[-+]?\\d+(E[+]?\\d+)?\\s*" ).exactMatch(ui->LineEdit->text()))
     {
-        C_Controller::Message( tr( "Bad integer number string" ) );
+        TypeController::Message( tr( "Bad integer number string" ) );
         return;
     }
 

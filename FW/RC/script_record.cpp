@@ -1,48 +1,43 @@
 #include "FW/RC/script_record.h"
 #include "FW/UI/PR/ui_record_properties.h"
-
-#include "FW/UI/ui_editor_container.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include <QCoreApplication>
 #include <QVBoxLayout>
 #include <FW/UI/PR/ui_record_name_property.h>
 #include <FW/UI/PR/ui_string_property.h>
 #include <FW/UI/ED/ui_text_editor.h>
 
-#include "FW/UI/ui_main_window.h"
-#include "FW/document.h"
 
-C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
-    C_Record( id, name, value, parent, root )
+TypeScriptRecord::TypeScriptRecord( QString id, QString name, QString value, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRecord( id, name, value, parent, root )
 {
     m_Class = "Script";
 }
 
-C_ScriptRecord::C_ScriptRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_Record( "", "", "", parent, root )
+TypeScriptRecord::TypeScriptRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRecord( "", "", "", parent, root )
 {
     m_Class = "Script";
     SetState( state, root );
 }
 
-C_ScriptRecord::~C_ScriptRecord()
+TypeScriptRecord::~TypeScriptRecord()
 {
     //void
 }
 
-QStringList C_ScriptRecord::Script()
+QStringList TypeScriptRecord::Script()
 {
     return QStringList( Value() );
 }
 
-QWidget* C_ScriptRecord::PropertyWidget( C_Controller& controller )
+QWidget* TypeScriptRecord::PropertyWidget( TypeController& controller )
 {
     QWidget* name_widget;
 
-    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
 
@@ -50,9 +45,9 @@ QWidget* C_ScriptRecord::PropertyWidget( C_Controller& controller )
 
     QWidget* value_widget;
 
-    value_widget = new C_UiStringProperty( "Script", Value(), [&controller, this]( C_UiProperty & property_base )
+    value_widget = new TypeUiStringProperty( "Script", Value(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiStringProperty&>( property_base );
+        auto& property = static_cast<TypeUiStringProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
     } );
@@ -68,13 +63,13 @@ QWidget* C_ScriptRecord::PropertyWidget( C_Controller& controller )
     return widget;
 }
 
-C_UiEditor* C_ScriptRecord::EditorWidget( QString id, C_Controller& controller )
+TypeUiEditor* TypeScriptRecord::EditorWidget( QString id, TypeController& controller )
 {
-    C_UiTextEditor* text_editor;
+    TypeUiTextEditor* text_editor;
 
-    text_editor = new C_UiTextEditor( id, Name(), Name().split( "." ).back(), [&controller, this]( C_UiEditor & editor_base )
+    text_editor = new TypeUiTextEditor( id, Name(), Name().split( "." ).back(), [&controller, this]( TypeUiEditor & editor_base )
     {
-        C_UiTextEditor& editor = static_cast<C_UiTextEditor&>( editor_base );
+        TypeUiTextEditor& editor = static_cast<TypeUiTextEditor&>( editor_base );
         SetValue( editor.Text() );
         emit controller.RecordsChanged();
     } );
@@ -84,20 +79,20 @@ C_UiEditor* C_ScriptRecord::EditorWidget( QString id, C_Controller& controller )
     return text_editor;
 }
 
-C_ScriptRecordFactory::C_ScriptRecordFactory()
+TypeScriptRecordFactory::TypeScriptRecordFactory()
 {
     m_RecordClass = "Script";
 }
 
-C_Record* C_ScriptRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeScriptRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
-    C_ScriptRecord* record = new C_ScriptRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    TypeScriptRecord* record = new TypeScriptRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-C_Record* C_ScriptRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeScriptRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
-    C_ScriptRecord* record = new C_ScriptRecord( state, parent, root );
+    TypeScriptRecord* record = new TypeScriptRecord( state, parent, root );
     return record;
 }
 

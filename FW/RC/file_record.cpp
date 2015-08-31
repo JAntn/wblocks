@@ -1,18 +1,13 @@
 #include "FW/RC/file_record.h"
 #include "FW/UI/PR/ui_file_property.h"
 #include "FW/UI/PR/ui_record_name_property.h"
-
-#include "FW/UI/ui_main_window.h"
-#include "FW/document.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-
 #include <QVBoxLayout>
 
 
-
-C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
-    C_Record( id, name, value, parent, root )
+TypeFileRecord::TypeFileRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeRecord( id, name, value, parent, root )
 {
     m_Class = "File";
 
@@ -20,34 +15,34 @@ C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* 
         m_Value = "untitled";
 }
 
-C_FileRecord::C_FileRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_Record( "", "", "", parent, root )
+TypeFileRecord::TypeFileRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeRecord( "", "", "", parent, root )
 {
     m_Class = "File";
     SetState( state, root );
 }
 
-C_FileRecord::~C_FileRecord()
+TypeFileRecord::~TypeFileRecord()
 {
     //void
 }
 
-QWidget* C_FileRecord::PropertyWidget( C_Controller& controller )
+QWidget* TypeFileRecord::PropertyWidget( TypeController& controller )
 {
     QWidget* name_widget;
 
-    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
     } );
 
     QWidget* value_widget;
 
-    value_widget = new C_UiFileProperty( "File", Value(), [&controller, this]( C_UiProperty & property_base )
+    value_widget = new TypeUiFileProperty( "File", Value(), [&controller, this]( TypeUiProperty & property_base )
     {
-        auto& property = static_cast<C_UiFileProperty&>( property_base );
+        auto& property = static_cast<TypeUiFileProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
     } );
@@ -63,34 +58,34 @@ QWidget* C_FileRecord::PropertyWidget( C_Controller& controller )
     return widget;
 }
 
-QString C_FileRecord::FilePath()
+QString TypeFileRecord::FilePath()
 {
     QStringList string_list = Value().split( "/" );
     string_list.pop_back();
     return string_list.join( "/" );
 }
 
-QString C_FileRecord::FileName()
+QString TypeFileRecord::FileName()
 {
     return Value().split( "/" ).back();
 }
 
-QString C_FileRecord::FileFullName()
+QString TypeFileRecord::FileFullName()
 {
     return Value();
 }
 
-C_Record* C_FileRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeFileRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_FileRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeFileRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_FileRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeFileRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_FileRecord( state, parent, root );
+    return new TypeFileRecord( state, parent, root );
 }
 
-C_FileRecordFactory::C_FileRecordFactory()
+TypeFileRecordFactory::TypeFileRecordFactory()
 {
     m_RecordClass = "File";
 }

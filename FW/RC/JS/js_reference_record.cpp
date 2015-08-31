@@ -3,26 +3,26 @@
 #include "FW/ST/state_writer.h"
 
 
-C_JsReferenceRecord::C_JsReferenceRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
-    C_ReferenceRecord( id, name, value, parent, root )
+TypeJsReferenceRecord::TypeJsReferenceRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeReferenceRecord( id, name, value, parent, root )
 {
     m_Class = "JsReference";
 }
 
-C_JsReferenceRecord::C_JsReferenceRecord( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root ):
-    C_ReferenceRecord( state, parent, root )
+TypeJsReferenceRecord::TypeJsReferenceRecord( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeReferenceRecord( state, parent, root )
 {
     m_Class = "JsReference";
 }
 
-C_JsReferenceRecord::~C_JsReferenceRecord()
+TypeJsReferenceRecord::~TypeJsReferenceRecord()
 {
     // void
 }
 
-QStringList C_JsReferenceRecord::Script()
+QStringList TypeJsReferenceRecord::Script()
 {
-    C_Record* record = Referencee();
+    TypeRecord* record = Referencee();
 
     if( record != 0 )
         return QStringList( "\n" + FullName() + " = " + record->FullName() + ";" );
@@ -32,17 +32,17 @@ QStringList C_JsReferenceRecord::Script()
 }
 
 
-C_JsReferenceRecordFactory::C_JsReferenceRecordFactory()
+TypeJsReferenceRecordFactory::TypeJsReferenceRecordFactory()
 {
     m_RecordClass = "JsReference";
 }
 
-C_Record* C_JsReferenceRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeJsReferenceRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_JsReferenceRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeJsReferenceRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_JsReferenceRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeJsReferenceRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_JsReferenceRecord( state, parent, root );
+    return new TypeJsReferenceRecord( state, parent, root );
 }

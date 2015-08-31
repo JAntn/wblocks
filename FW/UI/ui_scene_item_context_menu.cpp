@@ -7,8 +7,8 @@
 #include <QMenu>
 #include <QMessageBox>
 
-C_UiSceneItemContextMenu::C_UiSceneItemContextMenu(
-    C_SceneItem& item,
+TypeUiSceneItemContextMenu::TypeUiSceneItemContextMenu(
+    TypeSceneItem& item,
     QGraphicsSceneContextMenuEvent* event,
     QObject* parent ):
     QObject( parent ),
@@ -39,12 +39,12 @@ C_UiSceneItemContextMenu::C_UiSceneItemContextMenu(
     menu.exec( event->screenPos() );
 }
 
-C_UiSceneItemContextMenu::~C_UiSceneItemContextMenu()
+TypeUiSceneItemContextMenu::~TypeUiSceneItemContextMenu()
 {
     //void
 }
 
-void C_UiSceneItemContextMenu::OnEditRecordProperties()
+void TypeUiSceneItemContextMenu::OnEditRecordProperties()
 {
     SceneItem()
     .Record()
@@ -54,9 +54,9 @@ void C_UiSceneItemContextMenu::OnEditRecordProperties()
         .Document().Controller() );
 }
 
-void C_UiSceneItemContextMenu::OnRemove()
+void TypeUiSceneItemContextMenu::OnRemove()
 {
-    if( C_Controller::AcceptMessage(
+    if( TypeController::AcceptMessage(
                 tr( "Remove this record?" ) ) )
     {
         delete & SceneItem().Record();
@@ -68,9 +68,9 @@ void C_UiSceneItemContextMenu::OnRemove()
     }
 }
 
-void C_UiSceneItemContextMenu::OnRemoveFromScene()
+void TypeUiSceneItemContextMenu::OnRemoveFromScene()
 {
-    if( C_Controller::AcceptMessage(
+    if( TypeController::AcceptMessage(
                 tr( "Remove this item from scene?" ) ) )
         delete & SceneItem();
 }

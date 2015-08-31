@@ -1,9 +1,9 @@
 #include "FW/UI/PR/ui_line_text_property.h"
 #include "ui_linetextproperty.h"
 
-C_UiLineTextProperty::C_UiLineTextProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
-    C_UiProperty( on_changed, parent ),
-    ui( new Ui::C_UiLineTextProperty )
+TypeUiLineTextProperty::TypeUiLineTextProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+    TypeUiProperty( on_changed, parent ),
+    ui( new Ui::TypeUiLineTextProperty )
 {
     ui->setupUi( this );
     ui->Label->setText( tag_name );
@@ -13,27 +13,27 @@ C_UiLineTextProperty::C_UiLineTextProperty( QString tag_name, QString value, on_
         ui->LineEdit,
         QLineEdit::returnPressed,
         this,
-        C_UiLineTextProperty::OnReturnPressed
+        TypeUiLineTextProperty::OnReturnPressed
     );
 }
 
-C_UiLineTextProperty::~C_UiLineTextProperty()
+TypeUiLineTextProperty::~TypeUiLineTextProperty()
 {
     delete ui;
 }
 
-void C_UiLineTextProperty::SetValue( QString value )
+void TypeUiLineTextProperty::SetValue( QString value )
 {
     ui->LineEdit->setText( value );
 }
 
-QString C_UiLineTextProperty::Value()
+QString TypeUiLineTextProperty::Value()
 {
     return ui->LineEdit->text();
 }
 
 
-void C_UiLineTextProperty::OnReturnPressed()
+void TypeUiLineTextProperty::OnReturnPressed()
 {
     OnApplyChanges();
 }

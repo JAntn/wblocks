@@ -1,39 +1,39 @@
-#ifndef C_JS_STRING_RECORD_H
-#define C_JS_STRING_RECORD_H
+#ifndef TypeJS_STRING_RECORD_H
+#define TypeJS_STRING_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/string_record.h"
 
-class C_StateReader;
-class C_StateWriter;
+class TypeStateReader;
+class TypeStateWriter;
 
-class C_JsStringRecord : public C_StringRecord
+class TypeJsStringRecord : public TypeStringRecord
 {
 
 public:
 
-    explicit C_JsStringRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_JsStringRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_JsStringRecord() override;
+    explicit TypeJsStringRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeJsStringRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeJsStringRecord() override;
 
     QStringList         Script()  override;
 
 private:
 
-    friend class        C_JsStringRecordFactory;
+    friend class        TypeJsStringRecordFactory;
 };
 
-class C_JsStringRecordFactory : public C_RecordFactory
+class TypeJsStringRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS     ( C_JsStringRecordFactory )
+    SINGLETON_CLASS     ( TypeJsStringRecordFactory )
 
-    C_JsStringRecordFactory();
+    TypeJsStringRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 
 };
 
-#endif // C_JS_STRING_RECORD_H
+#endif // TypeJS_STRING_RECORD_H

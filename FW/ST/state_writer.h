@@ -1,17 +1,17 @@
-#ifndef C_STATEWRITER_H
-#define C_STATEWRITER_H
+#ifndef TypeSTATEWRITER_H
+#define TypeSTATEWRITER_H
 
 #include <QStringList>
 
 #include "FW/macro.h"
 #include "FW/variant.h"
 
-class C_StateWriter : public C_Variant
+class TypeStateWriter : public TypeVariant
 {
 public:
 
-    C_StateWriter( long flags = 0, C_Variant* parent = 0 );
-    ~C_StateWriter();
+    TypeStateWriter( long flags = 0, TypeVariant* parent = 0 );
+    ~TypeStateWriter();
 
     virtual void        Stop();
     virtual void        Write( QStringList& data, bool next = true);
@@ -24,7 +24,7 @@ public:
 
 };
 
-#endif // C_STATEWRITER_H
+#endif // TypeSTATEWRITER_H
 
 #include "FW/ST/state_writer_database.h"
 #include "FW/ST/state_writer_stream.h"

@@ -1,24 +1,24 @@
-#ifndef C_RECORD_CONTEXT_MENU_H
-#define C_RECORD_CONTEXT_MENU_H
+#ifndef TypeRECORD_CONTEXT_MENU_H
+#define TypeRECORD_CONTEXT_MENU_H
 
 #include "FW/macro.h"
 
 #include <QObject>
 
-class C_Record;
-class C_Controller;
+class TypeRecord;
+class TypeController;
 
-class C_UiRecordContextMenu : QObject
+class TypeUiRecordContextMenu : QObject
 {
     Q_OBJECT
 
 public:
 
-    C_UiRecordContextMenu( C_Controller& controller, const QPoint& global_point, QObject* parent = 0 );
-    ~C_UiRecordContextMenu() override;
+    TypeUiRecordContextMenu( TypeController& controller, const QPoint& global_point, QObject* parent = 0 );
+    ~TypeUiRecordContextMenu() override;
 
-    M_POINTER           ( Controller, C_Controller )
+    M_POINTER           ( Controller, TypeController )
 
 };
 
-#endif // C_RECORD_CONTEXT_MENU_H
+#endif // TypeRECORD_CONTEXT_MENU_H

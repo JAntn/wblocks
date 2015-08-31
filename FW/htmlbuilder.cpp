@@ -2,18 +2,18 @@
 #include "FW/htmlbuilder.h"
 #include "FW/RC/record_struct.h"
 
-C_HtmlBuilder::C_HtmlBuilder( C_Variant* parent ):
-    C_Variant( parent )
+TypeHtmlBuilder::TypeHtmlBuilder( TypeVariant* parent ):
+    TypeVariant( parent )
 {
     // void
 }
 
-C_HtmlBuilder::~C_HtmlBuilder()
+TypeHtmlBuilder::~TypeHtmlBuilder()
 {
     // void
 }
 
-void C_HtmlBuilder::Build( C_RecordStruct& root )
+void TypeHtmlBuilder::Build( TypeRecordStruct& root )
 {
     m_Html.clear();
 
@@ -22,16 +22,16 @@ void C_HtmlBuilder::Build( C_RecordStruct& root )
     << "\n<html>\n"
     << "\n<script>\n";
 
-    for( C_Variant* variant : root )
+    for( TypeVariant* variant : root )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
         m_Html << record->Script();
     }
     m_Html << "\n</script>\n";
 
-    for( C_Variant* variant : root )
+    for( TypeVariant* variant : root )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
         m_Html << record->Html();
     }
 

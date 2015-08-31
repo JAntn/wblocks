@@ -1,60 +1,60 @@
-#ifndef C_SCENE_H
-#define C_SCENE_H
+#ifndef TypeSCENE_H
+#define TypeSCENE_H
 
 #include "FW/variant.h"
 #include "FW/macro.h"
 #include <QObject>
 #include <QGraphicsScene>
 
-class C_SceneItem;
-class C_Record;
-class C_Document;
-class C_StateWriter;
-class C_SceneLine;
+class TypeSceneItem;
+class TypeRecord;
+class TypeDocument;
+class TypeStateWriter;
+class TypeSceneLine;
 
-class C_Scene : public C_Variant
+class TypeScene : public TypeVariant
 {
 public:
 
-    explicit C_Scene( C_Document& document, C_Variant* parent = 0 );
-    ~C_Scene() override;
+    explicit TypeScene( TypeDocument& document, TypeVariant* parent = 0 );
+    ~TypeScene() override;
 
     static QString                GenerateId();
     static QString                IdCount();
 
-    C_SceneItem*                  CreateItem( C_StateWriter& state );
-    C_SceneItem*                  CreateItem( C_Record& record );
-    C_SceneItem*                  CreateItem( C_Record& record, qreal x, qreal y, qreal z = -1 );
+    TypeSceneItem*                  CreateItem( TypeStateWriter& state );
+    TypeSceneItem*                  CreateItem( TypeRecord& record );
+    TypeSceneItem*                  CreateItem( TypeRecord& record, qreal x, qreal y, qreal z = -1 );
 
-    QList<C_SceneItem*>           FromRecord( C_Record& record ) const;
+    QList<TypeSceneItem*>           FromRecord( TypeRecord& record ) const;
 
     void                          Clear();
     int                           Size();
 
-    void                          BringFront( C_SceneItem& sc );
+    void                          BringFront( TypeSceneItem& sc );
 
     void                          UpdateLines();
     void                          ClearLines();
 
     M_POINTER                     ( Graphics,       QGraphicsScene )
-    M_POINTER                     ( Document,       C_Document )
+    M_POINTER                     ( Document,       TypeDocument )
     M_VALUE                       ( TopZ,           double )
-    M_VALUE                       ( Items,          QList<C_SceneItem*> )
-    M_VALUE                       ( Lines,          QList<C_SceneLine*> )
+    M_VALUE                       ( Items,          QList<TypeSceneItem*> )
+    M_VALUE                       ( Lines,          QList<TypeSceneLine*> )
 
 private:
 
     static long                   m_IdCount;
 
-    friend class                  C_Document;
-    friend class                  C_SceneItem;
-    friend class                  C_SceneLine;
+    friend class                  TypeDocument;
+    friend class                  TypeSceneItem;
+    friend class                  TypeSceneLine;
 
 };
 
 
 
-#endif // C_SCENE_H
+#endif // TypeSCENE_H
 
 #include "scene_item.h"
 

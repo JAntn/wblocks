@@ -5,27 +5,27 @@
 #include "FW/macro.h"
 #include <QStringListModel>
 
-class C_Document;
-class C_Controller;
+class TypeDocument;
+class TypeController;
 
 namespace Ui
 {
-class C_UiFileExplorer;
+class TypeUiFileExplorer;
 }
 
-class C_UiFileExplorer : public QWidget
+class TypeUiFileExplorer : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    C_UiFileExplorer( C_Controller& controller, QWidget* parent = 0 );
-    ~C_UiFileExplorer();
+    TypeUiFileExplorer( TypeController& controller, QWidget* parent = 0 );
+    ~TypeUiFileExplorer();
 
     M_VALUE                       ( Path,       QString )
     M_VALUE                       ( ModelData,  QStringList )
     M_POINTER                     ( Model,      QStringListModel )
-    M_POINTER                     ( Controller, C_Controller )
+    M_POINTER                     ( Controller, TypeController )
 
     void                          Update();
     void                          Open( QString file_name );
@@ -41,7 +41,7 @@ private:
 
     QString                       FullPath();
 
-    Ui::C_UiFileExplorer* ui;
+    Ui::TypeUiFileExplorer* ui;
 };
 
 #endif // UI_FILE_EXPLORER_VIEW_H

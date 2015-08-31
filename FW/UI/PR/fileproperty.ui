@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>C_UiFileProperty</class>
- <widget class="QWidget" name="C_UiFileProperty">
+ <class>TypeUiFileProperty</class>
+ <widget class="QWidget" name="TypeUiFileProperty">
   <property name="geometry">
    <rect>
     <x>0</x>

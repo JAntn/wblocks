@@ -1,5 +1,5 @@
-#ifndef C_RECORD_H
-#define C_RECORD_H
+#ifndef TypeRECORD_H
+#define TypeRECORD_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
@@ -7,26 +7,26 @@
 #include <QString>
 #include <QWidget>
 
-class C_UiEditor;
-class C_RecordStruct;
-class C_StateReader;
-class C_StateWriter;
-class C_Controller;
+class TypeUiEditor;
+class TypeRecordStruct;
+class TypeStateReader;
+class TypeStateWriter;
+class TypeController;
 
-class C_Record : public C_Variant
+class TypeRecord : public TypeVariant
 {
 public:
 
-    explicit C_Record( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_Record( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_Record() override;
+    explicit TypeRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeRecord() override;
 
-    virtual bool                  GetState( C_StateReader& state );
-    virtual bool                  SetState( C_StateWriter& state, C_RecordStruct* root = 0 );
-    virtual QWidget*              PropertyWidget( C_Controller& controller );
-    virtual C_UiEditor*           EditorWidget( QString id, C_Controller& controller );
+    virtual bool                  GetState( TypeStateReader& state );
+    virtual bool                  SetState( TypeStateWriter& state, TypeRecordStruct* root = 0 );
+    virtual QWidget*              PropertyWidget( TypeController& controller );
+    virtual TypeUiEditor*           EditorWidget( QString id, TypeController& controller );
 
-    virtual C_RecordStruct*       Struct();
+    virtual TypeRecordStruct*       Struct();
     virtual QStringList           Script();
     virtual QStringList           Html();
 
@@ -45,14 +45,14 @@ protected:
     QString                       m_Value;
 };
 
-class C_RecordFactory
+class TypeRecordFactory
 {
 public:
 
-    C_RecordFactory();
+    TypeRecordFactory();
 
-    virtual C_Record*             CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    virtual C_Record*             CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
+    virtual TypeRecord*             CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    virtual TypeRecord*             CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
 
     static QString                GenerateId();
     static QString                IdCount();
@@ -62,10 +62,10 @@ public:
 private:
 
     static long                   m_IdCount;
-    friend class                  C_Document;
+    friend class                  TypeDocument;
 };
 
-#endif // C_RECORD_H
+#endif // TypeRECORD_H
 
 #include "FW/RC/record_struct.h"
 

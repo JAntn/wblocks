@@ -8,10 +8,10 @@
 #include <FW/UI/ED/ui_text_editor.h>
 #include "FW/controller.h"
 
-C_UiFileExplorer::C_UiFileExplorer( C_Controller& controller, QWidget* parent ) :
+TypeUiFileExplorer::TypeUiFileExplorer( TypeController& controller, QWidget* parent ) :
     QWidget( parent ),
     m_Controller( &controller ),
-    ui( new Ui::C_UiFileExplorer )
+    ui( new Ui::TypeUiFileExplorer )
 {
     m_Path = ""; // RELATIVE TO DOCUMENT PATH
     m_Model = new QStringListModel( this );
@@ -24,37 +24,37 @@ C_UiFileExplorer::C_UiFileExplorer( C_Controller& controller, QWidget* parent ) 
         ui->ListView,
         QListView::doubleClicked,
         this,
-        C_UiFileExplorer::OnDoubleClicked
+        TypeUiFileExplorer::OnDoubleClicked
     );
 
     connect(
         ui->RootButton,
         QPushButton::clicked,
         this,
-        C_UiFileExplorer::OnRootButtonClicked
+        TypeUiFileExplorer::OnRootButtonClicked
     );
 
     connect(
         ui->UpButton,
         QPushButton::clicked,
         this,
-        C_UiFileExplorer::OnUpButtonClicked
+        TypeUiFileExplorer::OnUpButtonClicked
     );
 
     connect(
         ui->LineEdit,
         QLineEdit::returnPressed,
         this,
-        C_UiFileExplorer::OnLineEditReturnPressed
+        TypeUiFileExplorer::OnLineEditReturnPressed
     );
 }
 
-C_UiFileExplorer::~C_UiFileExplorer()
+TypeUiFileExplorer::~TypeUiFileExplorer()
 {
     delete ui;
 }
 
-QString C_UiFileExplorer::FullPath()
+QString TypeUiFileExplorer::FullPath()
 {
     if( !Path().isEmpty() )
         return Controller().Document().Path() + "/" + Path();
@@ -62,7 +62,7 @@ QString C_UiFileExplorer::FullPath()
     return Controller().Document().Path();
 }
 
-void C_UiFileExplorer::Update()
+void TypeUiFileExplorer::Update()
 {
     ui->LineEdit->setText( Path() );
     m_ModelData = QDir( FullPath() ).entryList();
@@ -73,7 +73,7 @@ void C_UiFileExplorer::Update()
     emit Controller().FileExplorerChanged();
 }
 
-void C_UiFileExplorer::Open( QString file_name )
+void TypeUiFileExplorer::Open( QString file_name )
 {
     if( file_name.isEmpty() )
     {
@@ -92,7 +92,7 @@ void C_UiFileExplorer::Open( QString file_name )
     if( !QFileInfo( file_name ).exists() )
     {
         // IT SHALL NOT ENTER HERE NEVER
-        C_Controller::Message( tr( "File doesn't exists" ) );
+        TypeController::Message( tr( "File doesn't exists" ) );
         Update();
         return;
     }
@@ -104,7 +104,7 @@ void C_UiFileExplorer::Open( QString file_name )
     Controller().OpenFileEditorWidget( file_name );
 }
 
-void C_UiFileExplorer::OnDoubleClicked( const QModelIndex& index )
+void TypeUiFileExplorer::OnDoubleClicked( const QModelIndex& index )
 {
     QString file_name = m_ModelData[index.row()];
 
@@ -114,18 +114,18 @@ void C_UiFileExplorer::OnDoubleClicked( const QModelIndex& index )
     Open( file_name );
 }
 
-void C_UiFileExplorer::OnLineEditReturnPressed()
+void TypeUiFileExplorer::OnLineEditReturnPressed()
 {
     Open( ui->LineEdit->text() );
 }
 
-void C_UiFileExplorer::OnRootButtonClicked()
+void TypeUiFileExplorer::OnRootButtonClicked()
 {
     m_Path = "";
     Update();
 }
 
-void C_UiFileExplorer::OnUpButtonClicked()
+void TypeUiFileExplorer::OnUpButtonClicked()
 {
     if( !m_Path.isEmpty() )
     {

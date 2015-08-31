@@ -19,24 +19,24 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
 
-C_Document::C_Document( C_Controller& controller, QString file_name, QString path, C_Variant* parent ):
-    C_Variant( parent ), m_Controller( &controller )
+TypeDocument::TypeDocument( TypeController& controller, QString file_name, QString path, TypeVariant* parent ):
+    TypeVariant( parent ), m_Controller( &controller )
 {
-    C_RecordStruct::InitFactoryList();
+    TypeRecordStruct::InitFactoryList();
 
     m_FileName          = file_name;
     m_Path              = path;
-    m_Root              = new C_RecordStruct( "root", this );
-    m_Scene             = new C_Scene( *this, this );
-    m_Context           = new C_Context( Root(), Scene(), &Root(), this );
+    m_Root              = new TypeRecordStruct( "root", this );
+    m_Scene             = new TypeScene( *this, this );
+    m_Context           = new TypeContext( Root(), Scene(), &Root(), this );
 }
 
-C_Document::~C_Document()
+TypeDocument::~TypeDocument()
 {
     // void
 }
 
-void C_Document::UpdateHtml()
+void TypeDocument::UpdateHtml()
 {
     Controller().HtmlBuilder().Build( Root() );
     m_Html = Controller().HtmlBuilder().Html().join( "" );
@@ -44,7 +44,7 @@ void C_Document::UpdateHtml()
     emit Controller().HtmlCodeChanged();
 }
 
-void C_Document::Clear()
+void TypeDocument::Clear()
 {
     Context().SetRecords( Root() );
     Root().Clear();
@@ -64,7 +64,7 @@ void C_Document::Clear()
     emit Controller().DirectoryChanged();
 }
 
-int C_Document::SaveFile( QString file_name )
+int TypeDocument::SaveFile( QString file_name )
 {
     QFile file( file_name );
 
@@ -77,16 +77,16 @@ int C_Document::SaveFile( QString file_name )
     }
 
     QDataStream out( &file );
-    out << C_RecordFactory::IdCount();
-    out << C_Scene::IdCount();
+    out << TypeRecordFactory::IdCount();
+    out << TypeScene::IdCount();
 
     // GET RECORDS
 
-    C_StateReaderStream record_state( out );
+    TypeStateReaderStream record_state( out );
 
-    for( C_Variant* variant : Root() )
+    for( TypeVariant* variant : Root() )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
 
         if( !record->GetState( record_state ) )
         {
@@ -101,9 +101,9 @@ int C_Document::SaveFile( QString file_name )
 
     // GET SCENE ITEMS
 
-    C_StateReaderStream scene_state( out );
+    TypeStateReaderStream scene_state( out );
 
-    for( C_SceneItem* item : Scene().Items() )
+    for( TypeSceneItem* item : Scene().Items() )
     {
         if( !item->GetState( scene_state ) )
         {
@@ -123,7 +123,7 @@ int C_Document::SaveFile( QString file_name )
     return 0;
 }
 
-int C_Document::LoadFile( QString file_name )
+int TypeDocument::LoadFile( QString file_name )
 {
     QFile file( file_name );
 
@@ -139,13 +139,13 @@ int C_Document::LoadFile( QString file_name )
     QDataStream in( &file );
     QString value;
     in >> value;
-    C_RecordFactory::m_IdCount = value.toLong();
+    TypeRecordFactory::m_IdCount = value.toLong();
     in >> value;
-    C_Scene::m_IdCount = value.toLong();
+    TypeScene::m_IdCount = value.toLong();
 
     // SET RECORDS
 
-    C_StateWriterStream record_state( in );
+    TypeStateWriterStream record_state( in );
 
     while( !record_state.AtEnd() )
     {
@@ -160,7 +160,7 @@ int C_Document::LoadFile( QString file_name )
 
     // SET SCENE ITEMS
 
-    C_StateWriterStream scene_state( in );
+    TypeStateWriterStream scene_state( in );
 
     while( !scene_state.AtEnd() )
     {
@@ -183,7 +183,7 @@ int C_Document::LoadFile( QString file_name )
 
 #define FIELD(__NAME)   "[$$$"+QString(__NAME)+"]"
 
-int C_Document::SaveSQL( QString file_name )
+int TypeDocument::SaveSQL( QString file_name )
 {
     QFile::remove( file_name );
     Controller().Database().OpenDatabase( file_name );
@@ -197,10 +197,10 @@ int C_Document::SaveSQL( QString file_name )
     // FILL SETUP TABLE
 
     row.clear();
-    row << FIELD( "RECORD_ID_COUNT" ) << C_RecordFactory::IdCount();
+    row << FIELD( "RECORD_ID_COUNT" ) << TypeRecordFactory::IdCount();
     Controller().Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
     row.clear();
-    row << FIELD( "SCENE_ID_COUNT" ) << C_Scene::IdCount();
+    row << FIELD( "SCENE_ID_COUNT" ) << TypeScene::IdCount();
     Controller().Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
 
     // RECORD TABLE
@@ -215,11 +215,11 @@ int C_Document::SaveSQL( QString file_name )
 
     // FILL TABLE
 
-    C_StateReaderDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
+    TypeStateReaderDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
 
-    for( C_Variant* variant : Root() )
+    for( TypeVariant* variant : Root() )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
         record->GetState( record_state );
     }
 
@@ -237,9 +237,9 @@ int C_Document::SaveSQL( QString file_name )
     scene_fields.append( FIELD( "Y" ) );
     scene_fields.append( FIELD( "Z" ) );
     Controller().Database().CreateTable( FIELD( "SCENE_TABLE" ), scene_fields );
-    C_StateReaderDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ) );
+    TypeStateReaderDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ) );
 
-    for( C_SceneItem* item : Scene().Items() )
+    for( TypeSceneItem* item : Scene().Items() )
         item->GetState( scene_state );
 
     row.clear();
@@ -253,15 +253,15 @@ int C_Document::SaveSQL( QString file_name )
     return 0;
 }
 
-int C_Document::LoadSQL( QString file_name )
+int TypeDocument::LoadSQL( QString file_name )
 {
     Clear();
     Controller().Database().OpenDatabase( file_name );
     QStringList row;
     row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_ID_COUNT" ) );
-    C_RecordFactory::m_IdCount = row[1].toLong();
+    TypeRecordFactory::m_IdCount = row[1].toLong();
     row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENE_ID_COUNT" ) );
-    C_Scene::m_IdCount = row[1].toLong();
+    TypeScene::m_IdCount = row[1].toLong();
     row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_NUM" ) );
     long record_size = row[1].toLong();
     row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENEITEM_NUM" ) );
@@ -269,14 +269,14 @@ int C_Document::LoadSQL( QString file_name )
 
     // RECORDS TABLE
 
-    C_StateWriterDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
+    TypeStateWriterDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
 
     while( !record_state.AtEnd() )
         Root().CreateRecord( record_state, -1, &Root() );
 
     // SCENE ITEMS TABLE
 
-    C_StateWriterDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ), scene_size );
+    TypeStateWriterDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ), scene_size );
 
     while( !scene_state.AtEnd() )
         Scene().CreateItem( scene_state );

@@ -1,43 +1,43 @@
-#ifndef C_SCRIPT_FILE_RECORD_H
-#define C_SCRIPT_FILE_RECORD_H
+#ifndef TypeSCRIPT_FILE_RECORD_H
+#define TypeSCRIPT_FILE_RECORD_H
 
 #include "FW/RC/file_record.h"
 #include "FW/macro.h"
 
-class C_RecordStruct;
-class C_UiEditor;
-class C_Controller;
+class TypeRecordStruct;
+class TypeUiEditor;
+class TypeController;
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_ScriptFileRecord: public C_FileRecord
+class TypeScriptFileRecord: public TypeFileRecord
 {
 
 public:
 
-    explicit C_ScriptFileRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_ScriptFileRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_ScriptFileRecord() override;
+    explicit TypeScriptFileRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeScriptFileRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeScriptFileRecord() override;
 
     QStringList         Script() override;
-    C_UiEditor*         EditorWidget( QString id, C_Controller& controller ) override;
+    TypeUiEditor*         EditorWidget( QString id, TypeController& controller ) override;
 
 private:
 
-    friend class        C_ScriptFileRecordFactory;
+    friend class        TypeScriptFileRecordFactory;
 };
 
-class C_ScriptFileRecordFactory : public C_RecordFactory
+class TypeScriptFileRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS   ( C_ScriptFileRecordFactory )
+    SINGLETON_CLASS   ( TypeScriptFileRecordFactory )
 
-    C_ScriptFileRecordFactory();
+    TypeScriptFileRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_SCRIPT_RECORD_H
+#endif // TypeSCRIPT_RECORD_H

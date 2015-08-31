@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>C_UiAddRecord</class>
- <widget class="QDialog" name="C_UiAddRecord">
+ <class>TypeUiAddRecord</class>
+ <widget class="QDialog" name="TypeUiAddRecord">
   <property name="geometry">
    <rect>
     <x>0</x>

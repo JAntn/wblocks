@@ -1,32 +1,32 @@
-#ifndef C_UIADDRECORD_H
-#define C_UIADDRECORD_H
+#ifndef TypeUIADDRECORD_H
+#define TypeUIADDRECORD_H
 
 #include "FW/macro.h"
 
 #include <QDialog>
 
-class C_Record;
-class C_Context;
-class C_Controller;
+class TypeRecord;
+class TypeContext;
+class TypeController;
 
 namespace Ui
 {
-class C_UiAddRecord;
+class TypeUiAddRecord;
 }
 
-class C_UiAddRecord : public QDialog
+class TypeUiAddRecord : public QDialog
 {
     Q_OBJECT
 
 public:
 
-    explicit C_UiAddRecord( C_Controller& controller, C_Context& context, int position = -1, QWidget* parent = 0 );
-    ~C_UiAddRecord() override;
+    explicit TypeUiAddRecord( TypeController& controller, TypeContext& context, int position = -1, QWidget* parent = 0 );
+    ~TypeUiAddRecord() override;
 
     bool                CheckFormData() const;
 
-    M_POINTER           ( Context,    C_Context )
-    M_POINTER           ( Controller, C_Controller )
+    M_POINTER           ( Context,    TypeContext )
+    M_POINTER           ( Controller, TypeController )
 
 public slots:
 
@@ -35,7 +35,7 @@ public slots:
 
 private:
 
-    Ui::C_UiAddRecord* ui;
+    Ui::TypeUiAddRecord* ui;
 };
 
-#endif // C_UIADDRECORD_H
+#endif // TypeUIADDRECORD_H

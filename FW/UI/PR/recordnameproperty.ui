@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>C_UiRecordNameProperty</class>
- <widget class="QWidget" name="C_UiRecordNameProperty">
+ <class>TypeUiRecordNameProperty</class>
+ <widget class="QWidget" name="TypeUiRecordNameProperty">
   <property name="geometry">
    <rect>
     <x>0</x>

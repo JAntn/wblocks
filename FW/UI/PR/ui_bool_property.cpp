@@ -2,9 +2,9 @@
 #include "ui_boolproperty.h"
 
 
-C_UiBoolProperty::C_UiBoolProperty( QString tag_name, bool value, on_changed_t on_changed, QWidget* parent ) :
-    C_UiProperty( on_changed, parent ),
-    ui( new Ui::C_UiBoolProperty )
+TypeUiBoolProperty::TypeUiBoolProperty( QString tag_name, bool value, on_changed_t on_changed, QWidget* parent ) :
+    TypeUiProperty( on_changed, parent ),
+    ui( new Ui::TypeUiBoolProperty )
 {
     ui->setupUi( this );
     ui->Label->setText( tag_name );
@@ -16,16 +16,16 @@ C_UiBoolProperty::C_UiBoolProperty( QString tag_name, bool value, on_changed_t o
         ui->ComboBox,
         static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this,
-        C_UiBoolProperty::OnCurrentIndexChanged
+        TypeUiBoolProperty::OnCurrentIndexChanged
     );
 }
 
-C_UiBoolProperty::~C_UiBoolProperty()
+TypeUiBoolProperty::~TypeUiBoolProperty()
 {
     delete ui;
 }
 
-bool C_UiBoolProperty::Value()
+bool TypeUiBoolProperty::Value()
 {
     bool value =  false;
 
@@ -35,12 +35,12 @@ bool C_UiBoolProperty::Value()
     return value;
 }
 
-void C_UiBoolProperty::SetValue( bool value )
+void TypeUiBoolProperty::SetValue( bool value )
 {
     ui->ComboBox->setCurrentIndex( value ? 1 : 0 );
 }
 
-void C_UiBoolProperty::OnCurrentIndexChanged( int )
+void TypeUiBoolProperty::OnCurrentIndexChanged( int )
 {
     OnApplyChanges();
 }

@@ -1,22 +1,22 @@
-#ifndef C_UITEXTEDITOR_H
-#define C_UITEXTEDITOR_H
+#ifndef TypeUITEXTEDITOR_H
+#define TypeUITEXTEDITOR_H
 
 #include "FW/macro.h"
 #include "FW/UI/ED/ui_editor.h"
 
 namespace Ui
 {
-class C_UiTextEditor;
+class TypeUiTextEditor;
 }
 
-class C_UiTextEditor : public C_UiEditor
+class TypeUiTextEditor : public TypeUiEditor
 {
     Q_OBJECT
 
 public:
 
-    explicit C_UiTextEditor( QString id, QString name, QString tab_name, save_callback_t save_callback, QWidget* parent = 0 );
-    ~C_UiTextEditor();
+    explicit TypeUiTextEditor( QString id, QString name, QString tab_name, save_callback_t save_callback, QWidget* parent = 0 );
+    ~TypeUiTextEditor();
 
     virtual QString              Text();
     virtual void                 SetText( QString text, bool signal_block = false );
@@ -27,7 +27,7 @@ public slots:
 
 private:
 
-    Ui::C_UiTextEditor* ui;
+    Ui::TypeUiTextEditor* ui;
 };
 
-#endif // C_UITEXTEDITOR_H
+#endif // TypeUITEXTEDITOR_H

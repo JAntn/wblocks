@@ -1,22 +1,22 @@
-#ifndef C_HTMLBUILDER_H
-#define C_HTMLBUILDER_H
+#ifndef TypeHTMLBUILDER_H
+#define TypeHTMLBUILDER_H
 
 #include "FW/variant.h"
 #include "FW/macro.h"
 #include <QStringList>
 
-class C_RecordStruct;
+class TypeRecordStruct;
 
-class C_HtmlBuilder : public C_Variant
+class TypeHtmlBuilder : public TypeVariant
 {
 public:
 
-    explicit C_HtmlBuilder( C_Variant* parent = 0 );
-    ~C_HtmlBuilder() override;
+    explicit TypeHtmlBuilder( TypeVariant* parent = 0 );
+    ~TypeHtmlBuilder() override;
 
-    void                      Build( C_RecordStruct& root );
+    void                      Build( TypeRecordStruct& root );
 
     M_VALUE                   ( Html,  QStringList )
 };
 
-#endif // C_HTMLBUILDER_H
+#endif // TypeHTMLBUILDER_H

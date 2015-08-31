@@ -1,37 +1,37 @@
-#ifndef C_REAL_RECORD_H
-#define C_REAL_RECORD_H
+#ifndef TypeREAL_RECORD_H
+#define TypeREAL_RECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
 
-class C_StateWriter;
-class C_StateReader;
+class TypeStateWriter;
+class TypeStateReader;
 
-class C_RealRecord : public C_Record
+class TypeRealRecord : public TypeRecord
 {
 public:
 
-    explicit C_RealRecord( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    C_RealRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
-    ~C_RealRecord() override;
+    explicit TypeRealRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    TypeRealRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    ~TypeRealRecord() override;
 
-    QWidget*            PropertyWidget( C_Controller& controller ) override;
+    QWidget*            PropertyWidget( TypeController& controller ) override;
 
 private:
 
-    friend class        C_RealRecordFactory;
+    friend class        TypeRealRecordFactory;
 };
 
-class C_RealRecordFactory : public C_RecordFactory
+class TypeRealRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS( C_RealRecordFactory )
+    SINGLETON_CLASS( TypeRealRecordFactory )
 
-    C_RealRecordFactory();
+    TypeRealRecordFactory();
 
-    C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-    C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // C_REAL_RECORD_H
+#endif // TypeREAL_RECORD_H

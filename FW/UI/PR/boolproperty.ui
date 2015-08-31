@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>C_UiBoolProperty</class>
- <widget class="QWidget" name="C_UiBoolProperty">
+ <class>TypeUiBoolProperty</class>
+ <widget class="QWidget" name="TypeUiBoolProperty">
   <property name="geometry">
    <rect>
     <x>0</x>

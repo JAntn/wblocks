@@ -9,8 +9,8 @@
 
 #define ADD_QUOTES(__VAR) (QString("\'").append(__VAR).append("\'"))
 
-C_Database::C_Database( C_Variant* parent ):
-    C_Variant( parent )
+TypeDatabase::TypeDatabase( TypeVariant* parent ):
+    TypeVariant( parent )
 {
 
     QSqlDatabase::addDatabase( "QSQLITE" );
@@ -18,28 +18,28 @@ C_Database::C_Database( C_Variant* parent ):
     // Anyway, qt creates the file if database doesn't exist yet.
 }
 
-C_Database::~C_Database()
+TypeDatabase::~TypeDatabase()
 {
     //void
 }
 
-void C_Database::OpenDatabase( QString file_name )
+void TypeDatabase::OpenDatabase( QString file_name )
 {
     QSqlDatabase::database().setDatabaseName( file_name );
     QSqlDatabase::database().open();
 }
 
-void C_Database::CloseDatabase()
+void TypeDatabase::CloseDatabase()
 {
     QSqlDatabase::database().close();
 }
 
-QString C_Database::GetDatabaseName()
+QString TypeDatabase::GetDatabaseName()
 {
     return QSqlDatabase::database().databaseName();
 }
 
-void C_Database::CreateTable( QString class_name, QStringList field_list )
+void TypeDatabase::CreateTable( QString class_name, QStringList field_list )
 {
     QString query_string;
 
@@ -67,7 +67,7 @@ void C_Database::CreateTable( QString class_name, QStringList field_list )
     query.exec( query_string );
 }
 
-void C_Database::RemoveTable( QString class_name )
+void TypeDatabase::RemoveTable( QString class_name )
 {
     QString query_string;
 
@@ -79,7 +79,7 @@ void C_Database::RemoveTable( QString class_name )
     query.exec( query_string );
 }
 
-bool C_Database::TableExists( QString class_name )
+bool TypeDatabase::TableExists( QString class_name )
 {
     QString query_string;
 
@@ -94,7 +94,7 @@ bool C_Database::TableExists( QString class_name )
     return query.record().value( 0 ).toInt() > 0;
 }
 
-bool C_Database::RecordExists( QString class_name, QString field, QString value )
+bool TypeDatabase::RecordExists( QString class_name, QString field, QString value )
 {
     QString query_string;
 
@@ -114,7 +114,7 @@ bool C_Database::RecordExists( QString class_name, QString field, QString value 
 }
 
 
-void C_Database::AppendRecord( QString class_name, QStringList value_list )
+void TypeDatabase::AppendRecord( QString class_name, QStringList value_list )
 {
     QString query_string;
 
@@ -141,7 +141,7 @@ void C_Database::AppendRecord( QString class_name, QStringList value_list )
     query.exec( query_string );
 }
 
-void C_Database::RemoveRecord( QString class_name, QString field, QString value )
+void TypeDatabase::RemoveRecord( QString class_name, QString field, QString value )
 {
     QString query_string;
 
@@ -158,7 +158,7 @@ void C_Database::RemoveRecord( QString class_name, QString field, QString value 
 
 }
 
-int C_Database::RowCount( QString class_name )
+int TypeDatabase::RowCount( QString class_name )
 {
     QString query_string;
 
@@ -173,7 +173,7 @@ int C_Database::RowCount( QString class_name )
     return query.record().value( 0 ).toInt();
 }
 
-QStringList C_Database::GetRecord( QString class_name, QString field, QString value )
+QStringList TypeDatabase::GetRecord( QString class_name, QString field, QString value )
 {
     QString query_string;
 

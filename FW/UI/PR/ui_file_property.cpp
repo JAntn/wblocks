@@ -2,9 +2,9 @@
 #include "ui_fileproperty.h"
 #include <QFileDialog>
 
-C_UiFileProperty::C_UiFileProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
-    C_UiProperty( on_changed, parent ),
-    ui( new Ui::C_UiFileProperty )
+TypeUiFileProperty::TypeUiFileProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+    TypeUiProperty( on_changed, parent ),
+    ui( new Ui::TypeUiFileProperty )
 {
     ui->setupUi( this );
 
@@ -15,38 +15,38 @@ C_UiFileProperty::C_UiFileProperty( QString tag_name, QString value, on_changed_
         ui->LineEdit,
         QLineEdit::returnPressed,
         this,
-        C_UiFileProperty::OnReturnPressed
+        TypeUiFileProperty::OnReturnPressed
     );
 
     connect(
         ui->SelectButton,
         QPushButton::clicked,
         this,
-        C_UiFileProperty::OnSelectButtonClicked
+        TypeUiFileProperty::OnSelectButtonClicked
     );
 }
 
-C_UiFileProperty::~C_UiFileProperty()
+TypeUiFileProperty::~TypeUiFileProperty()
 {
     delete ui;
 }
 
-QString C_UiFileProperty::Value()
+QString TypeUiFileProperty::Value()
 {
     return ui->LineEdit->text();
 }
 
-void C_UiFileProperty::SetValue(QString value)
+void TypeUiFileProperty::SetValue(QString value)
 {
     ui->LineEdit->setText(value);
 }
 
-void C_UiFileProperty::OnReturnPressed()
+void TypeUiFileProperty::OnReturnPressed()
 {
     OnApplyChanges();
 }
 
-void C_UiFileProperty::OnSelectButtonClicked()
+void TypeUiFileProperty::OnSelectButtonClicked()
 {
     QString file_name =
         QFileDialog::getOpenFileName(

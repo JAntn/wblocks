@@ -1,17 +1,17 @@
-#ifndef C_STATE_READER_H
-#define C_STATE_READER_H
+#ifndef TypeSTATE_READER_H
+#define TypeSTATE_READER_H
 
 #include <QStringList>
 
 #include "FW/macro.h"
 #include "FW/variant.h"
 
-class C_StateReader : public C_Variant
+class TypeStateReader : public TypeVariant
 {
 public:
 
-    C_StateReader( long flags = 0, C_Variant* parent = 0 );
-    ~C_StateReader() override;
+    TypeStateReader( long flags = 0, TypeVariant* parent = 0 );
+    ~TypeStateReader() override;
 
     virtual void        Stop();
     virtual void        Read( QStringList& data) = 0;

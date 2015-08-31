@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>C_UiTextEditor</class>
- <widget class="QWidget" name="C_UiTextEditor">
+ <class>TypeUiTextEditor</class>
+ <widget class="QWidget" name="TypeUiTextEditor">
   <property name="geometry">
    <rect>
     <x>0</x>

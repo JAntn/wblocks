@@ -1,5 +1,5 @@
-#ifndef C_UIINTEGERPROPERTY
-#define C_UIINTEGERPROPERTY
+#ifndef TypeUIINTEGERPROPERTY
+#define TypeUIINTEGERPROPERTY
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -7,17 +7,17 @@
 
 namespace Ui
 {
-class C_UiIntegerProperty;
+class TypeUiIntegerProperty;
 }
 
-class C_UiIntegerProperty : public C_UiProperty
+class TypeUiIntegerProperty : public TypeUiProperty
 {
     Q_OBJECT
 
 public:
 
-    C_UiIntegerProperty( QString tag_name, long value, on_changed_t on_changed, QWidget* parent  = 0 );
-    ~C_UiIntegerProperty() override;
+    TypeUiIntegerProperty( QString tag_name, long value, on_changed_t on_changed, QWidget* parent  = 0 );
+    ~TypeUiIntegerProperty() override;
 
     long                          Value();
     void                          SetValue( long value );
@@ -28,7 +28,7 @@ public slots:
 
 private:
 
-    Ui::C_UiIntegerProperty* ui;
+    Ui::TypeUiIntegerProperty* ui;
 };
 
-#endif // C_UIINTEGERPROPERTY
+#endif // TypeUIINTEGERPROPERTY

@@ -1,19 +1,19 @@
-#ifndef C_UIPROPERTY_H
-#define C_UIPROPERTY_H
+#ifndef TypeUIPROPERTY_H
+#define TypeUIPROPERTY_H
 
 #include "FW/macro.h"
 #include <QWidget>
 #include <functional>
 
-class C_UiProperty : public QWidget
+class TypeUiProperty : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    typedef std::function<void( C_UiProperty& )> on_changed_t;
+    typedef std::function<void( TypeUiProperty& )> on_changed_t;
 
-    C_UiProperty( on_changed_t on_changed, QWidget* parent );
+    TypeUiProperty( on_changed_t on_changed, QWidget* parent );
 
     M_VALUE             ( ApplyChangesCallBack, on_changed_t )
 
@@ -23,4 +23,4 @@ public slots:
 
 };
 
-#endif // C_UIPROPERTY_H
+#endif // TypeUIPROPERTY_H

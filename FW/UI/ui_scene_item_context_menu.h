@@ -1,26 +1,26 @@
-#ifndef C_SCENE_ITEM_CONTEXT_MENU_H
-#define C_SCENE_ITEM_CONTEXT_MENU_H
+#ifndef TypeSCENE_ITEM_CONTEXT_MENU_H
+#define TypeSCENE_ITEM_CONTEXT_MENU_H
 
 #include "FW/macro.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QObject>
 
-class C_SceneItem;
+class TypeSceneItem;
 
-class C_UiSceneItemContextMenu : public QObject
+class TypeUiSceneItemContextMenu : public QObject
 {
     Q_OBJECT
 
 public:
 
-    C_UiSceneItemContextMenu( C_SceneItem& item,
+    TypeUiSceneItemContextMenu( TypeSceneItem& item,
                               QGraphicsSceneContextMenuEvent* event,
                               QObject* parent = 0 );
 
-    ~C_UiSceneItemContextMenu() override;
+    ~TypeUiSceneItemContextMenu() override;
 
-    M_POINTER           ( SceneItem, C_SceneItem )
+    M_POINTER           ( SceneItem, TypeSceneItem )
 
 public slots:
 
@@ -30,4 +30,4 @@ public slots:
 
 };
 
-#endif // C_SCENE_ITEM_CONTEXT_MENU_H
+#endif // TypeSCENE_ITEM_CONTEXT_MENU_H

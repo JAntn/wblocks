@@ -1,5 +1,5 @@
-#ifndef C_UIFILEPROPERTY_H
-#define C_UIFILEPROPERTY_H
+#ifndef TypeUIFILEPROPERTY_H
+#define TypeUIFILEPROPERTY_H
 
 #include "FW/UI/PR/ui_property.h"
 #include "FW/macro.h"
@@ -8,17 +8,17 @@
 
 namespace Ui
 {
-class C_UiFileProperty;
+class TypeUiFileProperty;
 }
 
-class C_UiFileProperty : public C_UiProperty
+class TypeUiFileProperty : public TypeUiProperty
 {
     Q_OBJECT
 
 public:
 
-    C_UiFileProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
-    ~C_UiFileProperty() override;
+    TypeUiFileProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    ~TypeUiFileProperty() override;
 
     QString                       Value();
     void                          SetValue( QString value );
@@ -30,7 +30,7 @@ private slots:
 
 private:
 
-    Ui::C_UiFileProperty* ui;
+    Ui::TypeUiFileProperty* ui;
 };
 
-#endif // C_UIFILEPROPERTY_H
+#endif // TypeUIFILEPROPERTY_H

@@ -21,41 +21,41 @@
 ///////////////////////////////////////////////////////////////////////
 /// STATIC
 
-QList<C_RecordFactory*> C_RecordStruct::m_FactoryList;
+QList<TypeRecordFactory*> TypeRecordStruct::m_FactoryList;
 
-void C_RecordStruct::InitFactoryList()
+void TypeRecordStruct::InitFactoryList()
 {
     if( m_FactoryList.empty() )
     {
-        m_FactoryList.append( &C_BoolRecordFactory::Instance() );
-        m_FactoryList.append( &C_IntegerRecordFactory::Instance() );
-        m_FactoryList.append( &C_RealRecordFactory::Instance() );
-        m_FactoryList.append( &C_StringRecordFactory::Instance() );
-        m_FactoryList.append( &C_ScriptRecordFactory::Instance() );
-        m_FactoryList.append( &C_ScriptFileRecordFactory::Instance() );
-        m_FactoryList.append( &C_StructRecordFactory::Instance() );
-        m_FactoryList.append( &C_ReferenceRecordFactory::Instance() );
-        m_FactoryList.append( &C_FileRecordFactory::Instance() );
-        m_FactoryList.append( &C_HtmlRecordFactory::Instance() );
+        m_FactoryList.append( &TypeBoolRecordFactory::Instance() );
+        m_FactoryList.append( &TypeIntegerRecordFactory::Instance() );
+        m_FactoryList.append( &TypeRealRecordFactory::Instance() );
+        m_FactoryList.append( &TypeStringRecordFactory::Instance() );
+        m_FactoryList.append( &TypeScriptRecordFactory::Instance() );
+        m_FactoryList.append( &TypeScriptFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypeStructRecordFactory::Instance() );
+        m_FactoryList.append( &TypeReferenceRecordFactory::Instance() );
+        m_FactoryList.append( &TypeFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypeHtmlRecordFactory::Instance() );
 
-        m_FactoryList.append( &C_JsBoolRecordFactory::Instance() );
-        m_FactoryList.append( &C_JsIntegerRecordFactory::Instance() );
-        m_FactoryList.append( &C_JsRealRecordFactory::Instance() );
-        m_FactoryList.append( &C_JsStringRecordFactory::Instance() );
-        m_FactoryList.append( &C_JsReferenceRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsBoolRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsIntegerRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsRealRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsStringRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsReferenceRecordFactory::Instance() );
 
         // Add more classes here or later
     }
 }
 
-const QList<C_RecordFactory*>& C_RecordStruct::FactoryList()
+const QList<TypeRecordFactory*>& TypeRecordStruct::FactoryList()
 {
     return m_FactoryList;
 }
 
-C_RecordFactory* C_RecordStruct::FactoryFromName( QString class_name )
+TypeRecordFactory* TypeRecordStruct::FactoryFromName( QString class_name )
 {
-    for( C_RecordFactory* record_factory : FactoryList() )
+    for( TypeRecordFactory* record_factory : FactoryList() )
     {
         if( record_factory->RecordClass() == class_name )
             return record_factory;
@@ -67,33 +67,33 @@ C_RecordFactory* C_RecordStruct::FactoryFromName( QString class_name )
 ///////////////////////////////////////////////////////////////////////
 /// NON STATIC
 
-C_RecordStruct::C_RecordStruct( QString name, C_Variant* parent ):
-    C_VariantStruct( parent ),
+TypeRecordStruct::TypeRecordStruct( QString name, TypeVariant* parent ):
+    TypeVariantStruct( parent ),
     m_Name( name ),
     m_Flags( FLAG_ACTION_ALL )
 {
     //void
 }
 
-C_RecordStruct::~C_RecordStruct()
+TypeRecordStruct::~TypeRecordStruct()
 {
     Clear();
 }
 
-QString C_RecordStruct::FullName()
+QString TypeRecordStruct::FullName()
 {
     if( Name() == "root" )
         return "";
 
     auto parent = this->Parent() ;
-    return static_cast<C_Record*>( parent )->FullName();
+    return static_cast<TypeRecord*>( parent )->FullName();
 }
 
-C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position, C_RecordStruct* root )
+TypeRecord* TypeRecordStruct::CreateRecord( TypeStateWriter& state, iterator position, TypeRecordStruct* root )
 {
-    C_Record*           record = 0;
+    TypeRecord*           record = 0;
     QString             class_name = state.Data().at( 3 );
-    C_RecordFactory*    record_factory = C_RecordStruct::FactoryFromName( class_name );
+    TypeRecordFactory*    record_factory = TypeRecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
@@ -104,11 +104,11 @@ C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, iterator position,
     return record;
 }
 
-C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, int position, C_RecordStruct* root )
+TypeRecord* TypeRecordStruct::CreateRecord( TypeStateWriter& state, int position, TypeRecordStruct* root )
 {
-    C_Record*           record = 0;
+    TypeRecord*           record = 0;
     QString             class_name = state.Data()[3];
-    C_RecordFactory*    record_factory = C_RecordStruct::FactoryFromName( class_name );
+    TypeRecordFactory*    record_factory = TypeRecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
@@ -123,11 +123,11 @@ C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, int position, C_Re
     return record;
 }
 
-C_Record* C_RecordStruct::CreateRecord( QString name, QString value, QString class_name, int position,
-                                        C_RecordStruct* root )
+TypeRecord* TypeRecordStruct::CreateRecord( QString name, QString value, QString class_name, int position,
+                                        TypeRecordStruct* root )
 {
-    C_Record* record = 0;
-    C_RecordFactory* record_factory = C_RecordStruct::FactoryFromName( class_name );
+    TypeRecord* record = 0;
+    TypeRecordFactory* record_factory = TypeRecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
@@ -142,11 +142,11 @@ C_Record* C_RecordStruct::CreateRecord( QString name, QString value, QString cla
     return record;
 }
 
-C_Record* C_RecordStruct::CreateRecord( QString name, QString value, QString class_name, iterator position,
-                                        C_RecordStruct* root )
+TypeRecord* TypeRecordStruct::CreateRecord( QString name, QString value, QString class_name, iterator position,
+                                        TypeRecordStruct* root )
 {
-    C_Record* record = 0;
-    C_RecordFactory* record_factory = C_RecordStruct::FactoryFromName( class_name );
+    TypeRecord* record = 0;
+    TypeRecordFactory* record_factory = TypeRecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
@@ -157,13 +157,13 @@ C_Record* C_RecordStruct::CreateRecord( QString name, QString value, QString cla
     return record;
 }
 
-int C_RecordStruct::GetIndex( C_Record* record_value ) const
+int TypeRecordStruct::GetIndex( TypeRecord* record_value ) const
 {
     int count = 0;
 
-    for( C_Variant* variant : *this )
+    for( TypeVariant* variant : *this )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
 
         if( record == record_value )
             return count;
@@ -174,21 +174,21 @@ int C_RecordStruct::GetIndex( C_Record* record_value ) const
     return -1;
 }
 
-C_Record* C_RecordStruct::FromIndex( int index ) const
+TypeRecord* TypeRecordStruct::FromIndex( int index ) const
 {
     auto iter = begin();
 
     for( int count = 0; count < index; ++count )
         ++iter;
 
-    return static_cast<C_Record*>( *iter );
+    return static_cast<TypeRecord*>( *iter );
 }
 
-C_Record* C_RecordStruct::FromName( QString name, bool deep ) const
+TypeRecord* TypeRecordStruct::FromName( QString name, bool deep ) const
 {
-    for( C_Variant* variant : *this )
+    for( TypeVariant* variant : *this )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
 
         if( record->Name() == name )
             return record;
@@ -210,11 +210,11 @@ C_Record* C_RecordStruct::FromName( QString name, bool deep ) const
     return 0;
 }
 
-C_Record* C_RecordStruct::FromId( QString record_id , bool deep ) const
+TypeRecord* TypeRecordStruct::FromId( QString record_id , bool deep ) const
 {
-    for( C_Variant* variant : *this )
+    for( TypeVariant* variant : *this )
     {
-        C_Record* record = static_cast<C_Record*>( variant );
+        TypeRecord* record = static_cast<TypeRecord*>( variant );
 
         if( record->Id() == record_id )
             return record;
@@ -236,13 +236,13 @@ C_Record* C_RecordStruct::FromId( QString record_id , bool deep ) const
     return 0;
 }
 
-C_Record* C_RecordStruct::FromFullName( QString full_name ) const
+TypeRecord* TypeRecordStruct::FromFullName( QString full_name ) const
 {
     QStringList tokens = full_name.split( "." );
     QString token_end = tokens.back();
     tokens.pop_back();
-    C_Record* record;
-    const C_RecordStruct* record_struct = this;
+    TypeRecord* record;
+    const TypeRecordStruct* record_struct = this;
 
     for( QString token : tokens )
     {

@@ -1,8 +1,8 @@
 #include "FW/ST/state_writer_database.h"
 
-C_StateWriterDatabase::C_StateWriterDatabase( C_Database& database,
-        QString table_name, QString field_name, long size, long flags, C_Variant* parent ):
-    C_StateWriter( flags, parent )
+TypeStateWriterDatabase::TypeStateWriterDatabase( TypeDatabase& database,
+        QString table_name, QString field_name, long size, long flags, TypeVariant* parent ):
+    TypeStateWriter( flags, parent )
 {
     m_Database = &database;
     m_TableName = table_name;
@@ -21,7 +21,7 @@ C_StateWriterDatabase::C_StateWriterDatabase( C_Database& database,
     m_Data = tmp;
 }
 
-void C_StateWriterDatabase::Next()
+void TypeStateWriterDatabase::Next()
 {
     if( AtEnd() )
         return;

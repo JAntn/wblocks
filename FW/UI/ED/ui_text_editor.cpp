@@ -3,9 +3,9 @@
 #include <QFileDialog>
 
 
-C_UiTextEditor::C_UiTextEditor( QString id, QString name, QString tab_name, C_UiEditor::save_callback_t on_save_state, QWidget* parent ):
-    C_UiEditor( id, name, tab_name, on_save_state, parent ),
-    ui( new Ui::C_UiTextEditor )
+TypeUiTextEditor::TypeUiTextEditor( QString id, QString name, QString tab_name, TypeUiEditor::save_callback_t on_save_state, QWidget* parent ):
+    TypeUiEditor( id, name, tab_name, on_save_state, parent ),
+    ui( new Ui::TypeUiTextEditor )
 {
     ui->setupUi( this );
     ui->NameLineEdit->setText( m_Name );
@@ -14,16 +14,16 @@ C_UiTextEditor::C_UiTextEditor( QString id, QString name, QString tab_name, C_Ui
         ui->PlainTextEdit,
         QPlainTextEdit::textChanged,
         this,
-        C_UiTextEditor::OnTextChanged
+        TypeUiTextEditor::OnTextChanged
     );
 }
 
-C_UiTextEditor::~C_UiTextEditor()
+TypeUiTextEditor::~TypeUiTextEditor()
 {
     delete ui;
 }
 
-void C_UiTextEditor::SetText( QString text , bool signal_block )
+void TypeUiTextEditor::SetText( QString text , bool signal_block )
 {
     // WARNIG - BLOCKING SIGNALS
 
@@ -37,12 +37,12 @@ void C_UiTextEditor::SetText( QString text , bool signal_block )
     ui->PlainTextEdit->setPlainText( text );
 }
 
-QString C_UiTextEditor::Text()
+QString TypeUiTextEditor::Text()
 {
     return ui->PlainTextEdit->toPlainText();
 }
 
-void C_UiTextEditor::OnTextChanged()
+void TypeUiTextEditor::OnTextChanged()
 {
     if( !HasChanged() )
     {

@@ -1,21 +1,21 @@
-#ifndef C_UITEXTEDITORCONTAINER_H
-#define C_UITEXTEDITORCONTAINER_H
+#ifndef TypeUITEXTEDITORCONTAINER_H
+#define TypeUITEXTEDITORCONTAINER_H
 
 #include <QTabWidget>
 #include "FW/macro.h"
 
-class C_UiEditor;
-class C_Controller;
+class TypeUiEditor;
+class TypeController;
 
-class C_UiEditorContainer : public QWidget
+class TypeUiEditorContainer : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    explicit C_UiEditorContainer( C_Controller& controller, QWidget* parent = 0 );
+    explicit TypeUiEditorContainer( TypeController& controller, QWidget* parent = 0 );
 
-    void                          Append( C_UiEditor* editor );
+    void                          Append( TypeUiEditor* editor );
 
     void                          Close( int index );
     void                          Close( QString id );
@@ -35,11 +35,11 @@ public:
     void                          SetCurrent( QString id );
 
     M_CONST_POINTER               ( TabWidget,  QTabWidget )
-    M_POINTER                     ( Controller, C_Controller )
+    M_POINTER                     ( Controller, TypeController )
 
 public slots:
 
     void                          OnCloseTabRequested( int index );
 };
 
-#endif // C_UITEXTEDITORCONTAINER_H
+#endif // TypeUITEXTEDITORCONTAINER_H

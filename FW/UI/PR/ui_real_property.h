@@ -1,5 +1,5 @@
-#ifndef C_UIREALPROPERTY_H
-#define C_UIREALPROPERTY_H
+#ifndef TypeUIREALPROPERTY_H
+#define TypeUIREALPROPERTY_H
 
 #include "FW/macro.h"
 #include <QWidget>
@@ -8,17 +8,17 @@
 
 namespace Ui
 {
-class C_UiRealProperty;
+class TypeUiRealProperty;
 }
 
-class C_UiRealProperty : public C_UiProperty
+class TypeUiRealProperty : public TypeUiProperty
 {
     Q_OBJECT
 
 public:
 
-    C_UiRealProperty( QString tag_name, double value, on_changed_t on_changed, QWidget* parent  = 0 );
-    ~C_UiRealProperty() override;
+    TypeUiRealProperty( QString tag_name, double value, on_changed_t on_changed, QWidget* parent  = 0 );
+    ~TypeUiRealProperty() override;
 
     double                        Value();
     void                          SetValue( double value );
@@ -29,7 +29,7 @@ public slots:
 
 private:
 
-    Ui::C_UiRealProperty* ui;
+    Ui::TypeUiRealProperty* ui;
 };
 
-#endif // C_UIREALPROPERTY_H
+#endif // TypeUIREALPROPERTY_H

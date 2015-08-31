@@ -2,41 +2,41 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 
-C_JsBoolRecord::C_JsBoolRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
-    C_BoolRecord( id, name, value, parent, root )
+TypeJsBoolRecord::TypeJsBoolRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeBoolRecord( id, name, value, parent, root )
 {
     m_Class = "JsBool" ;
 }
 
-C_JsBoolRecord::C_JsBoolRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_BoolRecord( state, parent, root )
+TypeJsBoolRecord::TypeJsBoolRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeBoolRecord( state, parent, root )
 {
     m_Class = "JsBool" ;
 }
 
-C_JsBoolRecord::~C_JsBoolRecord()
+TypeJsBoolRecord::~TypeJsBoolRecord()
 {
     //void
 }
 
-QStringList C_JsBoolRecord::Script()
+QStringList TypeJsBoolRecord::Script()
 {
     return QStringList( "\n" + FullName() + " = " + Value() + ";" );
 }
 
-C_JsBoolRecordFactory::C_JsBoolRecordFactory()
+TypeJsBoolRecordFactory::TypeJsBoolRecordFactory()
 {
     m_RecordClass = "JsBool";
 }
 
-C_Record* C_JsBoolRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeJsBoolRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_JsBoolRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeJsBoolRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_JsBoolRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeJsBoolRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_JsBoolRecord( state, parent, root );
+    return new TypeJsBoolRecord( state, parent, root );
 }
 
 

@@ -6,11 +6,11 @@
 #include "FW/UI/ui_editor_container.h"
 
 
-C_UiHtmlRecordProperties::C_UiHtmlRecordProperties( C_HtmlRecord& record, C_Document& document, QWidget* parent ):
+TypeUiHtmlRecordProperties::TypeUiHtmlRecordProperties( TypeHtmlRecord& record, TypeDocument& document, QWidget* parent ):
     QDialog( parent ),
     m_Record( &record ),
     m_Document( &document ),
-    ui( new Ui::C_UiHtmlRecordProperties )
+    ui( new Ui::TypeUiHtmlRecordProperties )
 {
     ui->setupUi( this );
     ui->NameLineEdit->setText( Record().Name() );
@@ -20,27 +20,27 @@ C_UiHtmlRecordProperties::C_UiHtmlRecordProperties( C_HtmlRecord& record, C_Docu
         ui->ButtonBox,
         QDialogButtonBox::accepted,
         this,
-        C_UiHtmlRecordProperties::OnButtonBoxAccepted
+        TypeUiHtmlRecordProperties::OnButtonBoxAccepted
     );
 
     connect(
         ui->RemoveButton,
         QPushButton::clicked,
         this,
-        C_UiHtmlRecordProperties::OnRemoveButtonClicked
+        TypeUiHtmlRecordProperties::OnRemoveButtonClicked
     );
 }
 
-C_UiHtmlRecordProperties::~C_UiHtmlRecordProperties()
+TypeUiHtmlRecordProperties::~TypeUiHtmlRecordProperties()
 {
     delete ui;
 }
 
-void C_UiHtmlRecordProperties::OnButtonBoxAccepted()
+void TypeUiHtmlRecordProperties::OnButtonBoxAccepted()
 {
     if( !ui->NameLineEdit->text().contains( QRegExp( "^\\S+$" ) ) )
     {
-        C_Controller::Message( tr( "Name must not contain white spaces" ) );
+        TypeController::Message( tr( "Name must not contain white spaces" ) );
         return;
     }
 
@@ -49,9 +49,9 @@ void C_UiHtmlRecordProperties::OnButtonBoxAccepted()
     emit Document().Controller().RecordsChanged();
 }
 
-void C_UiHtmlRecordProperties::OnRemoveButtonClicked()
+void TypeUiHtmlRecordProperties::OnRemoveButtonClicked()
 {
-    if( C_Controller::AcceptMessage( tr( "Remove Record?" ) ) )
+    if( TypeController::AcceptMessage( tr( "Remove Record?" ) ) )
     {
         delete & Record();
         emit Document().Controller().RecordsChanged();

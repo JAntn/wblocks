@@ -1,5 +1,5 @@
-#ifndef C_DOCUMENT_H
-#define C_DOCUMENT_H
+#ifndef TypeDOCUMENT_H
+#define TypeDOCUMENT_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
@@ -7,23 +7,23 @@
 #include <QFile>
 #include <QObject>
 
-class C_Scene;
-class C_RecordStruct;
-class C_Script;
-class C_Database;
-class C_Record;
-class C_SceneItem;
-class C_Controller;
-class C_Context;
-class C_Clipboard;
-class C_HtmlBuilder;
+class TypeScene;
+class TypeRecordStruct;
+class TypeScript;
+class TypeDatabase;
+class TypeRecord;
+class TypeSceneItem;
+class TypeController;
+class TypeContext;
+class TypeClipboard;
+class TypeHtmlBuilder;
 
-class C_Document : public C_Variant
+class TypeDocument : public TypeVariant
 {
 public:
 
-    C_Document( C_Controller& controller, QString file_name, QString path, C_Variant* parent = 0 );
-    ~C_Document();
+    TypeDocument( TypeController& controller, QString file_name, QString path, TypeVariant* parent = 0 );
+    ~TypeDocument();
 
     int                 SaveFile( QString file_name );
     int                 LoadFile( QString file_name );
@@ -35,14 +35,14 @@ public:
     M_VALUE             ( Html,        QString )
     M_VALUE             ( FileName,    QString )
     M_VALUE             ( Path,        QString )
-    M_POINTER           ( Root,        C_RecordStruct )
-    M_POINTER           ( Scene,       C_Scene )
-    M_POINTER           ( Context,     C_Context )
-    M_POINTER           ( Controller,  C_Controller )
+    M_POINTER           ( Root,        TypeRecordStruct )
+    M_POINTER           ( Scene,       TypeScene )
+    M_POINTER           ( Context,     TypeContext )
+    M_POINTER           ( Controller,  TypeController )
 
 };
 
 #include "context.h"
 #include "controller.h"
 
-#endif // C_DOCUMENT_H
+#endif // TypeDOCUMENT_H

@@ -1,5 +1,5 @@
-#ifndef C_UILINETEXTPROPERTY_H
-#define C_UILINETEXTPROPERTY_H
+#ifndef TypeUILINETEXTPROPERTY_H
+#define TypeUILINETEXTPROPERTY_H
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -7,17 +7,17 @@
 
 namespace Ui
 {
-class C_UiLineTextProperty;
+class TypeUiLineTextProperty;
 }
 
-class C_UiLineTextProperty : public C_UiProperty
+class TypeUiLineTextProperty : public TypeUiProperty
 {
     Q_OBJECT
 
 public:
 
-    C_UiLineTextProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
-    ~C_UiLineTextProperty() override;
+    TypeUiLineTextProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    ~TypeUiLineTextProperty() override;
 
     QString                       Value();
     void                          SetValue( QString value );
@@ -28,7 +28,7 @@ private slots:
 
 private:
 
-    Ui::C_UiLineTextProperty*         ui;
+    Ui::TypeUiLineTextProperty*         ui;
 };
 
-#endif // C_UILINETEXTPROPERTY_H
+#endif // TypeUILINETEXTPROPERTY_H

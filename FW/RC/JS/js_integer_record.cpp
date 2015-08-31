@@ -3,41 +3,41 @@
 #include "FW/ST/state_writer.h"
 
 
-C_JsIntegerRecord::C_JsIntegerRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
-    C_IntegerRecord( id, name, value, parent, root )
+TypeJsIntegerRecord::TypeJsIntegerRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+    TypeIntegerRecord( id, name, value, parent, root )
 {
     m_Class = "JsInteger";
 }
 
-C_JsIntegerRecord::C_JsIntegerRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_IntegerRecord( state, parent, root )
+TypeJsIntegerRecord::TypeJsIntegerRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeIntegerRecord( state, parent, root )
 {
     m_Class = "JsInteger";
 }
 
-C_JsIntegerRecord::~C_JsIntegerRecord()
+TypeJsIntegerRecord::~TypeJsIntegerRecord()
 {
     //void
 }
 
-QStringList C_JsIntegerRecord::Script()
+QStringList TypeJsIntegerRecord::Script()
 {
     return QStringList( "\n" + FullName() + " = " + Value() + ";" );
 }
 
-C_JsIntegerRecordFactory::C_JsIntegerRecordFactory()
+TypeJsIntegerRecordFactory::TypeJsIntegerRecordFactory()
 {
     m_RecordClass = "JsInteger";
 }
 
-C_Record* C_JsIntegerRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeJsIntegerRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_JsIntegerRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeJsIntegerRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_JsIntegerRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent , C_RecordStruct* root )
+TypeRecord* TypeJsIntegerRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
-    return new C_JsIntegerRecord( state, parent, root );
+    return new TypeJsIntegerRecord( state, parent, root );
 }
 
 

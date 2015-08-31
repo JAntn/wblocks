@@ -1,71 +1,65 @@
 #include "FW/RC/script_file_record.h"
 #include "FW/RC/record_struct.h"
 #include "FW/UI/PR/ui_file_property.h"
-#include "FW/UI/ui_editor_container.h"
 #include "FW/RC/file_record.h"
 #include <QFileInfo>
-#include <QCoreApplication>
 #include "FW/UI/ED/ui_text_editor.h"
-
-#include "FW/document.h"
-#include "FW/UI/ui_main_window.h"
-
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 
 
 
-C_ScriptFileRecord::C_ScriptFileRecord( QString id, QString name, QString value,  C_Variant* parent, C_RecordStruct* root ):
-    C_FileRecord( id, name, value, parent, root )
+TypeScriptFileRecord::TypeScriptFileRecord( QString id, QString name, QString value,  TypeVariant* parent, TypeRecordStruct* root ):
+    TypeFileRecord( id, name, value, parent, root )
 {
     m_Class = "ScriptFile";
 }
 
-C_ScriptFileRecord::C_ScriptFileRecord( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root ):
-    C_FileRecord( state, parent, root )
+TypeScriptFileRecord::TypeScriptFileRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+    TypeFileRecord( state, parent, root )
 {
     m_Class = "ScriptFile";
 }
 
-C_ScriptFileRecord::~C_ScriptFileRecord()
+TypeScriptFileRecord::~TypeScriptFileRecord()
 {
     // void
 }
 
-QStringList C_ScriptFileRecord::Script()
+QStringList TypeScriptFileRecord::Script()
 {
-    return QStringList( C_Controller::LoadTextFile( FileFullName() ) );
+    return QStringList( TypeController::LoadTextFile( FileFullName() ) );
 }
 
-C_UiEditor* C_ScriptFileRecord::EditorWidget( QString id, C_Controller& controller )
+TypeUiEditor* TypeScriptFileRecord::EditorWidget( QString id, TypeController& controller )
 {
-    C_UiTextEditor* text_editor;
+    TypeUiTextEditor* text_editor;
 
-    text_editor = new C_UiTextEditor( id, FileName(), FileName().split( "/" ).back(), [&controller, this]( C_UiEditor & editor_base )
+    text_editor = new TypeUiTextEditor( id, FileName(), FileName().split( "/" ).back(), [&controller, this]( TypeUiEditor & editor_base )
     {
-        C_UiTextEditor& editor = static_cast<C_UiTextEditor&>( editor_base );
-        C_Controller::SaveTextFile( FileFullName(), editor.Text() );
+        TypeUiTextEditor& editor = static_cast<TypeUiTextEditor&>( editor_base );
+        TypeController::SaveTextFile( FileFullName(), editor.Text() );
         emit controller.RecordsChanged();
     } );
 
-    text_editor->SetText( C_Controller::LoadTextFile( FileFullName() ) );
+    text_editor->SetText( TypeController::LoadTextFile( FileFullName() ) );
 
     return text_editor;
 }
 
-C_ScriptFileRecordFactory::C_ScriptFileRecordFactory()
+TypeScriptFileRecordFactory::TypeScriptFileRecordFactory()
 {
     m_RecordClass = "ScriptFile";
 }
 
-C_Record* C_ScriptFileRecordFactory::CreateInstance( QString name, QString value, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeScriptFileRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_ScriptFileRecord( C_RecordFactory::GenerateId(), name, value, parent, root );
+    return new TypeScriptFileRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-C_Record* C_ScriptFileRecordFactory::CreateInstance( C_StateWriter& state, C_Variant* parent, C_RecordStruct* root )
+TypeRecord* TypeScriptFileRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
-    return new C_ScriptFileRecord( state, parent, root );
+    return new TypeScriptFileRecord( state, parent, root );
 }
 
 

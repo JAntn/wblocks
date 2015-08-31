@@ -1,5 +1,5 @@
-#ifndef C_UISTRINGPROPERTY_H
-#define C_UISTRINGPROPERTY_H
+#ifndef TypeUISTRINGPROPERTY_H
+#define TypeUISTRINGPROPERTY_H
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -7,17 +7,17 @@
 
 namespace Ui
 {
-class C_UiStringProperty;
+class TypeUiStringProperty;
 }
 
-class C_UiStringProperty : public C_UiProperty
+class TypeUiStringProperty : public TypeUiProperty
 {
     Q_OBJECT
 
 public:
 
-    C_UiStringProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
-    ~C_UiStringProperty() override;
+    TypeUiStringProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    ~TypeUiStringProperty() override;
 
     QString                       Value();
     void                          SetValue( QString value );
@@ -28,7 +28,7 @@ private slots:
 
 private:
 
-    Ui::C_UiStringProperty*         ui;
+    Ui::TypeUiStringProperty*         ui;
 };
 
-#endif // C_UISTRINGPROPERTY_H
+#endif // TypeUISTRINGPROPERTY_H

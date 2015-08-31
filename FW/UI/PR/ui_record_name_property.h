@@ -5,23 +5,23 @@
 #include "FW/UI/PR/ui_property.h"
 #include <QWidget>
 
-class C_Record;
-class C_StringRecord;
-class C_Document;
+class TypeRecord;
+class TypeStringRecord;
+class TypeDocument;
 
 namespace Ui
 {
-class C_UiRecordNameProperty;
+class TypeUiRecordNameProperty;
 }
 
-class C_UiRecordNameProperty : public C_UiProperty
+class TypeUiRecordNameProperty : public TypeUiProperty
 {
     Q_OBJECT
 
 public:
 
-    C_UiRecordNameProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
-    ~C_UiRecordNameProperty() override;
+    TypeUiRecordNameProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    ~TypeUiRecordNameProperty() override;
 
     QString                       Value();
     void                          SetValue( QString value );
@@ -32,7 +32,7 @@ private slots:
 
 private:
 
-    Ui::C_UiRecordNameProperty*    ui;
+    Ui::TypeUiRecordNameProperty*    ui;
 };
 
 

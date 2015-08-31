@@ -2,7 +2,7 @@
 #include "FW/SC/scene.h"
 #include <QGraphicsItem>
 
-C_SceneLine::C_SceneLine( C_SceneItem& from, C_SceneItem& target , Qt::GlobalColor color )
+TypeSceneLine::TypeSceneLine( TypeSceneItem& from, TypeSceneItem& target , Qt::GlobalColor color )
     : QGraphicsLineItem( &from )
 {
     SetFrom( from );
@@ -10,12 +10,12 @@ C_SceneLine::C_SceneLine( C_SceneItem& from, C_SceneItem& target , Qt::GlobalCol
     SetColor( color );
 }
 
-C_SceneLine::~C_SceneLine()
+TypeSceneLine::~TypeSceneLine()
 {
     From().Scene().Lines().removeOne( this );
 }
 
-void C_SceneLine::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
+void TypeSceneLine::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
     qreal x1, y1, x2, y2;
     x1 = From().scenePos().x();

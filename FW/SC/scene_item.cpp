@@ -18,8 +18,8 @@
 #define GFX_VALUE_RECT(__WIDTH)             QRectF(GFX_THICK+5,GFX_THICK+5+20,__WIDTH,20)
 #define GFX_SEPARATOR_LINE(__WIDTH)         QLine(GFX_THICK,GFX_THICK+5+19,__WIDTH+10+GFX_THICK,GFX_THICK+5+19)
 
-C_SceneItem::C_SceneItem( C_Scene& scene, C_StateWriter& state ) :
-    C_Variant( 0 ),
+TypeSceneItem::TypeSceneItem( TypeScene& scene, TypeStateWriter& state ) :
+    TypeVariant( 0 ),
     m_Scene( &scene )
 {
     SetState( state );
@@ -29,8 +29,8 @@ C_SceneItem::C_SceneItem( C_Scene& scene, C_StateWriter& state ) :
     setFlag( QGraphicsItem::ItemIsMovable );
 }
 
-C_SceneItem::C_SceneItem( C_Scene& scene, C_Record& record, qreal x_val, qreal y_val, qreal z_val ):
-    C_Variant( 0 ),
+TypeSceneItem::TypeSceneItem( TypeScene& scene, TypeRecord& record, qreal x_val, qreal y_val, qreal z_val ):
+    TypeVariant( 0 ),
     m_Record( &record ),
     m_Scene( &scene )
 
@@ -48,18 +48,18 @@ C_SceneItem::C_SceneItem( C_Scene& scene, C_Record& record, qreal x_val, qreal y
         setZValue( z_val );
 }
 
-C_SceneItem::~C_SceneItem()
+TypeSceneItem::~TypeSceneItem()
 {
     Scene().Items().removeOne( this );
 }
 
 
-QString C_SceneItem::HeaderText() const
+QString TypeSceneItem::HeaderText() const
 {
     return Record().FullName() + " : " + Record().Class();
 }
 
-QRectF C_SceneItem::boundingRect() const
+QRectF TypeSceneItem::boundingRect() const
 {
     QFontMetrics fm( scene()->font() );
     int header_width = fm.width( HeaderText() );
@@ -70,7 +70,7 @@ QRectF C_SceneItem::boundingRect() const
     return GFX_OUTER_RECT( header_width );
 }
 
-void C_SceneItem::paint( QPainter* painter, const QStyleOptionGraphicsItem*, QWidget* )
+void TypeSceneItem::paint( QPainter* painter, const QStyleOptionGraphicsItem*, QWidget* )
 {
 
     QFontMetrics fm( this->scene()->font() );
@@ -87,12 +87,12 @@ void C_SceneItem::paint( QPainter* painter, const QStyleOptionGraphicsItem*, QWi
     painter->drawLine( GFX_SEPARATOR_LINE( header_width ) );
 }
 
-void C_SceneItem::mousePressEvent( QGraphicsSceneMouseEvent* )
+void TypeSceneItem::mousePressEvent( QGraphicsSceneMouseEvent* )
 {
     Scene().BringFront( *this );
 }
 
-bool C_SceneItem::GetState( C_StateReader& state )
+bool TypeSceneItem::GetState( TypeStateReader& state )
 {
     QStringList row;
     row << Id();
@@ -105,7 +105,7 @@ bool C_SceneItem::GetState( C_StateReader& state )
     return true;
 }
 
-bool C_SceneItem::SetState( C_StateWriter& state )
+bool TypeSceneItem::SetState( TypeStateWriter& state )
 {
     QStringList row;
     state.Write( row );
@@ -117,14 +117,14 @@ bool C_SceneItem::SetState( C_StateWriter& state )
     return true;
 }
 
-void C_SceneItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent* )
+void TypeSceneItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent* )
 {
     Record().PropertyWidget( Scene().Document().Controller() );
 }
 
-void C_SceneItem::contextMenuEvent( QGraphicsSceneContextMenuEvent* event )
+void TypeSceneItem::contextMenuEvent( QGraphicsSceneContextMenuEvent* event )
 {
-    C_UiSceneItemContextMenu context_menu( *this, event );
+    TypeUiSceneItemContextMenu context_menu( *this, event );
 }
 
 
