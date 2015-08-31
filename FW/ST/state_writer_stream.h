@@ -8,7 +8,6 @@ class C_StateWriterStream : public C_StateWriter
 public:
 
     C_StateWriterStream( QDataStream& data_stream, long flags = 0, C_Variant* parent = 0 );
-
     void                Next() override;
 
     M_CONST_POINTER     ( DataStream, QDataStream )

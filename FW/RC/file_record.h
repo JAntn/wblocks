@@ -16,7 +16,7 @@ public:
     C_FileRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_FileRecord() override;
 
-    void                EditProperties( C_Document& document ) override;
+    QWidget*            PropertyWidget( C_Controller& controller ) override;
 
     QString             FilePath();
     QString             FileName();
@@ -24,7 +24,6 @@ public:
 
 private:
 
-    friend class        C_UiFileRecordProperties;
     friend class        C_FileRecordFactory;
 };
 

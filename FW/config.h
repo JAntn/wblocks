@@ -17,9 +17,9 @@ public:
     QString             ConfigFileFullName();
     QString             ProjectFileFullName();
 
-    M_VALUE             ( ConfigPath,  QString )
-    M_VALUE             ( ConfigFileName, QString )
-    M_VALUE             ( ProjectPath,  QString )
+    M_VALUE             ( ConfigPath,      QString )
+    M_VALUE             ( ConfigFileName,  QString )
+    M_VALUE             ( ProjectPath,     QString )
     M_VALUE             ( ProjectFileName, QString )
 
 };

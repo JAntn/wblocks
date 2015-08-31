@@ -7,10 +7,11 @@
 #include <QString>
 #include <QWidget>
 
-class C_Document;
+class C_UiEditor;
 class C_RecordStruct;
 class C_StateReader;
 class C_StateWriter;
+class C_Controller;
 
 class C_Record : public C_Variant
 {
@@ -20,10 +21,10 @@ public:
     C_Record( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_Record() override;
 
-    virtual void                  GetState( C_StateReader& state );
-    virtual void                  SetState( C_StateWriter& state, C_RecordStruct* root = 0 );
-    virtual void                  EditProperties( C_Document& document );
-    virtual void                  OpenInEditor( C_Document& document );
+    virtual bool                  GetState( C_StateReader& state );
+    virtual bool                  SetState( C_StateWriter& state, C_RecordStruct* root = 0 );
+    virtual QWidget*              PropertyWidget( C_Controller& controller );
+    virtual C_UiEditor*           EditorWidget( QString id, C_Controller& controller );
 
     virtual C_RecordStruct*       Struct();
     virtual QStringList           Script();
@@ -67,3 +68,5 @@ private:
 #endif // C_RECORD_H
 
 #include "FW/RC/record_struct.h"
+
+#include <FW/controller.h>

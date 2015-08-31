@@ -6,7 +6,8 @@
 #include <QDialog>
 
 class C_Record;
-class C_Document;
+class C_Context;
+class C_Controller;
 
 namespace Ui
 {
@@ -19,18 +20,18 @@ class C_UiAddRecord : public QDialog
 
 public:
 
-    explicit C_UiAddRecord( C_Document& document, int position = -1, QWidget* parent = 0 );
+    explicit C_UiAddRecord( C_Controller& controller, C_Context& context, int position = -1, QWidget* parent = 0 );
     ~C_UiAddRecord() override;
 
     bool                CheckFormData() const;
 
-    M_POINTER           ( Document, C_Document )
+    M_POINTER           ( Context,    C_Context )
+    M_POINTER           ( Controller, C_Controller )
 
 public slots:
 
     void                OnButtonBoxAccepted();
     void                OnButtonBoxRejected();
-    void                OnEditButtonClicked();
 
 private:
 

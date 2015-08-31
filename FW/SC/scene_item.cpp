@@ -92,7 +92,7 @@ void C_SceneItem::mousePressEvent( QGraphicsSceneMouseEvent* )
     Scene().BringFront( *this );
 }
 
-void C_SceneItem::GetState( C_StateReader& state )
+bool C_SceneItem::GetState( C_StateReader& state )
 {
     QStringList row;
     row << Id();
@@ -101,27 +101,25 @@ void C_SceneItem::GetState( C_StateReader& state )
     row << QString::number( y() );
     row << QString::number( zValue() );
     state.Read( row );
+
+    return true;
 }
 
-void C_SceneItem::SetState( C_StateWriter& state )
+bool C_SceneItem::SetState( C_StateWriter& state )
 {
     QStringList row;
     state.Write( row );
     m_Id = row[0];
-
-    m_Record =
-        Scene()
-        .Document()
-        .Root()
-        .FromId( row[1], true );
-
+    m_Record = Scene().Document().Root().FromId( row[1], true );
     setPos( row[2].toFloat(), row[3].toFloat() );
     setZValue( row[4].toFloat() );
+
+    return true;
 }
 
 void C_SceneItem::mouseDoubleClickEvent( QGraphicsSceneMouseEvent* )
 {
-    Record().EditProperties( Scene().Document() );
+    Record().PropertyWidget( Scene().Document().Controller() );
 }
 
 void C_SceneItem::contextMenuEvent( QGraphicsSceneContextMenuEvent* event )

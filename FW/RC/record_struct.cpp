@@ -123,12 +123,8 @@ C_Record* C_RecordStruct::CreateRecord( C_StateWriter& state, int position, C_Re
     return record;
 }
 
-C_Record* C_RecordStruct::CreateRecord(
-    QString name,
-    QString value,
-    QString class_name,
-    int position,
-    C_RecordStruct* root )
+C_Record* C_RecordStruct::CreateRecord( QString name, QString value, QString class_name, int position,
+                                        C_RecordStruct* root )
 {
     C_Record* record = 0;
     C_RecordFactory* record_factory = C_RecordStruct::FactoryFromName( class_name );
@@ -146,12 +142,8 @@ C_Record* C_RecordStruct::CreateRecord(
     return record;
 }
 
-C_Record* C_RecordStruct::CreateRecord(
-    QString name,
-    QString value,
-    QString class_name,
-    iterator position,
-    C_RecordStruct* root )
+C_Record* C_RecordStruct::CreateRecord( QString name, QString value, QString class_name, iterator position,
+                                        C_RecordStruct* root )
 {
     C_Record* record = 0;
     C_RecordFactory* record_factory = C_RecordStruct::FactoryFromName( class_name );

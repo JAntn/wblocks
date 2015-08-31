@@ -1,5 +1,8 @@
 #include "FW/RC/integer_record.h"
-#include "FW/UI/PR/ui_integer_record_properties.h"
+#include "FW/UI/PR/ui_integer_property.h"
+#include "FW/UI/PR/ui_record_name_property.h"
+#include <QVBoxLayout>
+
 #include "FW/UI/ui_main_window.h"
 #include <FW/ST/state_writer.h>
 #include <FW/ST/state_reader.h>
@@ -24,14 +27,38 @@ C_IntegerRecord::C_IntegerRecord( C_StateWriter& state, C_Variant* parent, C_Rec
 
 C_IntegerRecord::~C_IntegerRecord()
 {
-    //void
+    // void
 }
 
-
-void C_IntegerRecord::EditProperties( C_Document& document )
+QWidget* C_IntegerRecord::PropertyWidget( C_Controller& controller )
 {
-    QWidget* dialog = new C_UiIntegerRecordProperties( *this, document, &document.MainWindow() );
-    dialog->show();
+    QWidget* name_widget;
+
+    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        SetName( property.Value() );
+        emit controller.RecordsChanged();
+    } );
+
+
+    QWidget* value_widget;
+
+    value_widget = new C_UiIntegerProperty( "Integer", Value().toLong(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiIntegerProperty&>( property_base );
+        SetValue( QString::number( property.Value() ) );
+        emit controller.RecordsChanged();
+    } );
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( name_widget );
+    layout->addWidget( value_widget );
+
+    QWidget* widget = new QWidget;
+    widget->setLayout( layout );
+
+    return widget;
 }
 
 C_IntegerRecordFactory::C_IntegerRecordFactory()

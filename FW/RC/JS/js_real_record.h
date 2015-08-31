@@ -19,7 +19,6 @@ public:
 
 private:
 
-    friend class        C_UiRealRecordProperties;
     friend class        C_JsRealRecordFactory;
 };
 

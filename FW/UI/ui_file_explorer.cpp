@@ -1,17 +1,18 @@
 #include "FW/document.h"
 #include "FW/UI/ui_file_explorer.h"
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/ui_text_editor_container.h"
+#include "FW/UI/ui_editor_container.h"
 #include "ui_fileexplorer.h"
-#include "FW/UI/ui_file_text_editor.h"
 #include <QDir>
 #include <QStringListModel>
+#include <FW/UI/ED/ui_text_editor.h>
+#include "FW/controller.h"
 
-C_UiFileExplorer::C_UiFileExplorer( C_Document& document, QWidget* parent ) :
+C_UiFileExplorer::C_UiFileExplorer( C_Controller& controller, QWidget* parent ) :
     QWidget( parent ),
+    m_Controller( &controller ),
     ui( new Ui::C_UiFileExplorer )
 {
-    m_Document = &document;
     m_Path = ""; // RELATIVE TO DOCUMENT PATH
     m_Model = new QStringListModel( this );
     ui->setupUi( this );
@@ -56,9 +57,9 @@ C_UiFileExplorer::~C_UiFileExplorer()
 QString C_UiFileExplorer::FullPath()
 {
     if( !Path().isEmpty() )
-        return Document().Path() + "/" + Path();
+        return Controller().Document().Path() + "/" + Path();
 
-    return Document().Path();
+    return Controller().Document().Path();
 }
 
 void C_UiFileExplorer::Update()
@@ -69,10 +70,10 @@ void C_UiFileExplorer::Update()
     m_ModelData.pop_front();
     m_Model->setStringList( m_ModelData );
     m_Model->layoutChanged();
-    emit Document().Events().FileExplorerChanged();
+    emit Controller().FileExplorerChanged();
 }
 
-void C_UiFileExplorer::Activate( QString file_name )
+void C_UiFileExplorer::Open( QString file_name )
 {
     if( file_name.isEmpty() )
     {
@@ -90,33 +91,17 @@ void C_UiFileExplorer::Activate( QString file_name )
 
     if( !QFileInfo( file_name ).exists() )
     {
-        C_Document::Message( tr( "File doesn't exists" ) );
+        // IT SHALL NOT ENTER HERE NEVER
+        C_Controller::Message( tr( "File doesn't exists" ) );
         Update();
         return;
     }
 
-    QString editor_id = "FILE:TEXT:" + file_name;
-
-    if( Document().MainWindow().TextEditorContainer().HasId( editor_id ) )
-    {
-        if( C_Document::AcceptMessage( tr( "File already opened. Load again?" ) ) )
-        {
-            Document().MainWindow().TextEditorContainer().Close( editor_id );
-            Document().MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
-            Document().MainWindow().TextEditorContainer().SetCurrent( editor_id );
-            Document().MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
-
-            Update();
-        }
-
-        return;
-    }
-
-    Document().MainWindow().TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
-    Document().MainWindow().TextEditorContainer().SetCurrent( editor_id );
-    Document().MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
-
+    QStringList string_list = file_name.split( "/" );
+    string_list.pop_back();
+    m_Path = string_list.join( "/" );
     Update();
+    Controller().OpenFileEditorWidget( file_name );
 }
 
 void C_UiFileExplorer::OnDoubleClicked( const QModelIndex& index )
@@ -126,12 +111,12 @@ void C_UiFileExplorer::OnDoubleClicked( const QModelIndex& index )
     if( !Path().isEmpty() )
         file_name.prepend( Path() + "/" );
 
-    Activate( file_name );
+    Open( file_name );
 }
 
 void C_UiFileExplorer::OnLineEditReturnPressed()
 {
-    Activate( ui->LineEdit->text() );
+    Open( ui->LineEdit->text() );
 }
 
 void C_UiFileExplorer::OnRootButtonClicked()

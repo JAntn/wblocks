@@ -8,7 +8,6 @@ class C_StateWriterTable : public C_StateWriter
 public:
 
     C_StateWriterTable(QList<QStringList>& table, long flags = 0, C_Variant* parent = 0 );
-
     void                Next() override;
 
     M_CONST_POINTER     ( Table, QList<QStringList> )

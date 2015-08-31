@@ -4,9 +4,7 @@
 #include "FW/document.h"
 #include "FW/SC/scene.h"
 #include "FW/UI/ui_record_explorer.h"
-#include "FW/UI/ui_find_record.h"
-#include "FW/UI/ui_file_text_editor.h"
-#include "FW/UI/ui_text_editor_container.h"
+#include "FW/UI/ui_editor_container.h"
 #include "FW/UI/ui_file_explorer.h"
 #include "FW/config.h"
 #include "FW/clipboard.h"
@@ -19,239 +17,197 @@
 #include <QGraphicsView>
 #include <QtWebKitWidgets>
 
-C_UiMainWindow::C_UiMainWindow( QWidget* parent ):
+C_UiMainWindow::C_UiMainWindow( C_Controller& controller, QWidget* parent ):
     QMainWindow( parent ),
+    m_Controller( &controller ),
     ui( new Ui::C_UiMainWindow )
 {
-    QFile project_file;
+    controller.SetMainWindow( *this );
 
     m_RecordExplorer = 0;
     m_FileExplorer = 0;
     m_Document = 0;
-
-    // ROOT OBJECT
-
-    m_Config = new C_Config( QDir().canonicalPath() );
-    m_Config->Load();
-
-    // BUILD EMPTY DOCUMENT
-
-    m_Document = new C_Document( Config().ProjectFileName(), Config().ProjectPath(), *this, m_Config );
-
-    // FILL DOCUMENT USING STORED CONFIGURATION
-
-    bool check_config =
-        QFileInfo( Config().ProjectPath() ).exists() &&
-        QFileInfo( Config().ProjectFileFullName() ).exists();
-
-    if( !check_config )
-    {
-        Document().SetPath( "" );
-        Document().SetFileName( "" );
-
-        Config().SetProjectPath( Document().Path() );
-        Config().SetProjectFileName( Document().FileName() );
-
-        C_Record* string_record =
-            Document().Root().CreateRecord(
-                "SampleString",
-                "Welcome to JS Blocks.\n This is a sample string", "String"
-            );
-
-        Document().Scene().CreateItem( *string_record );
-    }
-    else
-    {
-        QDir().setCurrent( Config().ProjectPath() );
-        project_file.setFileName( Config().ProjectFileFullName() );
-    }
+    m_PropertiesWidget = 0;
 
     // SETUP USER INTERFACE
 
     ui->setupUi( this );
 
-    m_RecordExplorer = new C_UiRecordExplorer( Document(), this );
-    m_FileExplorer = new C_UiFileExplorer( Document(), this );
-    m_TextEditorContainer = new C_UiTextEditorContainer( this );
+    m_RecordExplorer = new C_UiRecordExplorer( controller.Document().Context(), Controller(), this );
+    m_FileExplorer = new C_UiFileExplorer( controller, this );
+    m_TextEditorContainer = new C_UiEditorContainer( controller, this );
 
     ui->RecordExplorerLayout->addWidget( m_RecordExplorer );
     ui->EditorLayout->addWidget( m_TextEditorContainer );
     ui->FileExplorerLayout->addWidget( m_FileExplorer );
-    ui->GraphicsView->setScene( &Document().Scene().Graphics() );
+    ui->GraphicsView->setScene( &Controller().Document().Scene().Graphics() );
 
     QRect screen_size = QApplication::desktop()->availableGeometry( this );
-    setFixedSize( QSize( screen_size.width() * 0.8, screen_size.height() * 0.8 ) );
-
-    if( check_config )
-        Document().LoadFile( project_file );
+    resize( QSize( screen_size.width() * 0.8, screen_size.height() * 0.8 ) );
+    SetTitle( controller.Config().ProjectFileName() );
 
     InitConnections();
 
-    emit Document().Events().RecordsChanged();
+    emit Controller().RecordsChanged();
     SetCurrentTab( MAINWINDOW_TAB_SCENE );
 }
 
 C_UiMainWindow::~C_UiMainWindow()
 {
-    m_Config->Save();
-    delete m_Config;
+    Controller().Config().SetProjectFileName( Controller().Document().FileName() );
+    Controller().Config().SetProjectPath( Controller().Document().Path() );
+    Controller().Config().Save();
     delete ui;
 }
 
 void C_UiMainWindow::InitConnections()
 {
-    Document().Events().InitConnections();
+    Controller().ConnectSlots();
 
     connect(
         ui->ActionExit,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionExit );
+        &Controller(),
+        C_Controller::OnActionExit );
 
     connect(
         ui->ActionFileLoad,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionLoadProjectFile );
+        &Controller(),
+        C_Controller::OnActionLoadProjectFile );
 
     connect(
         ui->ActionFileSave,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionSaveProjectFile );
+        &Controller(),
+        C_Controller::OnActionSaveProjectFile );
 
     connect(
         ui->ActionSQLLoad,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionLoadProjectSQL );
+        &Controller(),
+        C_Controller::OnActionLoadProjectSQL );
 
     connect(
         ui->ActionSQLSave,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionSaveProjectSQL );
+        &Controller(),
+        C_Controller::OnActionSaveProjectSQL );
 
     connect(
         ui->ActionSaveClientScript,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionSaveHtmlCode );
+        &Controller(),
+        C_Controller::OnActionSaveHtmlCode );
 
     connect(
         ui->ActionUpdateClientScript,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionUpdateHtmlCode );
+        &Controller(),
+        C_Controller::OnActionUpdateHtmlCode );
 
     connect(
         ui->ActionRunClientScript,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionRunHtmlCode );
+        &Controller(),
+        C_Controller::OnActionRunHtmlCode );
 
     connect(
         ui->ActionAdd,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionAddRecord );
+        &Controller(),
+        C_Controller::OnActionAddRecord );
 
     connect(
         ui->ActionAdd_to_scene,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionAddSceneItem );
+        &Controller(),
+        C_Controller::OnActionAddSceneItem );
 
     connect(
         ui->ActionProperties,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionEditRecordProperties );
+        &Controller(),
+        C_Controller::OnActionChangePropertyWidget );
 
     connect(
         ui->ActionOpen_In_Editor,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionOpenRecordInEditor );
+        &Controller(),
+        C_Controller::OnActionOpenRecordInEditor );
 
     connect(
         ui->ActionRemove,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionRemoveRecord );
+        &Controller(),
+        C_Controller::OnActionRemoveRecord );
 
     connect(
         ui->ActionCopy,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionCopyRecord );
+        &Controller(),
+        C_Controller::OnActionCopyRecord );
 
     connect(
         ui->ActionCut,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionCutRecord );
+        &Controller(),
+        C_Controller::OnActionCutRecord );
 
     connect(
         ui->ActionPaste,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionPasteRecord );
-
-    connect(
-        ui->ActionFind,
-        QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionFindRecord );
+        &Controller(),
+        C_Controller::OnActionPasteRecord );
 
     connect(
         ui->ActionNew,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionNewProjectFile );
+        &Controller(),
+        C_Controller::OnActionNewProjectFile );
 
     connect(
         ui->ActionNewEditorFile,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionNewFile );
+        &Controller(),
+        C_Controller::OnActionNewFile );
 
     connect(
         ui->ActionCloseEditorFile,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionCloseFile );
+        &Controller(),
+        C_Controller::OnActionCloseFile );
 
     connect(
         ui->ActionCloseAllEditorFiles,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionCloseAllFiles );
+        &Controller(),
+        C_Controller::OnActionCloseAllFiles );
 
     connect(
         ui->ActionSaveEditorFile,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionSaveFile );
+        &Controller(),
+        C_Controller::OnActionSaveFile );
 
     connect(
         ui->ActionSaveAllEditorFiles,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionSaveAllFiles );
+        &Controller(),
+        C_Controller::OnActionSaveAllFiles );
 
     connect(
         ui->ActionLoadEditorFile,
         QAction::triggered,
-        &Document().Events(),
-        C_Events::OnActionLoadFile );
+        &Controller(),
+        C_Controller::OnActionLoadFile );
 }
 
 void C_UiMainWindow::closeEvent( QCloseEvent* )
 {
-    if( C_Document::AcceptMessage( "Save project changes?" ) )
+    if( C_Controller::AcceptMessage( "Save project changes?" ) )
     {
-        QString file_name = Document().FileName();
+        QString file_name = Controller().Document().FileName();
 
         if( file_name.isEmpty() )
         {
@@ -260,7 +216,7 @@ void C_UiMainWindow::closeEvent( QCloseEvent* )
                     this,
                     tr( "Save File" ),
                     "untitled.prj",
-                    tr( "Project Files (*.prj)" )
+                    tr( "Project Files (*.prj, *.sql)" )
                 );
         }
 
@@ -268,21 +224,43 @@ void C_UiMainWindow::closeEvent( QCloseEvent* )
             qDebug() << "File Selection failed";
         else
         {
-            TextEditorContainer().SaveStateAll();
-            QFile file( file_name );
-            Document().SaveFile( file );
+            TextEditorContainer().SaveAll();
+
+            if( file_name.split( "." ).back() == "prj" )
+                Controller().Document().SaveFile( file_name );
+            else if( file_name.split( "." ).back() == "sql" )
+                Controller().Document().SaveSQL( file_name );
         }
     }
 }
 
 void C_UiMainWindow::SetTitle( QString title )
 {
-    setWindowTitle( "JSBlocks - " + title );
+    if( !title.isEmpty() )
+        title.prepend( " - " );
+
+    setWindowTitle( "JSBlocks" + title );
 }
 
 void C_UiMainWindow::SetCurrentTab( int index )
 {
     ui->TabWidget->setCurrentIndex( index );
+}
+
+void C_UiMainWindow::SetPropertyWidget( QWidget* widget )
+{
+    if( m_PropertiesWidget != 0 )
+        delete m_PropertiesWidget;
+
+    m_PropertiesWidget = widget;
+    m_PropertiesWidget->setParent( this );
+    ui->PropertiesLayout->addWidget( widget );
+}
+
+void C_UiMainWindow::OpenEditorWidget( C_UiEditor* widget )
+{
+    TextEditorContainer().Append( widget );
+    SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
 void C_UiMainWindow::UpdateRecordExplorer()
@@ -299,13 +277,13 @@ void C_UiMainWindow::UpdateFileExplorer()
 
 void C_UiMainWindow::UpdateHtmlCodeView()
 {
-    ui->TextEdit->setPlainText( Document().Html() );
+    ui->TextEdit->setPlainText( Controller().Document().Html() );
     ui->TextEdit->update();
 }
 
 void C_UiMainWindow::UpdateSceneView()
 {
-    Document().Scene().UpdateLines();
+    Controller().Document().Scene().UpdateLines();
 }
 
 void C_UiMainWindow::UpdateMenubar()
@@ -340,7 +318,7 @@ void C_UiMainWindow::UpdateMenubar()
 
         for( auto action : actions )
         {
-            if( Document().Context().Records().Flags() & ( *iter ) )
+            if( Controller().Document().Context().Records().Flags() & ( *iter ) )
                 action->setEnabled( true );
             else
                 action->setEnabled( false );
@@ -348,10 +326,7 @@ void C_UiMainWindow::UpdateMenubar()
             ++iter;
         }
 
-        if( !Document()
-                .MainWindow()
-                .RecordExplorer()
-                .HasSelection() )
+        if( !RecordExplorer().HasSelection() )
         {
             ui->ActionCopy->setEnabled( false );
             ui->ActionCut->setEnabled( false );
@@ -362,12 +337,7 @@ void C_UiMainWindow::UpdateMenubar()
 
         }
 
-        bool is_empty =
-            Document()
-            .Clipboard()
-            .Empty();
-
-        if( is_empty )
+        if( Controller().Clipboard().Empty() )
             ui->ActionPaste->setEnabled( false );
     }
 
@@ -392,8 +362,8 @@ void C_UiMainWindow::UpdateMenubar()
 
 void C_UiMainWindow::UpdateWebView()
 {
-    Document().UpdateHtml();
+    Controller().Document().UpdateHtml();
 
-    ui->WebView->setHtml( Document().Html() );
+    ui->WebView->setHtml( Controller().Document().Html() );
     ui->WebView->show();
 }

@@ -8,7 +8,6 @@ class C_StateReaderStream : public C_StateReader
 public:
 
     C_StateReaderStream( QDataStream& data_stream, long flags = 0, C_Variant* parent = 0 );
-
     void                Read( QStringList& row ) override;
     void                Stop() override;
 

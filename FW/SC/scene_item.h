@@ -27,8 +27,8 @@ public:
     void                mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
     QString             HeaderText() const;
-    virtual void        GetState(C_StateReader& state);
-    virtual void        SetState(C_StateWriter& state);
+    virtual bool        GetState(C_StateReader& state);
+    virtual bool        SetState(C_StateWriter& state);
 
     M_POINTER           (Record,    C_Record)
     M_POINTER           (Scene,     C_Scene)

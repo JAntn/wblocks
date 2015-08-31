@@ -1,15 +1,18 @@
 #include "FW/RC/script_file_record.h"
 #include "FW/RC/record_struct.h"
-#include "FW/document.h"
-#include "FW/UI/ui_main_window.h"
-#include "FW/UI/PR/ui_script_file_record_properties.h"
-#include "FW/UI/ui_text_editor_container.h"
+#include "FW/UI/PR/ui_file_property.h"
+#include "FW/UI/ui_editor_container.h"
 #include "FW/RC/file_record.h"
-#include "FW/UI/ui_file_text_editor.h"
-#include "FW/ST/state_reader.h"
-#include "FW/ST/state_writer.h"
 #include <QFileInfo>
 #include <QCoreApplication>
+#include "FW/UI/ED/ui_text_editor.h"
+
+#include "FW/document.h"
+#include "FW/UI/ui_main_window.h"
+
+#include "FW/ST/state_reader.h"
+#include "FW/ST/state_writer.h"
+
 
 
 C_ScriptFileRecord::C_ScriptFileRecord( QString id, QString name, QString value,  C_Variant* parent, C_RecordStruct* root ):
@@ -31,49 +34,23 @@ C_ScriptFileRecord::~C_ScriptFileRecord()
 
 QStringList C_ScriptFileRecord::Script()
 {
-    return QStringList( C_Document::LoadTextFile( FileFullName() ) );
+    return QStringList( C_Controller::LoadTextFile( FileFullName() ) );
 }
 
-void C_ScriptFileRecord::EditProperties( C_Document& document )
+C_UiEditor* C_ScriptFileRecord::EditorWidget( QString id, C_Controller& controller )
 {
-    QWidget* dialog = new C_UiScriptFileRecordProperties( *this, document, &document.MainWindow() );
-    dialog->show();
-}
+    C_UiTextEditor* text_editor;
 
-void C_ScriptFileRecord::OpenInEditor( C_Document& document )
-{
-    // OPEN THE FILE OR CREATE AN EMPTY ONE
-
-    auto& main_window = document.MainWindow();
-
-    QString editor_id = "FILE:TEXT:" + FileFullName();
-    QString file_name = FileFullName();
-
-    if( main_window.TextEditorContainer().HasId( editor_id ) )
+    text_editor = new C_UiTextEditor( id, FileName(), FileName().split( "/" ).back(), [&controller, this]( C_UiEditor & editor_base )
     {
-        if( C_Document::AcceptMessage(
-                    QCoreApplication::translate( "C_ScriptFileRecord", "File already opened.\n\nLoad again?" ) ) )
-        {
-            main_window.TextEditorContainer().Close( editor_id );
-            main_window.TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
-            emit document.Events().TextEditorContainerChanged();
-            main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
-        }
+        C_UiTextEditor& editor = static_cast<C_UiTextEditor&>( editor_base );
+        C_Controller::SaveTextFile( FileFullName(), editor.Text() );
+        emit controller.RecordsChanged();
+    } );
 
-        emit document.Events().RecordsChanged();
-        return;
-    }
+    text_editor->SetText( C_Controller::LoadTextFile( FileFullName() ) );
 
-    if( !QFileInfo( file_name ).exists() )
-    {
-        if( C_Document::AcceptMessage(
-                    QCoreApplication::translate( "C_ScriptFileRecord", "File doesn't exists.\nCreate a new file?" ) ) )
-            C_Document::SaveTextFile( file_name, "" );
-    }
-
-    main_window.TextEditorContainer().Append( new C_UiFileTextEditor( editor_id, file_name ) );
-    emit document.Events().TextEditorContainerChanged();
-    main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+    return text_editor;
 }
 
 C_ScriptFileRecordFactory::C_ScriptFileRecordFactory()

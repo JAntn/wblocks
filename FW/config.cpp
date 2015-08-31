@@ -27,10 +27,10 @@ void C_Config::Load()
         config_file_name.prepend( ConfigPath() + "/" );
 
     if( !QFileInfo( config_file_name ).exists() )
-        C_Document::SaveTextFile( config_file_name , EMPTY_CONFIGURATION_TEXT() );
+        C_Controller::SaveTextFile( config_file_name , EMPTY_CONFIGURATION_TEXT() );
 
     QStringList config_file_tokens;
-    config_file_tokens = C_Document::LoadTextFile( config_file_name ).split( "\n" );
+    config_file_tokens = C_Controller::LoadTextFile( config_file_name ).split( "\n" );
 
     for( QString token_row : config_file_tokens )
     {
@@ -55,7 +55,7 @@ void C_Config::Save()
     config_file_tokens << "project_file=" << m_ProjectFileName << "\n";
     config_file_tokens << "project_path=" << m_ProjectPath << "\n";
 
-    C_Document::SaveTextFile(
+    C_Controller::SaveTextFile(
         config_file_name,
         config_file_tokens.join( "" )
     );

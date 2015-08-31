@@ -19,15 +19,15 @@ void C_HtmlBuilder::Build( C_RecordStruct& root )
 
     m_Html
     << "\n<!DOCTYPE html>"
-    << "\n<html>"
-    << "\n<script>";
+    << "\n<html>\n"
+    << "\n<script>\n";
 
     for( C_Variant* variant : root )
     {
         C_Record* record = static_cast<C_Record*>( variant );
         m_Html << record->Script();
     }
-    m_Html << "\n</script>";
+    m_Html << "\n</script>\n";
 
     for( C_Variant* variant : root )
     {

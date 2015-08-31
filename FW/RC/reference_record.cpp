@@ -1,10 +1,12 @@
 #include "FW/RC/reference_record.h"
-#include "FW/UI/PR/ui_reference_record_properties.h"
+#include "FW/UI/PR/ui_record_name_property.h"
+
 #include "FW/UI/ui_main_window.h"
-#include "ui_referencerecordproperties.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/document.h"
+
+#include <QVBoxLayout>
 
 
 C_ReferenceRecord::C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
@@ -27,10 +29,36 @@ C_ReferenceRecord::~C_ReferenceRecord()
     // void
 }
 
-void C_ReferenceRecord::EditProperties( C_Document& document )
+QWidget* C_ReferenceRecord::PropertyWidget( C_Controller& controller )
 {
-    QWidget* dialog = new C_UiReferenceRecordProperties( *this, document, &document.MainWindow() );
-    dialog->show();
+    QWidget* name_widget;
+
+    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        SetName( property.Value() );
+        emit controller.RecordsChanged();
+
+    } );
+
+    QWidget* value_widget;
+
+    value_widget = new C_UiRecordNameProperty( "Reference", Value(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        SetValue( property.Value() );
+        emit controller.RecordsChanged();
+    } );
+
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( name_widget );
+    layout->addWidget( value_widget );
+
+    QWidget* widget = new QWidget;
+    widget->setLayout( layout );
+
+    return widget;
 }
 
 QString C_ReferenceRecord::Value()
@@ -65,7 +93,7 @@ C_Record* C_ReferenceRecord::Referencee()
     return Root().FromId( m_Value, true );
 }
 
-void C_ReferenceRecord::GetState( C_StateReader& state )
+bool C_ReferenceRecord::GetState( C_StateReader& state )
 {
     QStringList row;
     row.append( m_Id );
@@ -73,9 +101,11 @@ void C_ReferenceRecord::GetState( C_StateReader& state )
     row.append( m_Value );
     row.append( m_Class );
     state.Read( row );
+
+    return true;
 }
 
-void C_ReferenceRecord::SetState( C_StateWriter& state , C_RecordStruct* root )
+bool C_ReferenceRecord::SetState( C_StateWriter& state , C_RecordStruct* root )
 {
     m_Root = root;
 
@@ -90,6 +120,8 @@ void C_ReferenceRecord::SetState( C_StateWriter& state , C_RecordStruct* root )
     m_Name  = row[1];
     m_Value = row[2];
     m_Class = row[3];
+
+    return true;
 }
 
 C_ReferenceRecordFactory::C_ReferenceRecordFactory()

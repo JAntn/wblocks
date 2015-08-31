@@ -15,11 +15,10 @@ public:
     C_BoolRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_BoolRecord() override;
 
-    void                EditProperties( C_Document& document ) override;
+    QWidget*            PropertyWidget(C_Controller& controller ) override;
 
 private:
 
-    friend class        C_UiBoolRecordProperties;
     friend class        C_BoolRecordFactory;
 };
 

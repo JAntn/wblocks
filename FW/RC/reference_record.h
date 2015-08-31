@@ -18,9 +18,9 @@ public:
     C_ReferenceRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_ReferenceRecord() override;
 
-    void                GetState( C_StateReader& state ) override;
-    void                SetState( C_StateWriter& state, C_RecordStruct* root = 0) override;
-    void                EditProperties( C_Document& document ) override;
+    bool                GetState( C_StateReader& state ) override;
+    bool                SetState( C_StateWriter& state, C_RecordStruct* root = 0) override;
+    QWidget*            PropertyWidget(C_Controller& controller ) override;
 
     QString             Value() override;
     void                SetValue(QString full_name) override;

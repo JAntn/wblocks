@@ -2,7 +2,7 @@
 #define C_UIRECORDPROPERTIES_H
 
 #include "FW/macro.h"
-#include <QDialog>
+#include <QWidget>
 
 class C_Record;
 class C_Document;
@@ -12,7 +12,7 @@ namespace Ui
 class C_UiRecordProperties;
 }
 
-class C_UiRecordProperties : public QDialog
+class C_UiRecordProperties : public QWidget
 {
     Q_OBJECT
 
@@ -26,8 +26,7 @@ public:
 
 private slots:
 
-    void                OnButtonBoxAccepted();
-    void                OnRemoveButtonClicked();
+    void                OnApplyButtonClicked();
 
 private:
 

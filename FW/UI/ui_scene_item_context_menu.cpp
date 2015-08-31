@@ -48,29 +48,29 @@ void C_UiSceneItemContextMenu::OnEditRecordProperties()
 {
     SceneItem()
     .Record()
-    .EditProperties(
+    .PropertyWidget(
         SceneItem()
         .Scene()
-        .Document() );
+        .Document().Controller() );
 }
 
 void C_UiSceneItemContextMenu::OnRemove()
 {
-    if( C_Document::AcceptMessage(
+    if( C_Controller::AcceptMessage(
                 tr( "Remove this record?" ) ) )
     {
         delete & SceneItem().Record();
         emit SceneItem()
         .Scene()
         .Document()
-        .Events()
+        .Controller()
         .RecordsChanged();
     }
 }
 
 void C_UiSceneItemContextMenu::OnRemoveFromScene()
 {
-    if( C_Document::AcceptMessage(
+    if( C_Controller::AcceptMessage(
                 tr( "Remove this item from scene?" ) ) )
         delete & SceneItem();
 }

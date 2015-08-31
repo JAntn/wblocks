@@ -9,13 +9,14 @@
 #include "ui_mainwindow.h"
 #include "ui_recordexplorer.h"
 
-C_UiRecordExplorer::C_UiRecordExplorer( C_Document& document, QWidget* parent ) :
+C_UiRecordExplorer::C_UiRecordExplorer( C_Context& context, C_Controller& controller, QWidget* parent ) :
     QWidget( parent ),
-    m_Document( &document ),
+    m_Context( &context ),
+    m_Controller( &controller ),
     ui( new Ui::C_UiRecordExplorer )
 {
     ui->setupUi( this );
-    m_RecordTableModel = new C_UiRecordTableModel( Document(), this );
+    m_RecordTableModel = new C_UiRecordTableModel( Controller().Document(), this );
     ui->TableView->setModel( m_RecordTableModel );
 
     connect(
@@ -68,32 +69,20 @@ C_UiRecordExplorer::~C_UiRecordExplorer()
 
 void C_UiRecordExplorer::Update()
 {
-    ui->LineEdit->setText( Document().Context().Records().FullName() );
+    ui->LineEdit->setText( Context().Records().FullName() );
     m_RecordTableModel->layoutChanged();
-    emit Document().Events().RecordExplorerChanged();
+    emit Controller().RecordExplorerChanged();
 }
 
-C_RecordStruct& C_UiRecordExplorer::Records()
-{
-    return Document().Context().Records();
-}
 
 QList<C_Record*> C_UiRecordExplorer::Selection()
 {
-    QModelIndexList index_list =
-        ui->TableView
-        ->selectionModel()
-        ->selectedRows();
-
+    QModelIndexList index_list = ui->TableView->selectionModel()->selectedRows();
     QList<C_Record*> record_list;
 
     for( auto index : index_list )
     {
-        C_Record* record =
-            Document()
-            .Context()
-            .Records()
-            .FromIndex( index.row() );
+        C_Record* record = Context().Records().FromIndex( index.row() );
 
         record_list.append( record );
     }
@@ -118,12 +107,14 @@ void C_UiRecordExplorer::Activate( C_Record* record )
 
     if( record->Struct() != 0 )
     {
-        Document().Context().SetRecords( *( record->Struct() ) );
+        Context().SetRecords( *( record->Struct() ) );
         Update();
         return;
     }
 
-    record->EditProperties( Document() );
+    Context().SetRecords( *static_cast<C_RecordStruct*>( record->Parent() ) );
+    Update();
+    Controller().SetPropertyWidgetRecord( *record );
 }
 
 void C_UiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
@@ -134,34 +125,34 @@ void C_UiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
     if( index.row() >= 0 )
         ui->TableView->selectionModel()->setCurrentIndex( index, QItemSelectionModel::Select );
 
-    C_UiRecordContextMenu context_menu( Document(), global_point );
+    C_UiRecordContextMenu context_menu( Controller(), global_point );
 }
 
 void C_UiRecordExplorer::OnDoubleClicked( const QModelIndex& index )
 {
-    Activate( Records().FromIndex( index.row() ) );
+    Activate( Context().Records().FromIndex( index.row() ) );
 }
 
 void C_UiRecordExplorer::OnRootButtonClicked()
 {
-    Document().Context().SetRecords( Document().Root() );
+    Context().SetRecords( Controller().Document().Root() );
     Update();
 }
 
 void C_UiRecordExplorer::OnUpButtonClicked()
 {
-    if( ( & Records() ) != ( & Document().Root() ) )
+    if( ( & Context().Records() ) != ( & Controller().Document().Root() ) )
     {
-        C_Record* record = static_cast<C_Record*>( Document().Context().Records().Parent() );
-        auto parent = static_cast<C_RecordStruct*>( record->Parent() );
-        Document().Context().SetRecords( *parent );
+        C_Record* record = static_cast<C_Record*>( Context().Records().Parent() );
+        C_RecordStruct* parent = static_cast<C_RecordStruct*>( record->Parent() );
+        Context().SetRecords( *parent );
         Update();
     }
 }
 
 void C_UiRecordExplorer::OnSelectionChanged( const QItemSelection&, const QItemSelection&  )
 {
-    Document().MainWindow().UpdateMenubar();
+    Controller().MainWindow().UpdateMenubar();
 }
 
 void C_UiRecordExplorer::OnLineEditReturnPressed()
@@ -170,10 +161,10 @@ void C_UiRecordExplorer::OnLineEditReturnPressed()
 
     if( full_name == "" )
     {
-        Document().Context().SetRecords( Document().Root() );
+        Context().SetRecords( Controller().Document().Root() );
         Update();
         return;
     }
 
-    Activate( Document().Root().FromFullName( full_name ) );
+    Activate( Controller().Document().Root().FromFullName( full_name ) );
 }

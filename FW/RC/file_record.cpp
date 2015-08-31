@@ -1,9 +1,14 @@
 #include "FW/RC/file_record.h"
+#include "FW/UI/PR/ui_file_property.h"
+#include "FW/UI/PR/ui_record_name_property.h"
+
 #include "FW/UI/ui_main_window.h"
 #include "FW/document.h"
-#include "FW/UI/PR/ui_file_record_properties.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
+
+#include <QVBoxLayout>
+
 
 
 C_FileRecord::C_FileRecord( QString id, QString name, QString value, C_Variant* parent , C_RecordStruct* root ):
@@ -27,10 +32,35 @@ C_FileRecord::~C_FileRecord()
     //void
 }
 
-void C_FileRecord::EditProperties( C_Document& document )
+QWidget* C_FileRecord::PropertyWidget( C_Controller& controller )
 {
-    QWidget* dialog = new C_UiFileRecordProperties( *this, document, &document.MainWindow() );
-    dialog->show();
+    QWidget* name_widget;
+
+    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        SetName( property.Value() );
+        emit controller.RecordsChanged();
+    } );
+
+    QWidget* value_widget;
+
+    value_widget = new C_UiFileProperty( "File", Value(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiFileProperty&>( property_base );
+        SetValue( property.Value() );
+        emit controller.RecordsChanged();
+    } );
+
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( name_widget );
+    layout->addWidget( value_widget );
+
+    QWidget* widget = new QWidget;
+    widget->setLayout( layout );
+
+    return widget;
 }
 
 QString C_FileRecord::FilePath()

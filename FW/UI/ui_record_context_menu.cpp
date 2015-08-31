@@ -10,44 +10,30 @@
 #include <QModelIndexList>
 #include <QTableView>
 
-C_UiRecordContextMenu::C_UiRecordContextMenu(
-    C_Document& document,
-    const QPoint& global_point,
-    QObject* parent ):
-    QObject( parent ),
-    m_Document( &document )
+C_UiRecordContextMenu::C_UiRecordContextMenu( C_Controller& controller, const QPoint& global_point, QObject* parent ):
+    QObject( parent ), m_Controller( &controller )
 {
     QMenu menu;
-
-    bool has_selection =
-        Document()
-        .MainWindow()
-        .RecordExplorer()
-        .HasSelection();
-
-    long action_flags =
-        document
-        .Context()
-        .Records()
-        .Flags();
+    bool has_selection = Controller().MainWindow().RecordExplorer().HasSelection();
+    long action_flags = Controller().Document().Context().Records().Flags();
 
     if( ( action_flags & FLAG_ACTION_COPY ) && has_selection )
     {
         QAction* action_copy = menu.addAction( tr( "Copy" ) );
-        connect( action_copy, QAction::triggered, &document.Events(), C_Events::OnActionCopyRecord );
+        connect( action_copy, QAction::triggered, &Controller(), C_Controller::OnActionCopyRecord );
 
     }
 
     if( ( action_flags & FLAG_ACTION_CUT ) && has_selection )
     {
         QAction* action_copy = menu.addAction( tr( "Cut" ) );
-        connect( action_copy, QAction::triggered, &document.Events(), C_Events::OnActionCutRecord );
+        connect( action_copy, QAction::triggered, &Controller(), C_Controller::OnActionCutRecord );
     }
 
-    if( ( action_flags & FLAG_ACTION_PASTE ) && !document.Clipboard().Empty() )
+    if( ( action_flags & FLAG_ACTION_PASTE ) && !Controller().Clipboard().Empty() )
     {
         QAction* action_paste = menu.addAction( tr( "Paste" ) );
-        connect( action_paste, QAction::triggered, &document.Events(), C_Events::OnActionPasteRecord );
+        connect( action_paste, QAction::triggered, &Controller(), C_Controller::OnActionPasteRecord );
     }
 
     if( !menu.isEmpty() )
@@ -56,19 +42,19 @@ C_UiRecordContextMenu::C_UiRecordContextMenu(
     if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection )
     {
         QAction* action_openrecord = menu.addAction( tr( "Open.." ) );
-        connect( action_openrecord, QAction::triggered, &document.Events(), C_Events::OnActionOpenRecordInEditor );
+        connect( action_openrecord, QAction::triggered, &Controller(), C_Controller::OnActionOpenRecordInEditor );
     }
 
     if( ( action_flags & FLAG_ACTION_PROPERTIES ) && has_selection )
     {
         QAction* action_1 = menu.addAction( tr( "Properties.." ) );
-        connect( action_1, QAction::triggered, &document.Events(), C_Events::OnActionEditRecordProperties );
+        connect( action_1, QAction::triggered, &Controller(), C_Controller::OnActionChangePropertyWidget );
     }
 
     if( ( action_flags & FLAG_ACTION_ADD_SCENE ) && has_selection )
     {
         QAction* action_3 = menu.addAction( tr( "Add to scene" ) );
-        connect( action_3, QAction::triggered, &document.Events(), C_Events::OnActionAddSceneItem );
+        connect( action_3, QAction::triggered, &Controller(), C_Controller::OnActionAddSceneItem );
     }
 
     if( !menu.isEmpty() )
@@ -77,13 +63,13 @@ C_UiRecordContextMenu::C_UiRecordContextMenu(
     if( action_flags & FLAG_ACTION_ADD )
     {
         QAction* action_2 = menu.addAction( tr( "Add" ) );
-        connect( action_2, QAction::triggered, &document.Events(), C_Events::OnActionAddRecord );
+        connect( action_2, QAction::triggered, &Controller(), C_Controller::OnActionAddRecord );
     }
 
     if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection )
     {
         QAction* action_4 = menu.addAction( tr( "Remove" ) );
-        connect( action_4, QAction::triggered, &document.Events(), C_Events::OnActionRemoveRecord );
+        connect( action_4, QAction::triggered, &Controller(), C_Controller::OnActionRemoveRecord );
     }
 
     if( !menu.isEmpty() )

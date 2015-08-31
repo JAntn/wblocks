@@ -3,7 +3,11 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/PR/ui_struct_record_properties.h"
+#include "FW/UI/PR/ui_record_name_property.h"
+
+#include <QVBoxLayout>
+
+#include <FW/UI/PR/ui_string_property.h>
 
 C_StructRecord::C_StructRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
     C_Record( id, name, value, parent, root )
@@ -63,7 +67,7 @@ QStringList C_StructRecord::Script()
     return script;
 }
 
-void C_StructRecord::GetState( C_StateReader& state )
+bool C_StructRecord::GetState( C_StateReader& state )
 {
     QStringList row;
     row.append( m_Id );
@@ -77,9 +81,11 @@ void C_StructRecord::GetState( C_StateReader& state )
         C_Record* record = static_cast<C_Record*>( variant );
         record->GetState( state );
     }
+
+    return true;
 }
 
-void C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
+bool C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
 {
     Records().Clear();
 
@@ -100,12 +106,30 @@ void C_StructRecord::SetState( C_StateWriter& state, C_RecordStruct* root )
 
     for( long count = 0; count < size; ++count )
         Records().CreateRecord( state, -1, root );
+
+    return true;
 }
 
-void C_StructRecord::EditProperties( C_Document& document )
+QWidget* C_StructRecord::PropertyWidget( C_Controller& controller )
 {
-    QWidget* dialog = new C_UiStructRecordProperties( *this, document, &document.MainWindow() );
-    dialog->show();
+
+    QWidget* name_widget;
+
+    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        SetName( property.Value() );
+        emit controller.RecordsChanged();
+
+    } );
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( name_widget );
+
+    QWidget* widget = new QWidget;
+    widget->setLayout( layout );
+
+    return widget;
 }
 
 C_StructRecordFactory::C_StructRecordFactory()

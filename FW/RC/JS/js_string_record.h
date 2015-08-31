@@ -20,7 +20,6 @@ public:
 
 private:
 
-    friend class        C_UiStringRecordProperties;
     friend class        C_JsStringRecordFactory;
 };
 

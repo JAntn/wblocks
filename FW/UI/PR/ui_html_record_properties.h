@@ -3,6 +3,7 @@
 
 #include "FW/macro.h"
 #include <QDialog>
+#include "FW/UI/PR/ui_property.h"
 
 class C_Record;
 class C_HtmlRecord;

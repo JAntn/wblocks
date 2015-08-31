@@ -1,12 +1,20 @@
 #include "FW/RC/record.h"
+#include "FW/UI/PR/ui_record_name_property.h"
+#include "FW/UI/PR/ui_line_text_property.h"
+#include <QVBoxLayout>
+
+
+#include <QCoreApplication>
+#include "FW/UI/ui_editor_container.h"
+#include "FW/UI/ED/ui_text_editor.h"
 #include "FW/document.h"
+
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/ui_text_editor_container.h"
-#include "FW/UI/ui_record_value_editor.h"
-#include "FW/UI/PR/ui_record_properties.h"
+
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include <QCoreApplication>
+
+
 
 /////////////////////////////////////////////////////////////////////////////////
 /// STATIC
@@ -59,7 +67,7 @@ QString C_Record::Value()
 }
 
 
-void C_Record::GetState( C_StateReader& state )
+bool C_Record::GetState( C_StateReader& state )
 {
     QStringList row;
     row.append( m_Id );
@@ -67,9 +75,11 @@ void C_Record::GetState( C_StateReader& state )
     row.append( m_Value );
     row.append( m_Class );
     state.Read( row );
+
+    return true;
 }
 
-void C_Record::SetState( C_StateWriter& state, C_RecordStruct* )
+bool C_Record::SetState( C_StateWriter& state, C_RecordStruct* )
 {
     QStringList row;
     state.Write( row );
@@ -82,38 +92,57 @@ void C_Record::SetState( C_StateWriter& state, C_RecordStruct* )
     m_Name  = row[1];
     m_Value = row[2];
     m_Class = row[3];
+
+    return true;
 }
 
-void C_Record::EditProperties( C_Document& document )
+QWidget* C_Record::PropertyWidget( C_Controller& controller )
 {
-    QWidget* dialog = new C_UiRecordProperties( *this, document, &document.MainWindow() );
-    dialog->show();
-}
 
-void C_Record::OpenInEditor( C_Document& document )
-{
-    // DEFAULT OPEN OPERATION
+    QWidget* name_widget;
 
-    auto& main_window = document.MainWindow();
-    QString editor_id = "RECORD:TEXT:" + Id();
-    QString editor_name = Name();
-
-    if( main_window.TextEditorContainer().HasId( editor_id ) )
+    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
     {
-        if( C_Document::AcceptMessage( QCoreApplication::translate( "C_Record", "Record already opened.\n\nLoad again?" ) ) )
-        {
-            main_window.TextEditorContainer().Close( editor_id );
-            main_window.TextEditorContainer().Append( new C_UiRecordValueEditor( editor_id, editor_name, *this ) );
-            emit document.Events().TextEditorContainerChanged();
-            main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
-        }
+        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        SetName( property.Value() );
+        emit controller.RecordsChanged();
 
-        return;
-    }
+    } );
 
-    main_window.TextEditorContainer().Append( new C_UiRecordValueEditor( editor_id, editor_name, *this ) );
-    emit document.Events().TextEditorContainerChanged();
-    main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+    QWidget* value_widget;
+
+    value_widget = new C_UiLineTextProperty( "Value", Value(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiLineTextProperty&>( property_base );
+        SetValue( property.Value() );
+        emit controller.RecordsChanged();
+    } );
+
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( name_widget );
+    layout->addWidget( value_widget );
+
+    QWidget* widget = new QWidget;
+    widget->setLayout( layout );
+
+    return widget;
+}
+
+C_UiEditor* C_Record::EditorWidget( QString id, C_Controller& controller )
+{
+    C_UiTextEditor* text_editor;
+
+    text_editor = new C_UiTextEditor( id, Name(), Name().split( "." ).back(), [&controller, this]( C_UiEditor & editor_base )
+    {
+        C_UiTextEditor& editor = static_cast<C_UiTextEditor&>( editor_base );
+        SetValue( editor.Text() );
+        emit controller.RecordsChanged();
+    } );
+
+    text_editor->SetText( Value() );
+
+    return text_editor;
 }
 
 C_RecordStruct* C_Record::Struct()

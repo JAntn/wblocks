@@ -8,7 +8,7 @@ class C_RecordStruct;
 
 class C_StateWriter;
 class C_StateReader;
-
+class C_Controller;
 class C_StructRecord : public C_Record
 {
 public:
@@ -21,14 +21,14 @@ public:
     QStringList         Script() override;
     QStringList         Html() override;
 
-    void                GetState( C_StateReader& state ) override;
-    void                SetState( C_StateWriter& state , C_RecordStruct* root = 0 ) override;
-    void                EditProperties( C_Document& document ) override;
+    bool                GetState( C_StateReader& state ) override;
+    bool                SetState( C_StateWriter& state , C_RecordStruct* root = 0 ) override;
+    QWidget*            PropertyWidget( C_Controller& controller ) override;
 
     M_POINTER           ( Records, C_RecordStruct )
 
     QString             Value() override;
-    void                SetValue(QString) override;
+    void                SetValue( QString ) override;
 
 private:
 

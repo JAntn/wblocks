@@ -3,11 +3,12 @@
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
+#include "FW/RC/string_record.h"
 
 class C_StateReader;
 class C_StateWriter;
 
-class C_HtmlRecord : public C_Record
+class C_HtmlRecord : public C_StringRecord
 {
 
 public:
@@ -17,8 +18,6 @@ public:
     ~C_HtmlRecord() override;
 
     QStringList         Html()  override;
-    void                EditProperties( C_Document& document ) override;
-    void                OpenInEditor( C_Document& document ) override;
 
 private:
 

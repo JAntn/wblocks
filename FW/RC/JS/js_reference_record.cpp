@@ -27,7 +27,7 @@ QStringList C_JsReferenceRecord::Script()
     if( record != 0 )
         return QStringList( "\n" + FullName() + " = " + record->FullName() + ";" );
 
-    qDebug() << "Warning - Reference invalid: " << FullName();
+    qDebug() << "Warning - Bad reference value >" << FullName();
     return QStringList();
 }
 

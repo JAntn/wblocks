@@ -20,7 +20,6 @@ public:
 
 private:
 
-    friend class        C_UiReferenceEditor;
     friend class        C_JsReferenceRecordFactory;
 };
 

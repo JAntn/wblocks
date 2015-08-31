@@ -15,11 +15,10 @@ public:
     C_RealRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_RealRecord() override;
 
-    void                EditProperties( C_Document& document ) override;
+    QWidget*            PropertyWidget( C_Controller& controller ) override;
 
 private:
 
-    friend class        C_UiRealRecordProperties;
     friend class        C_RealRecordFactory;
 };
 

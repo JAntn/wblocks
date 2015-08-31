@@ -15,11 +15,10 @@ public:
     C_IntegerRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_IntegerRecord() override;
 
-    void                EditProperties( C_Document& document ) override;
+    QWidget*            PropertyWidget( C_Controller& controller ) override;
 
 private:
 
-    friend class        C_UiIntegerRecordProperties;
     friend class        C_IntegerRecordFactory;
 };
 

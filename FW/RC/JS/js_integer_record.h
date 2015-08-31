@@ -19,7 +19,6 @@ public:
 
 private:
 
-    friend class        C_UiIntegerRecordProperties;
     friend class        C_JsIntegerRecordFactory;
 };
 

@@ -1,13 +1,17 @@
 #include "FW/RC/script_record.h"
-#include "FW/UI/PR/ui_script_record_properties.h"
-#include "FW/UI/ui_main_window.h"
-#include "FW/document.h"
-#include "FW/UI/ui_record_value_editor.h"
-#include "FW/UI/ui_text_editor_container.h"
+#include "FW/UI/PR/ui_record_properties.h"
+
+#include "FW/UI/ui_editor_container.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include <QCoreApplication>
+#include <QVBoxLayout>
+#include <FW/UI/PR/ui_record_name_property.h>
+#include <FW/UI/PR/ui_string_property.h>
+#include <FW/UI/ED/ui_text_editor.h>
 
+#include "FW/UI/ui_main_window.h"
+#include "FW/document.h"
 
 C_ScriptRecord::C_ScriptRecord( QString id, QString name, QString value, C_Variant* parent, C_RecordStruct* root ):
     C_Record( id, name, value, parent, root )
@@ -32,37 +36,52 @@ QStringList C_ScriptRecord::Script()
     return QStringList( Value() );
 }
 
-void C_ScriptRecord::EditProperties( C_Document& document )
+QWidget* C_ScriptRecord::PropertyWidget( C_Controller& controller )
 {
-    QWidget* dialog = new C_UiScriptRecordProperties( *this, document, &document.MainWindow() );
-    dialog->show();
+    QWidget* name_widget;
+
+    name_widget = new C_UiRecordNameProperty( "Name", Name(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiRecordNameProperty&>( property_base );
+        SetName( property.Value() );
+        emit controller.RecordsChanged();
+
+    } );
+
+    QWidget* value_widget;
+
+    value_widget = new C_UiStringProperty( "Script", Value(), [&controller, this]( C_UiProperty & property_base )
+    {
+        auto& property = static_cast<C_UiStringProperty&>( property_base );
+        SetValue( property.Value() );
+        emit controller.RecordsChanged();
+    } );
+
+
+    QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( name_widget );
+    layout->addWidget( value_widget );
+
+    QWidget* widget = new QWidget;
+    widget->setLayout( layout );
+
+    return widget;
 }
 
-void C_ScriptRecord::OpenInEditor( C_Document& document )
+C_UiEditor* C_ScriptRecord::EditorWidget( QString id, C_Controller& controller )
 {
-    // DEFAULT OPEN OPERATION (WILL BE EXTENDED)
+    C_UiTextEditor* text_editor;
 
-    auto& main_window = document.MainWindow();
-    QString editor_id = "RECORD:TEXT:" + Id();
-    QString editor_name = Name();
-
-    if( main_window.TextEditorContainer().HasId( editor_id ) )
+    text_editor = new C_UiTextEditor( id, Name(), Name().split( "." ).back(), [&controller, this]( C_UiEditor & editor_base )
     {
-        if( C_Document::AcceptMessage(
-                    QCoreApplication::translate( "C_ScriptRecord", "Record already opened.\n\nLoad again?" ) ) )
-        {
-            main_window.TextEditorContainer().Close( editor_id );
-            main_window.TextEditorContainer().Append( new C_UiRecordValueEditor( editor_id, editor_name, *this ) );
-            emit document.Events().TextEditorContainerChanged();
-            main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
-        }
+        C_UiTextEditor& editor = static_cast<C_UiTextEditor&>( editor_base );
+        SetValue( editor.Text() );
+        emit controller.RecordsChanged();
+    } );
 
-        return;
-    }
+    text_editor->SetText( Value() );
 
-    main_window.TextEditorContainer().Append( new C_UiRecordValueEditor( editor_id, editor_name, *this ) );
-    emit document.Events().TextEditorContainerChanged();
-    main_window.SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+    return text_editor;
 }
 
 C_ScriptRecordFactory::C_ScriptRecordFactory()

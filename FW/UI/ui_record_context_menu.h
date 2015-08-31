@@ -6,7 +6,7 @@
 #include <QObject>
 
 class C_Record;
-class C_Document;
+class C_Controller;
 
 class C_UiRecordContextMenu : QObject
 {
@@ -14,13 +14,10 @@ class C_UiRecordContextMenu : QObject
 
 public:
 
-    C_UiRecordContextMenu( C_Document& document,
-                           const QPoint& global_point,
-                           QObject* parent = 0 );
-
+    C_UiRecordContextMenu( C_Controller& controller, const QPoint& global_point, QObject* parent = 0 );
     ~C_UiRecordContextMenu() override;
 
-    M_POINTER           ( Document, C_Document )
+    M_POINTER           ( Controller, C_Controller )
 
 };
 

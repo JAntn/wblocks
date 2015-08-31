@@ -12,34 +12,35 @@ class C_UiRecordExplorer;
 
 class C_UiRecordTableModel;
 class C_RecordStruct;
-class C_Document;
+class C_Controller;
 class C_Record;
+class C_Context;
 
 class C_UiRecordExplorer : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit C_UiRecordExplorer( C_Document& document, QWidget* parent = 0 );
+    explicit C_UiRecordExplorer( C_Context& context, C_Controller& controller, QWidget* parent = 0 );
     ~C_UiRecordExplorer() override;
 
     void                          Update();
 
-    M_POINTER                     ( Document,         C_Document )
+    M_POINTER                     ( Context,          C_Context )
+    M_POINTER                     ( Controller,       C_Controller )
     M_POINTER                     ( RecordTableModel, C_UiRecordTableModel )
 
-    C_RecordStruct&               Records();
     QList<C_Record*>              Selection();
     void                          ClearSelection();
     bool                          HasSelection();
-    void                          Activate(C_Record* record);
+    void                          Activate( C_Record* record );
 public slots:
 
     void                          OnCustomContextMenuRequested( const QPoint& point );
     void                          OnDoubleClicked( const QModelIndex& index );
     void                          OnRootButtonClicked();
     void                          OnUpButtonClicked();
-    void                          OnSelectionChanged(const QItemSelection&, const QItemSelection&);
+    void                          OnSelectionChanged( const QItemSelection&, const QItemSelection& );
     void                          OnLineEditReturnPressed();
 private:
 

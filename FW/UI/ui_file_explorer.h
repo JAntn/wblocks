@@ -4,7 +4,9 @@
 #include <QWidget>
 #include "FW/macro.h"
 #include <QStringListModel>
+
 class C_Document;
+class C_Controller;
 
 namespace Ui
 {
@@ -17,16 +19,16 @@ class C_UiFileExplorer : public QWidget
 
 public:
 
-    C_UiFileExplorer( C_Document& document, QWidget* parent = 0 );
+    C_UiFileExplorer( C_Controller& controller, QWidget* parent = 0 );
     ~C_UiFileExplorer();
 
-    M_VALUE                       ( Path,      QString )
-    M_VALUE                       ( ModelData, QStringList )
-    M_POINTER                     ( Model,     QStringListModel )
-    M_POINTER                     ( Document,  C_Document )
+    M_VALUE                       ( Path,       QString )
+    M_VALUE                       ( ModelData,  QStringList )
+    M_POINTER                     ( Model,      QStringListModel )
+    M_POINTER                     ( Controller, C_Controller )
 
     void                          Update();
-    void                          Activate(QString file_name);
+    void                          Open( QString file_name );
 
 public slots:
 

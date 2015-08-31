@@ -17,12 +17,11 @@ public:
     ~C_ScriptRecord() override;
 
     QStringList         Script()  override;
-    void                EditProperties( C_Document& document ) override;
-    void                OpenInEditor( C_Document& document ) override;
+    QWidget*            PropertyWidget( C_Controller& controller ) override;
+    C_UiEditor*         EditorWidget( QString id, C_Controller& document ) override;
 
 private:
 
-    friend class        C_UiScriptRecordProperties;
     friend class        C_ScriptRecordFactory;
 };
 

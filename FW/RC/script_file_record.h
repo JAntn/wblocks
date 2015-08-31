@@ -5,8 +5,8 @@
 #include "FW/macro.h"
 
 class C_RecordStruct;
-class C_StringRecord;
-class C_BoolRecord;
+class C_UiEditor;
+class C_Controller;
 
 class C_StateWriter;
 class C_StateReader;
@@ -21,12 +21,10 @@ public:
     ~C_ScriptFileRecord() override;
 
     QStringList         Script() override;
-    void                EditProperties( C_Document& document ) override;
-    void                OpenInEditor(C_Document& document) override;
+    C_UiEditor*         EditorWidget( QString id, C_Controller& controller ) override;
 
 private:
 
-    friend class        C_UiScriptFileRecordProperties;
     friend class        C_ScriptFileRecordFactory;
 };
 

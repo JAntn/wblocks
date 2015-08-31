@@ -15,11 +15,10 @@ public:
     C_StringRecord( QString id, QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 );
     ~C_StringRecord() override;
 
-    void                EditProperties( C_Document& document ) override;
+    QWidget*            PropertyWidget(C_Controller& controller ) override;
 
 private:
 
-    friend class        C_UiStringRecordProperties;
     friend class        C_StringRecordFactory;
 };
 
@@ -33,7 +32,6 @@ public:
 
     C_Record*           CreateInstance( QString name, QString value, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
     C_Record*           CreateInstance( C_StateWriter& state, C_Variant* parent = 0, C_RecordStruct* root = 0 ) override;
-
 };
 
 #endif // C_STRING_RECORD_H

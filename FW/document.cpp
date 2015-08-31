@@ -7,7 +7,6 @@
 #include "FW/clipboard.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_file_explorer.h"
 #include "FW/RC/script_file_record.h"
 #include "FW/config.h"
@@ -18,65 +17,10 @@
 #include <QDir>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-/// STATIC
-
-QString C_Document::LoadTextFile( QString file_name )
-{
-    QFile file( file_name );
-
-    if( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
-    {
-        file.close();
-        return QString();
-    }
-
-    QString text = file.readAll();
-    file.close();
-    return text;
-}
-
-void C_Document::SaveTextFile( QString file_name, QString text )
-{
-    QFile file( file_name );
-
-    if( !file.open( QIODevice::WriteOnly | QIODevice::Text ) )
-    {
-        file.close();
-        return;
-    }
-
-    QTextStream out( &file );
-    out << text;
-    file.close();
-}
-
-bool C_Document::AcceptMessage( QString msg )
-{
-    QMessageBox msgBox;
-    msgBox.setText( msg );
-    msgBox.setStandardButtons( QMessageBox::Ok | QMessageBox::Cancel );
-    msgBox.setDefaultButton( QMessageBox::Cancel );
-    msgBox.exec();
-
-    if( msgBox.result() == QMessageBox::Cancel )
-        return false;
-
-    return true;
-}
-
-void C_Document::Message( QString msg )
-{
-    QMessageBox msgBox;
-    msgBox.setText( msg );
-    msgBox.exec();
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
 
-C_Document::C_Document( QString file_name, QString path, C_UiMainWindow& main_window, C_Variant* parent ):
-    C_Variant( parent ),
-    m_MainWindow( &main_window )
+C_Document::C_Document( C_Controller& controller, QString file_name, QString path, C_Variant* parent ):
+    C_Variant( parent ), m_Controller( &controller )
 {
     C_RecordStruct::InitFactoryList();
 
@@ -84,11 +28,7 @@ C_Document::C_Document( QString file_name, QString path, C_UiMainWindow& main_wi
     m_Path              = path;
     m_Root              = new C_RecordStruct( "root", this );
     m_Scene             = new C_Scene( *this, this );
-    m_Context           = new C_Context( Root(), Scene(), this );
-    m_HtmlBuilder       = new C_HtmlBuilder( this );
-    m_Database          = new C_Database( this );
-    m_Clipboard         = new C_Clipboard( this );
-    m_Events            = new C_Events( *this, main_window );
+    m_Context           = new C_Context( Root(), Scene(), &Root(), this );
 }
 
 C_Document::~C_Document()
@@ -96,13 +36,12 @@ C_Document::~C_Document()
     // void
 }
 
-
 void C_Document::UpdateHtml()
 {
-    HtmlBuilder().Build( Root() );
-    m_Html = HtmlBuilder().Html().join( "" );
+    Controller().HtmlBuilder().Build( Root() );
+    m_Html = Controller().HtmlBuilder().Html().join( "" );
 
-    emit Events().HtmlCodeChanged();
+    emit Controller().HtmlCodeChanged();
 }
 
 void C_Document::Clear()
@@ -110,27 +49,33 @@ void C_Document::Clear()
     Context().SetRecords( Root() );
     Root().Clear();
     Scene().Clear();
-    Clipboard().Clear();
     Html().clear();
 
-    emit Events().RecordsChanged();
+    //
+    // Controller().Clipboard().Clear();
+
+    emit Controller().RecordsChanged();
 
     // UPDATE CONFIG FILE
 
     SetFileName( "" );
     SetPath( "" );
-    MainWindow().Config().SetProjectFileName( "" );
-    MainWindow().Config().SetProjectPath( "" );
-    QDir().setCurrent( "" );
 
-    emit Events().DirectoryChanged();
-
-    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
+    emit Controller().DirectoryChanged();
 }
 
-void C_Document::SaveFile( QFile& file )
+int C_Document::SaveFile( QString file_name )
 {
-    file.open( QIODevice::WriteOnly );
+    QFile file( file_name );
+
+    if( !file.open( QIODevice::WriteOnly ) )
+    {
+        qDebug() << "Failed to open file to write"
+                 << file_name;
+        // code
+        return 1;
+    }
+
     QDataStream out( &file );
     out << C_RecordFactory::IdCount();
     out << C_Scene::IdCount();
@@ -142,7 +87,14 @@ void C_Document::SaveFile( QFile& file )
     for( C_Variant* variant : Root() )
     {
         C_Record* record = static_cast<C_Record*>( variant );
-        record->GetState( record_state );
+
+        if( !record->GetState( record_state ) )
+        {
+            qDebug() << "Failed at reading record state"
+                     << file_name;
+            // code
+            return 2;
+        }
     }
 
     record_state.Stop();
@@ -152,29 +104,38 @@ void C_Document::SaveFile( QFile& file )
     C_StateReaderStream scene_state( out );
 
     for( C_SceneItem* item : Scene().Items() )
-        item->GetState( scene_state );
+    {
+        if( !item->GetState( scene_state ) )
+        {
+            qDebug() << "Failed at reading scene state"
+                     << file_name;
+            // code
+            return 3;
+        }
+
+    }
 
     scene_state.Stop();
-    file.close();
 
-    // UPDATE CONFIG FILE
+    SetFileName( QFileInfo( file_name ).fileName() );
+    SetPath( QFileInfo( file_name ).canonicalPath() );
 
-    SetFileName( QFileInfo( file ).fileName() );
-    SetPath( QFileInfo( file ).canonicalPath() );
-    MainWindow().Config().SetProjectFileName( FileName() );
-    MainWindow().Config().SetProjectPath( Path() );
-    QDir().setCurrent( MainWindow().Config().ProjectPath() );
-
-    emit Events().DirectoryChanged();
-
-    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
+    return 0;
 }
 
-void C_Document::LoadFile( QFile& file )
+int C_Document::LoadFile( QString file_name )
 {
-    Clear();
+    QFile file( file_name );
 
-    file.open( QIODevice::ReadOnly );
+    if( !file.open( QIODevice::ReadOnly ) )
+    {
+        qDebug() << "Failed to open file to read"
+                 << file_name;
+        // code
+        return 1;
+    }
+
+    Clear();
     QDataStream in( &file );
     QString value;
     in >> value;
@@ -187,53 +148,60 @@ void C_Document::LoadFile( QFile& file )
     C_StateWriterStream record_state( in );
 
     while( !record_state.AtEnd() )
-        Root().CreateRecord( record_state, -1, &Root() );
+    {
+        if( Root().CreateRecord( record_state, -1, &Root() ) == 0 )
+        {
+            qDebug() << "Failed at writing record state"
+                     << file_name;
+            // code
+            return 2;
+        }
+    }
 
     // SET SCENE ITEMS
 
     C_StateWriterStream scene_state( in );
 
     while( !scene_state.AtEnd() )
-        Scene().CreateItem( scene_state );
+    {
+        if( Scene().CreateItem( scene_state ) == 0 )
+        {
+            qDebug() << "Failed at writing scene state"
+                     << file_name;
+            // code
+            return 3;
+        }
+    }
 
-    emit Events().RecordsChanged();
+    emit Controller().RecordsChanged();
 
-    file.close();
+    SetFileName( QFileInfo( file_name ).fileName() );
+    SetPath( QFileInfo( file_name ).canonicalPath() );
 
-    // UPDATE CONFIG FILE
-
-    SetFileName( QFileInfo( file ).fileName() );
-    SetPath( QFileInfo( file ).canonicalPath() );
-    MainWindow().Config().SetProjectFileName( FileName() );
-    MainWindow().Config().SetProjectPath( Path() );
-    QDir().setCurrent( MainWindow().Config().ProjectPath() );
-
-    emit Events().DirectoryChanged();
-
-    MainWindow().SetTitle( MainWindow().Config().ProjectFileName() );
+    return 0;
 }
 
 #define FIELD(__NAME)   "[$$$"+QString(__NAME)+"]"
 
-void C_Document::SaveSQL( QString file_name )
+int C_Document::SaveSQL( QString file_name )
 {
     QFile::remove( file_name );
-    Database().OpenDatabase( file_name );
+    Controller().Database().OpenDatabase( file_name );
 
     // SETUP TABLE
 
     QStringList row;
     row << FIELD( "ROW" ) << FIELD( "valueUE" );
-    Database().CreateTable( FIELD( "SETUP_TABLE" ), row );
+    Controller().Database().CreateTable( FIELD( "SETUP_TABLE" ), row );
 
     // FILL SETUP TABLE
 
     row.clear();
     row << FIELD( "RECORD_ID_COUNT" ) << C_RecordFactory::IdCount();
-    Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
+    Controller().Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
     row.clear();
     row << FIELD( "SCENE_ID_COUNT" ) << C_Scene::IdCount();
-    Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
+    Controller().Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
 
     // RECORD TABLE
 
@@ -243,11 +211,11 @@ void C_Document::SaveSQL( QString file_name )
     record_fields.append( FIELD( "NAME" ) );
     record_fields.append( FIELD( "valueUE" ) );
     record_fields.append( FIELD( "CLASS_NAME" ) );
-    Database().CreateTable( FIELD( "RECORD_TABLE" ), record_fields );
+    Controller().Database().CreateTable( FIELD( "RECORD_TABLE" ), record_fields );
 
     // FILL TABLE
 
-    C_StateReaderDatabase record_state( Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
+    C_StateReaderDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
 
     for( C_Variant* variant : Root() )
     {
@@ -257,7 +225,7 @@ void C_Document::SaveSQL( QString file_name )
 
     row.clear();
     row << FIELD( "RECORD_NUM" ) << QString::number( record_state.Count() );
-    Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
+    Controller().Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
 
     // SCENE ITEMS TABLE
 
@@ -268,47 +236,57 @@ void C_Document::SaveSQL( QString file_name )
     scene_fields.append( FIELD( "X" ) );
     scene_fields.append( FIELD( "Y" ) );
     scene_fields.append( FIELD( "Z" ) );
-    Database().CreateTable( FIELD( "SCENE_TABLE" ), scene_fields );
-    C_StateReaderDatabase scene_state( Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ) );
+    Controller().Database().CreateTable( FIELD( "SCENE_TABLE" ), scene_fields );
+    C_StateReaderDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ) );
 
     for( C_SceneItem* item : Scene().Items() )
         item->GetState( scene_state );
 
     row.clear();
     row << FIELD( "SCENEITEM_NUM" ) << QString::number( scene_state.Count()  );
-    Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
-    Database().CloseDatabase();
+    Controller().Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
+    Controller().Database().CloseDatabase();
+
+    SetFileName( QFileInfo( file_name ).fileName() );
+    SetPath( QFileInfo( file_name ).canonicalPath() );
+
+    return 0;
 }
 
-void C_Document::LoadSQL( QString file_name )
+int C_Document::LoadSQL( QString file_name )
 {
     Clear();
-    Database().OpenDatabase( file_name );
+    Controller().Database().OpenDatabase( file_name );
     QStringList row;
-    row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_ID_COUNT" ) );
+    row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_ID_COUNT" ) );
     C_RecordFactory::m_IdCount = row[1].toLong();
-    row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENE_ID_COUNT" ) );
+    row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENE_ID_COUNT" ) );
     C_Scene::m_IdCount = row[1].toLong();
-    row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_NUM" ) );
+    row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_NUM" ) );
     long record_size = row[1].toLong();
-    row = Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENEITEM_NUM" ) );
+    row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "SCENEITEM_NUM" ) );
     long scene_size = row[1].toLong();
 
     // RECORDS TABLE
 
-    C_StateWriterDatabase record_state( Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
+    C_StateWriterDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
 
     while( !record_state.AtEnd() )
         Root().CreateRecord( record_state, -1, &Root() );
 
     // SCENE ITEMS TABLE
 
-    C_StateWriterDatabase scene_state( Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ), scene_size );
+    C_StateWriterDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ), scene_size );
 
     while( !scene_state.AtEnd() )
         Scene().CreateItem( scene_state );
 
-    Database().CloseDatabase();
-    emit Events().RecordsChanged();
+    Controller().Database().CloseDatabase();
+    emit Controller().RecordsChanged();
+
+    SetFileName( QFileInfo( file_name ).fileName() );
+    SetPath( QFileInfo( file_name ).canonicalPath() );
+
+    return 0;
 }
 
