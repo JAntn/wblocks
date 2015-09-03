@@ -1,5 +1,5 @@
-#ifndef TypeSTATEREADERDATABASE_H
-#define TypeSTATEREADERDATABASE_H
+#ifndef STATEREADERDATABASE_H
+#define STATEREADERDATABASE_H
 
 #include <FW/ST/state_reader.h>
 #include <FW/database.h>
@@ -9,7 +9,7 @@ class TypeStateReaderDatabase : public TypeStateReader
 public:
 
     TypeStateReaderDatabase( TypeDatabase& database, QString table_name, QString field_name,
-                           long flags = 0, TypeVariant* parent = 0 );
+                           long flags = 0, TypeVariant* Parent = 0 );
 
     void                Read( QStringList& data ) override;
 
@@ -18,4 +18,4 @@ public:
     M_CONST_VALUE       ( FieldName, QString )
 };
 
-#endif // TypeSTATEREADERDATABASE_H
+#endif // STATEREADERDATABASE_H

@@ -1,8 +1,12 @@
-#ifndef TypeUITEXTEDITOR_H
-#define TypeUITEXTEDITOR_H
+#ifndef UITEXTEDITOR_H
+#define UITEXTEDITOR_H
 
 #include "FW/macro.h"
 #include "FW/UI/ED/ui_editor.h"
+
+class TypeUiSyntaxHighlighter;
+class QTextEdit;
+class QLineEdit;
 
 namespace Ui
 {
@@ -15,19 +19,29 @@ class TypeUiTextEditor : public TypeUiEditor
 
 public:
 
-    explicit TypeUiTextEditor( QString id, QString name, QString tab_name, save_callback_t save_callback, QWidget* parent = 0 );
+    explicit TypeUiTextEditor( QString id, QString name, QString tab_name,
+                               QWidget* parent = 0,
+                               TypeSaveCallback save_callback = TypeUiEditor::empty_save_callback,
+                               TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
     ~TypeUiTextEditor();
 
-    virtual QString              Text();
-    virtual void                 SetText( QString text, bool signal_block = false );
+    virtual QString                    Text();
+    virtual void                       SetText( QString text, bool signal_block = false );
+    void                               SetSyntaxHighlighter( TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
+
+protected:
+
+    QTextEdit&                         TextEditWidget();
+    QLineEdit&                         NameLineEditWidget();
 
 public slots:
 
-    void                         OnTextChanged();
+    void                               OnTextChanged();
 
 private:
 
-    Ui::TypeUiTextEditor* ui;
+    TypeUiSyntaxHighlighter*           m_SyntaxHighlighter;
+    Ui::TypeUiTextEditor*              ui;
 };
 
-#endif // TypeUITEXTEDITOR_H
+#endif // UITEXTEDITOR_H

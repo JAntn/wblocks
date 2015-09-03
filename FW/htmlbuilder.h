@@ -1,22 +1,23 @@
-#ifndef TypeHTMLBUILDER_H
-#define TypeHTMLBUILDER_H
+#ifndef HTMLBUILDER_H
+#define HTMLBUILDER_H
 
 #include "FW/variant.h"
 #include "FW/macro.h"
-#include <QStringList>
 
+class TypeBlockStream;
 class TypeRecordStruct;
 
 class TypeHtmlBuilder : public TypeVariant
 {
 public:
 
-    explicit TypeHtmlBuilder( TypeVariant* parent = 0 );
+    explicit TypeHtmlBuilder( TypeVariant* Parent = 0 );
     ~TypeHtmlBuilder() override;
 
     void                      Build( TypeRecordStruct& root );
+    QString                   Text();
 
-    M_VALUE                   ( Html,  QStringList )
+    M_POINTER                ( BlockStream,  TypeBlockStream )
 };
 
-#endif // TypeHTMLBUILDER_H
+#endif // HTMLBUILDER_H

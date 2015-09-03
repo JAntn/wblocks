@@ -3,20 +3,22 @@
 #include "FW/RC/record_struct.h"
 #include "FW/RC/reference_record.h"
 #include "FW/RC/real_record.h"
-#include "FW/RC/script_file_record.h"
-#include "FW/RC/script_record.h"
+#include "FW/RC/JS/js_script_file_record.h"
+#include "FW/RC/JS/js_script_record.h"
+#include "FW/RC/PHP/php_file_record.h"
 #include "FW/RC/string_record.h"
 #include "FW/RC/bool_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/RC/file_record.h"
 #include "FW/RC/HTML/html_record.h"
-
 #include "FW/RC/JS/js_bool_record.h"
 #include "FW/RC/JS/js_integer_record.h"
 #include "FW/RC/JS/js_real_record.h"
 #include "FW/RC/JS/js_reference_record.h"
 #include "FW/RC/JS/js_string_record.h"
+
+#include "FW/tools.h"
 
 ///////////////////////////////////////////////////////////////////////
 /// STATIC
@@ -31,13 +33,13 @@ void TypeRecordStruct::InitFactoryList()
         m_FactoryList.append( &TypeIntegerRecordFactory::Instance() );
         m_FactoryList.append( &TypeRealRecordFactory::Instance() );
         m_FactoryList.append( &TypeStringRecordFactory::Instance() );
-        m_FactoryList.append( &TypeScriptRecordFactory::Instance() );
-        m_FactoryList.append( &TypeScriptFileRecordFactory::Instance() );
         m_FactoryList.append( &TypeStructRecordFactory::Instance() );
         m_FactoryList.append( &TypeReferenceRecordFactory::Instance() );
         m_FactoryList.append( &TypeFileRecordFactory::Instance() );
         m_FactoryList.append( &TypeHtmlRecordFactory::Instance() );
-
+        m_FactoryList.append( &TypePhpFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsScriptRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsScriptFileRecordFactory::Instance() );
         m_FactoryList.append( &TypeJsBoolRecordFactory::Instance() );
         m_FactoryList.append( &TypeJsIntegerRecordFactory::Instance() );
         m_FactoryList.append( &TypeJsRealRecordFactory::Instance() );
@@ -89,32 +91,32 @@ QString TypeRecordStruct::FullName()
     return static_cast<TypeRecord*>( parent )->FullName();
 }
 
-TypeRecord* TypeRecordStruct::CreateRecord( TypeStateWriter& state, iterator position, TypeRecordStruct* root )
+TypeRecord* TypeRecordStruct::NewRecord( TypeStateWriter& state, iterator position, TypeRecordStruct* root )
 {
     TypeRecord*           record = 0;
-    QString             class_name = state.Data().at( 3 );
+    QString               class_name = state.Data().at( 3 );
     TypeRecordFactory*    record_factory = TypeRecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( state, 0, root );
+        record = record_factory->NewInstance( state, 0, root );
         Insert( position, *record );
     }
 
     return record;
 }
 
-TypeRecord* TypeRecordStruct::CreateRecord( TypeStateWriter& state, int position, TypeRecordStruct* root )
+TypeRecord* TypeRecordStruct::NewRecord( TypeStateWriter& state, int position, TypeRecordStruct* root )
 {
     TypeRecord*           record = 0;
-    QString             class_name = state.Data()[3];
+    QString               class_name = state.Data()[3];
     TypeRecordFactory*    record_factory = TypeRecordStruct::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( state, 0, root );
+        record = record_factory->NewInstance( state, 0, root );
 
-        if( position > 0 )
+        if( position >= 0 )
             Insert( position, *record );
         else
             Append( *record );
@@ -123,7 +125,7 @@ TypeRecord* TypeRecordStruct::CreateRecord( TypeStateWriter& state, int position
     return record;
 }
 
-TypeRecord* TypeRecordStruct::CreateRecord( QString name, QString value, QString class_name, int position,
+TypeRecord* TypeRecordStruct::NewRecord( QString name, QString value, QString class_name, int position,
                                         TypeRecordStruct* root )
 {
     TypeRecord* record = 0;
@@ -131,9 +133,9 @@ TypeRecord* TypeRecordStruct::CreateRecord( QString name, QString value, QString
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( name, value, 0, root );
+        record = record_factory->NewInstance( name, value, 0, root );
 
-        if( position > 0 )
+        if( position >= 0 )
             Insert( position, *record );
         else
             Append( *record );
@@ -142,7 +144,7 @@ TypeRecord* TypeRecordStruct::CreateRecord( QString name, QString value, QString
     return record;
 }
 
-TypeRecord* TypeRecordStruct::CreateRecord( QString name, QString value, QString class_name, iterator position,
+TypeRecord* TypeRecordStruct::NewRecord( QString name, QString value, QString class_name, iterator position,
                                         TypeRecordStruct* root )
 {
     TypeRecord* record = 0;
@@ -150,7 +152,7 @@ TypeRecord* TypeRecordStruct::CreateRecord( QString name, QString value, QString
 
     if( record_factory != 0 )
     {
-        record = record_factory->CreateInstance( name, value, 0, root );
+        record = record_factory->NewInstance( name, value, 0, root );
         Insert( position, *record );
     }
 
@@ -161,10 +163,8 @@ int TypeRecordStruct::GetIndex( TypeRecord* record_value ) const
 {
     int count = 0;
 
-    for( TypeVariant* variant : *this )
+    for( TypeVariantPtr<TypeRecord> record : *this )
     {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
-
         if( record == record_value )
             return count;
 
@@ -186,10 +186,8 @@ TypeRecord* TypeRecordStruct::FromIndex( int index ) const
 
 TypeRecord* TypeRecordStruct::FromName( QString name, bool deep ) const
 {
-    for( TypeVariant* variant : *this )
+    for( TypeVariantPtr<TypeRecord> record : *this )
     {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
-
         if( record->Name() == name )
             return record;
 
@@ -212,10 +210,8 @@ TypeRecord* TypeRecordStruct::FromName( QString name, bool deep ) const
 
 TypeRecord* TypeRecordStruct::FromId( QString record_id , bool deep ) const
 {
-    for( TypeVariant* variant : *this )
+    for( TypeVariantPtr<TypeRecord> record : *this )
     {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
-
         if( record->Id() == record_id )
             return record;
 

@@ -1,6 +1,6 @@
 #include "FW/RC/bool_record.h"
 #include "FW/UI/PR/ui_bool_property.h"
-#include "FW/UI/PR/ui_record_name_property.h"
+#include "FW/UI/PR/ui_recordname_property.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include <QVBoxLayout>
@@ -68,12 +68,12 @@ TypeBoolRecordFactory::TypeBoolRecordFactory()
     m_RecordClass = "Bool";
 }
 
-TypeRecord* TypeBoolRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeBoolRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeBoolRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeBoolRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeBoolRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeBoolRecord( state, parent, root );
 }

@@ -1,24 +1,30 @@
 #include "FW/RC/record.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_add_record.h"
-#include "FW/document.h"
 #include "FW/SC/scene.h"
+#include "FW/UI/SH/ui_syntax_highlighter.h"
+#include "FW/UI/SH/ui_syntax_highlighter_factory.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_editor_container.h"
 #include "FW/UI/ui_file_explorer.h"
+#include "FW/UI/ED/ui_html_blocks_editor.h"
+#include "FW/document.h"
+#include "FW/context.h"
+#include "FW/controller.h"
 #include "FW/config.h"
 #include "FW/clipboard.h"
 #include "FW/htmlbuilder.h"
-#include "ui_findrecord.h"
-#include "ui_record_context_menu.h"
+#include "ui_record_contextmenu.h"
 #include "ui_mainwindow.h"
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 #include <QGraphicsView>
 #include <QtWebKitWidgets>
 
+
 TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent ):
     QMainWindow( parent ),
+    TypeVariant( 0 ),
     m_Controller( &controller ),
     ui( new Ui::TypeUiMainWindow )
 {
@@ -28,6 +34,7 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
     m_FileExplorer = 0;
     m_Document = 0;
     m_PropertiesWidget = 0;
+    m_HtmlBlocksEditor = 0;
 
     // SETUP USER INTERFACE
 
@@ -42,6 +49,24 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
     ui->FileExplorerLayout->addWidget( m_FileExplorer );
     ui->GraphicsView->setScene( &Controller().Document().Scene().Graphics() );
 
+    // !!!
+
+    m_HtmlBlocksEditor = new TypeUiHtmlBlocksEditor(
+        controller,
+        controller.NewHtmlBlocksEditorId( controller.Document().FileName() ),
+        controller.Document().FileName(),
+        controller.Document().FileName().split( "/" ).back(),
+        this,
+        &TypeUiEditor::empty_save_callback,
+        controller.SyntaxHighlighterFactory().NewInstance( "HTML" ) );
+
+    ui->HtmlTextLayout->addWidget( m_HtmlBlocksEditor );
+
+    // TODO: multiple module support implementation
+    // + TypeUiHtmlBlocksEditor: to implement interface to multiple module tab container
+    // + to implement a tab container class
+    // + to implement multiple document load n save etc
+
     QRect screen_size = QApplication::desktop()->availableGeometry( this );
     resize( QSize( screen_size.width() * 0.8, screen_size.height() * 0.8 ) );
     SetTitle( controller.Config().ProjectFileName() );
@@ -50,6 +75,11 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
 
     emit Controller().RecordsChanged();
     SetCurrentTab( MAINWINDOW_TAB_SCENE );
+
+    // !!!
+    HtmlBlocksEditor().SetFileTitle( controller.Document().FileName() );
+    HtmlBlocksEditor().SetHasChanged( false );
+    //
 }
 
 TypeUiMainWindow::~TypeUiMainWindow()
@@ -98,19 +128,19 @@ void TypeUiMainWindow::InitConnections()
         ui->ActionSaveClientScript,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionSaveHtmlCode );
+        TypeController::OnActionSaveHtmlBlocks );
 
     connect(
         ui->ActionUpdateClientScript,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionUpdateHtmlCode );
+        TypeController::OnActionUpdateHtmlBlocks );
 
     connect(
         ui->ActionRunClientScript,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionRunHtmlCode );
+        TypeController::OnActionRunHtmlBlocks );
 
     connect(
         ui->ActionAdd,
@@ -275,10 +305,9 @@ void TypeUiMainWindow::UpdateFileExplorer()
         m_FileExplorer->Update();
 }
 
-void TypeUiMainWindow::UpdateHtmlCodeView()
+void TypeUiMainWindow::UpdateHtmlTextView()
 {
-    ui->TextEdit->setPlainText( Controller().Document().Html() );
-    ui->TextEdit->update();
+    HtmlBlocksEditor().UpdateText();
 }
 
 void TypeUiMainWindow::UpdateSceneView()

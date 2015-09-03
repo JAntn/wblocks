@@ -1,3 +1,4 @@
+#include "FW/BK/block_stream.h"
 #include "FW/RC/HTML/html_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -20,9 +21,9 @@ TypeHtmlRecord::~TypeHtmlRecord()
     //void
 }
 
-QStringList TypeHtmlRecord::Html()
+void TypeHtmlRecord::Html( TypeBlockStream& block_stream )
 {
-    return QStringList( Value() );
+    block_stream.Append( Value(), Id() );
 }
 
 TypeHtmlRecordFactory::TypeHtmlRecordFactory()
@@ -30,13 +31,13 @@ TypeHtmlRecordFactory::TypeHtmlRecordFactory()
     m_RecordClass = "Html";
 }
 
-TypeRecord* TypeHtmlRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeHtmlRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
     TypeHtmlRecord* record = new TypeHtmlRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-TypeRecord* TypeHtmlRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeHtmlRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
     TypeHtmlRecord* record = new TypeHtmlRecord( state, parent, root );
     return record;

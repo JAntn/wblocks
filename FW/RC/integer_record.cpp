@@ -1,6 +1,6 @@
 #include "FW/RC/integer_record.h"
 #include "FW/UI/PR/ui_integer_property.h"
-#include "FW/UI/PR/ui_record_name_property.h"
+#include "FW/UI/PR/ui_recordname_property.h"
 #include <QVBoxLayout>
 #include <FW/ST/state_writer.h>
 #include <FW/ST/state_reader.h>
@@ -63,12 +63,12 @@ TypeIntegerRecordFactory::TypeIntegerRecordFactory()
     m_RecordClass = "Integer";
 }
 
-TypeRecord* TypeIntegerRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeIntegerRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeIntegerRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeIntegerRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeIntegerRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeIntegerRecord( state, parent, root );
 }

@@ -1,5 +1,5 @@
-#ifndef TypeSTRING_RECORD_H
-#define TypeSTRING_RECORD_H
+#ifndef STRINGRECORD_H
+#define STRINGRECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
@@ -11,8 +11,8 @@ class TypeStringRecord : public TypeRecord
 {
 public:
 
-    explicit TypeStringRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
-    TypeStringRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeStringRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    TypeStringRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
     ~TypeStringRecord() override;
 
     QWidget*            PropertyWidget(TypeController& controller ) override;
@@ -30,8 +30,8 @@ public:
 
     TypeStringRecordFactory();
 
-    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // TypeSTRING_RECORD_H
+#endif // STRINGRECORD_H

@@ -1,5 +1,6 @@
+#include "FW/tools.h"
 #include "FW/RC/reference_record.h"
-#include "FW/UI/PR/ui_record_name_property.h"
+#include "FW/UI/PR/ui_recordname_property.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include <QVBoxLayout>
@@ -125,12 +126,12 @@ TypeReferenceRecordFactory::TypeReferenceRecordFactory()
     m_RecordClass = "Reference";
 }
 
-TypeRecord* TypeReferenceRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeReferenceRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeReferenceRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeReferenceRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeReferenceRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeReferenceRecord( state, parent, root );
 }

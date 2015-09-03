@@ -1,5 +1,5 @@
-#ifndef TypeSCENE_ITEM_H
-#define TypeSCENE_ITEM_H
+#ifndef SCENEITEM_H
+#define SCENEITEM_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
@@ -39,6 +39,6 @@ private:
     friend class        TypeScene;
 };
 
-#endif // TypeSCENE_ITEM_H
+#endif // SCENEITEM_H
 
 

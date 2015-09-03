@@ -1,14 +1,14 @@
-#ifndef TypeRECORD_CONTEXT_MENU_H
-#define TypeRECORD_CONTEXT_MENU_H
+#ifndef UIRECORDCONTEXTMENU_H
+#define UIRECORDCONTEXTMENU_H
 
+#include "FW/variant.h"
 #include "FW/macro.h"
-
 #include <QObject>
 
 class TypeRecord;
 class TypeController;
 
-class TypeUiRecordContextMenu : QObject
+class TypeUiRecordContextMenu : public QObject, public TypeVariant
 {
     Q_OBJECT
 
@@ -21,4 +21,4 @@ public:
 
 };
 
-#endif // TypeRECORD_CONTEXT_MENU_H
+#endif // UIRECORDCONTEXTMENU_H

@@ -1,6 +1,7 @@
-#ifndef TypeUIMAINWINDOW_H
-#define TypeUIMAINWINDOW_H
+#ifndef UIMAINWINDOW_H
+#define UIMAINWINDOW_H
 
+#include "FW/variant.h"
 #include "FW/macro.h"
 #include <QMainWindow>
 
@@ -12,13 +13,14 @@ class TypeUiFileExplorer;
 class TypeConfig;
 class TypeDocument;
 class TypeUiEditor;
+class TypeUiHtmlBlocksEditor;
 
 namespace Ui
 {
 class TypeUiMainWindow;
 }
 
-class TypeUiMainWindow : public QMainWindow
+class TypeUiMainWindow : public QMainWindow, public TypeVariant
 {
     Q_OBJECT
 
@@ -29,7 +31,7 @@ public:
 
     void                          UpdateRecordExplorer();
     void                          UpdateFileExplorer();
-    void                          UpdateHtmlCodeView();
+    void                          UpdateHtmlTextView();
     void                          UpdateWebView();
     void                          UpdateSceneView();
     void                          UpdateMenubar();
@@ -44,7 +46,7 @@ public:
     M_POINTER                     ( RecordExplorer,      TypeUiRecordExplorer )
     M_POINTER                     ( FileExplorer,        TypeUiFileExplorer )
     M_POINTER                     ( TextEditorContainer, TypeUiEditorContainer )
-    M_VALUE                       ( BinPath,             QString )
+    M_POINTER                     ( HtmlBlocksEditor,    TypeUiHtmlBlocksEditor )
 
     void                          SetPropertyWidget( QWidget* widget );
     void                          OpenEditorWidget( TypeUiEditor* widget );
@@ -52,7 +54,7 @@ public:
 private:
 
     QWidget*                      m_PropertiesWidget;
-    Ui::TypeUiMainWindow*           ui;
+    Ui::TypeUiMainWindow*         ui;
 };
 
 #define MAINWINDOW_TAB_SCENE   0
@@ -60,4 +62,4 @@ private:
 #define MAINWINDOW_TAB_CLIENT  2
 #define MAINWINDOW_TAB_OUTPUT  3
 
-#endif // TypeUIMAINWINDOW_H
+#endif // UIMAINWINDOW_H

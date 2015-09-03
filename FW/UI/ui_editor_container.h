@@ -1,13 +1,14 @@
-#ifndef TypeUITEXTEDITORCONTAINER_H
-#define TypeUITEXTEDITORCONTAINER_H
+#ifndef UIEDITORCONTAINER_H
+#define UIEDITORCONTAINER_H
 
 #include <QTabWidget>
 #include "FW/macro.h"
+#include "FW/variant.h"
 
 class TypeUiEditor;
 class TypeController;
 
-class TypeUiEditorContainer : public QWidget
+class TypeUiEditorContainer : public QWidget, public TypeVariant
 {
     Q_OBJECT
 
@@ -42,4 +43,4 @@ public slots:
     void                          OnCloseTabRequested( int index );
 };
 
-#endif // TypeUITEXTEDITORCONTAINER_H
+#endif // UIEDITORCONTAINER_H

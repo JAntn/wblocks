@@ -1,5 +1,6 @@
 #include "FW/RC/record.h"
 #include "FW/document.h"
+#include "FW/context.h"
 #include "FW/SC/scene.h"
 #include "FW/UI/ui_add_record.h"
 #include "FW/RC/reference_record.h"
@@ -9,6 +10,7 @@
 
 TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& context, int index, QWidget* parent ) :
     QDialog( parent ),
+    TypeVariant(0),
     m_Context( &context ),
     m_Controller( &controller ),
     ui( new Ui::TypeUiAddRecord )
@@ -57,7 +59,7 @@ bool TypeUiAddRecord::CheckFormData() const
         return false;
     }
 
-    if( !QRegExp( "[A-Za-z][\\w.]+" ).exactMatch( ui->LineEdit->text() ) )
+    if( !QRegExp( "[A-Za-z][\\w.]*" ).exactMatch( ui->LineEdit->text() ) )
     {
         TypeController::Message( tr( "Bad record name" ) );
         return false;
@@ -83,7 +85,7 @@ void TypeUiAddRecord::OnButtonBoxAccepted()
         QString name = ui->LineEdit->text();
         int index = ui->SpinBox->value();
 
-        TypeRecord* record = Context().Records().CreateRecord(
+        TypeRecord* record = Context().Records().NewRecord(
                                name, "", class_name, index, &Context().Root() );
 
         if( ui->CheckBox->isChecked() )

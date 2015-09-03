@@ -1,6 +1,7 @@
 #ifndef UIRECORDTABLEVIEW_H
 #define UIRECORDTABLEVIEW_H
 
+#include "FW/variant.h"
 #include "FW/macro.h"
 #include <QTableView>
 #include <QWidget>
@@ -16,7 +17,7 @@ class TypeController;
 class TypeRecord;
 class TypeContext;
 
-class TypeUiRecordExplorer : public QWidget
+class TypeUiRecordExplorer : public QWidget, public TypeVariant
 {
     Q_OBJECT
 

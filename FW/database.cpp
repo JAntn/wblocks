@@ -1,5 +1,5 @@
-#include "FW/database.h"
 #include "FW/variant.h"
+#include "FW/database.h"
 #include <qsqlquery.h>
 #include <qsqldatabase.h>
 #include <qstring.h>

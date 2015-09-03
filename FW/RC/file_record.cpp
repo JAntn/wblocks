@@ -1,6 +1,6 @@
 #include "FW/RC/file_record.h"
 #include "FW/UI/PR/ui_file_property.h"
-#include "FW/UI/PR/ui_record_name_property.h"
+#include "FW/UI/PR/ui_recordname_property.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include <QVBoxLayout>
@@ -75,12 +75,12 @@ QString TypeFileRecord::FileFullName()
     return Value();
 }
 
-TypeRecord* TypeFileRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeFileRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeFileRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeFileRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeFileRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeFileRecord( state, parent, root );
 }

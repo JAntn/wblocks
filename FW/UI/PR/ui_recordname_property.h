@@ -1,5 +1,5 @@
-#ifndef UI_RECORDNAME_PROPERTY_H
-#define UI_RECORDNAME_PROPERTY_H
+#ifndef UIRECORDNAMEPROPERTY_H
+#define UIRECORDNAMEPROPERTY_H
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -20,7 +20,7 @@ class TypeUiRecordNameProperty : public TypeUiProperty
 
 public:
 
-    TypeUiRecordNameProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    TypeUiRecordNameProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent  = 0 );
     ~TypeUiRecordNameProperty() override;
 
     QString                       Value();
@@ -36,4 +36,4 @@ private:
 };
 
 
-#endif // UI_RECORDNAME_PROPERTY_H
+#endif // UIRECORDNAMEPROPERTY_H

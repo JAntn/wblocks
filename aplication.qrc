@@ -1,0 +1,5 @@
+<RCC>
+    <qresource>
+        <file>RC/cpp.txt</file>
+    </qresource>
+</RCC>

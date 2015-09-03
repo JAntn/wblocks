@@ -2,7 +2,7 @@
 #include "FW/RC/record.h"
 #include "FW/document.h"
 #include "FW/context.h"
-#include "FW/UI/ui_record_table_model.h"
+#include "FW/UI/ui_record_tablemodel.h"
 
 QString HORIZONTAL_HEADER_TEXT[] =
 {

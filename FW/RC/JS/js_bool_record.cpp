@@ -1,3 +1,4 @@
+#include "FW/BK/block_stream.h"
 #include "FW/RC/JS/js_bool_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -19,9 +20,9 @@ TypeJsBoolRecord::~TypeJsBoolRecord()
     //void
 }
 
-QStringList TypeJsBoolRecord::Script()
+void TypeJsBoolRecord::Script( TypeBlockStream& block_stream )
 {
-    return QStringList( "\n" + FullName() + " = " + Value() + ";" );
+    block_stream.Append( "\n" + FullName() + " = " + Value() + ";" , Id() );
 }
 
 TypeJsBoolRecordFactory::TypeJsBoolRecordFactory()
@@ -29,12 +30,12 @@ TypeJsBoolRecordFactory::TypeJsBoolRecordFactory()
     m_RecordClass = "JsBool";
 }
 
-TypeRecord* TypeJsBoolRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeJsBoolRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeJsBoolRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeJsBoolRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeJsBoolRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeJsBoolRecord( state, parent, root );
 }

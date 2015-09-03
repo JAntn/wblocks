@@ -1,0 +1,7 @@
+@Tag,#0000ff,0,0
+<[^>]*>
+@Quotation,#808000,0,0
+\".*\"
+@[multcomment]MultiLineComment,#808080,0,0
+<!--
+-->

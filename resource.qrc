@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/SyntaxHighlight">
+        <file>rcc/cpp.txt</file>
+        <file>rcc/html.txt</file>
+        <file>rcc/js.txt</file>
+        <file>rcc/php.txt</file>
+    </qresource>
+</RCC>

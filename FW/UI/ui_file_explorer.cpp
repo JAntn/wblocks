@@ -10,6 +10,7 @@
 
 TypeUiFileExplorer::TypeUiFileExplorer( TypeController& controller, QWidget* parent ) :
     QWidget( parent ),
+    TypeVariant(0),
     m_Controller( &controller ),
     ui( new Ui::TypeUiFileExplorer )
 {
@@ -101,7 +102,7 @@ void TypeUiFileExplorer::Open( QString file_name )
     string_list.pop_back();
     m_Path = string_list.join( "/" );
     Update();
-    Controller().OpenFileEditorWidget( file_name );
+    Controller().OpenFileUiEditor( file_name );
 }
 
 void TypeUiFileExplorer::OnDoubleClicked( const QModelIndex& index )

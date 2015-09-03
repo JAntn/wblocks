@@ -1,10 +1,12 @@
-#include "FW/UI/ui_main_window.h"
 #include <QApplication>
-#include <QDir>
+#include "FW/tools.h"
+#include "FW/controller.h"
+#include "FW/UI/ui_main_window.h"
 #include "FW/config.h"
 #include "FW/document.h"
 #include "FW/RC/record_struct.h"
 #include "FW/SC/scene.h"
+#include "FW/htmlbuilder.h"
 
 int main( int argc, char* argv[] )
 {
@@ -37,11 +39,11 @@ int main( int argc, char* argv[] )
     {
         // Create an empty document
 
-        controller.Config().SetProjectPath( "");
+        controller.Config().SetProjectPath( "" );
         controller.Config().SetProjectFileName( "" );
 
         TypeRecord* string_record =
-            controller.Document().Root().CreateRecord(
+            controller.Document().Root().NewRecord(
                 "SampleString",
                 "Welcome to JS Blocks.\nThis is a sample string",
                 "String"
@@ -61,6 +63,9 @@ int main( int argc, char* argv[] )
         else if( controller.Config().ProjectFileName().split( "." ).back() == "sql" )
             controller.Document().LoadSQL( controller.Config().ProjectFileFullName() );
     }
+
+    // Build html content
+    controller.HtmlBuilder().Build( controller.Document().Root() );
 
     // Main window
 

@@ -1,3 +1,5 @@
+#include "FW/tools.h"
+#include "FW/BK/block_stream.h"
 #include "FW/RC/JS/js_reference_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -20,15 +22,16 @@ TypeJsReferenceRecord::~TypeJsReferenceRecord()
     // void
 }
 
-QStringList TypeJsReferenceRecord::Script()
+void TypeJsReferenceRecord::Script( TypeBlockStream& block_stream )
 {
     TypeRecord* record = Referencee();
 
-    if( record != 0 )
-        return QStringList( "\n" + FullName() + " = " + record->FullName() + ";" );
+    if( record != 0 ){
+        block_stream.Append( "\n" + FullName() + " = " + record->FullName() + ";", Id() );
+        return;
+    }
 
     qDebug() << "Warning - Bad reference value >" << FullName();
-    return QStringList();
 }
 
 
@@ -37,12 +40,12 @@ TypeJsReferenceRecordFactory::TypeJsReferenceRecordFactory()
     m_RecordClass = "JsReference";
 }
 
-TypeRecord* TypeJsReferenceRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeJsReferenceRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeJsReferenceRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeJsReferenceRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeJsReferenceRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
 {
     return new TypeJsReferenceRecord( state, parent, root );
 }

@@ -1,4 +1,4 @@
-#include "FW/variant.h"
+#include "FW/variant_struct.h"
 
 TypeVariantStruct::TypeVariantStruct( TypeVariant* parent ):
     TypeVariant( parent )

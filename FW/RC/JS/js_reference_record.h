@@ -1,5 +1,5 @@
-#ifndef TypeJS_REFERENCE_RECORD_H
-#define TypeJS_REFERENCE_RECORD_H
+#ifndef JS_REFERENCERECORD_H
+#define JS_REFERENCERECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/reference_record.h"
@@ -12,11 +12,11 @@ class TypeJsReferenceRecord : public TypeReferenceRecord
 
 public:
 
-    explicit TypeJsReferenceRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
-    TypeJsReferenceRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeJsReferenceRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    TypeJsReferenceRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
     ~TypeJsReferenceRecord() override;
 
-    QStringList         Script() override;
+    void                Script(TypeBlockStream& block_stream) override;
 
 private:
 
@@ -31,8 +31,8 @@ public:
 
     TypeJsReferenceRecordFactory();
 
-    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // TypeJS_REFERENCE_RECORD_H
+#endif // JS_REFERENCERECORD_H

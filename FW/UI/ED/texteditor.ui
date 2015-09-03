@@ -54,7 +54,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="PlainTextEdit"/>
+    <widget class="QTextEdit" name="TextEdit"/>
    </item>
   </layout>
  </widget>

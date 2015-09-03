@@ -1,3 +1,4 @@
+#include "FW/BK/block_stream.h"
 #include "FW/RC/JS/js_integer_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -20,9 +21,9 @@ TypeJsIntegerRecord::~TypeJsIntegerRecord()
     //void
 }
 
-QStringList TypeJsIntegerRecord::Script()
+void TypeJsIntegerRecord::Script( TypeBlockStream& block_stream )
 {
-    return QStringList( "\n" + FullName() + " = " + Value() + ";" );
+    block_stream.Append( "\n" + FullName() + " = " + Value() + ";" , Id() );
 }
 
 TypeJsIntegerRecordFactory::TypeJsIntegerRecordFactory()
@@ -30,12 +31,12 @@ TypeJsIntegerRecordFactory::TypeJsIntegerRecordFactory()
     m_RecordClass = "JsInteger";
 }
 
-TypeRecord* TypeJsIntegerRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeJsIntegerRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeJsIntegerRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeJsIntegerRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeJsIntegerRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeJsIntegerRecord( state, parent, root );
 }

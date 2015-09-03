@@ -1,8 +1,12 @@
+#include "FW/controller.h"
+#include "FW/RC/record.h"
 #include "FW/RC/record_struct.h"
 #include "FW/SC/scene.h"
-#include "FW/clipboard.h"
-#include "FW/document.h"
+#include "FW/UI/ED/ui_text_editor.h"
+#include "FW/UI/SH/ui_syntax_highlighter.h"
+#include "FW/UI/SH/ui_syntax_highlighter_factory.h"
 #include "FW/UI/ui_main_window.h"
+#include "FW/UI/ED/ui_html_blocks_editor.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_add_record.h"
 #include "FW/UI/ui_editor_container.h"
@@ -10,12 +14,12 @@
 #include "FW/database.h"
 #include "FW/clipboard.h"
 #include "FW/config.h"
-#include "ui_mainwindow.h"
-#include <QList>
-#include <QFileDialog>
+#include "FW/clipboard.h"
+#include "FW/document.h"
+#include "FW/tools.h"
+#include "FW/context.h"
 #include <QWebFrame>
-#include <QMessageBox>
-#include <FW/UI/ED/ui_text_editor.h>
+#include "ui_mainwindow.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// STATIC
@@ -76,9 +80,16 @@ void TypeController::Message( QString msg )
 
 TypeController::TypeController(): TypeVariant()
 {
+    m_BinPath           = QDir().canonicalPath();
     m_HtmlBuilder       = new TypeHtmlBuilder( this );
     m_Database          = new TypeDatabase( this );
     m_Clipboard         = new TypeClipboard( this );
+
+    m_SyntaxHighlighterFactory = new TypeUiSyntaxHighlighterFactory( this );
+    SyntaxHighlighterFactory().AppendFormat( "C++", ":/SyntaxHighlight/rcc/cpp.txt" );
+    SyntaxHighlighterFactory().AppendFormat( "HTML", ":/SyntaxHighlight/rcc/html.txt" );
+    SyntaxHighlighterFactory().AppendFormat( "JS", ":/SyntaxHighlight/rcc/js.txt" );
+    SyntaxHighlighterFactory().AppendFormat( "PHP", ":/SyntaxHighlight/rcc/php.txt" );
 }
 
 TypeController::~TypeController()
@@ -108,9 +119,9 @@ void TypeController::ConnectSlots()
 
     connect(
         this,
-        TypeController::HtmlCodeChanged,
+        TypeController::HtmlBlocksChanged,
         this,
-        TypeController::OnHtmlCodeChanged );
+        TypeController::OnHtmlBlocksChanged );
 
     connect(
         this,
@@ -126,7 +137,7 @@ void TypeController::ConnectSlots()
 
     connect(
         this,
-        TypeController::TextEditorContainerChanged,
+        TypeController::EditorContainerChanged,
         this,
         TypeController::OnEditorContainerChanged );
 }
@@ -154,10 +165,44 @@ void TypeController::OpenRecordEditorWidget( TypeRecord& record )
     MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
 }
 
-void TypeController::OpenFileEditorWidget( QString file_name )
+QString TypeController::NewFileNameId( QString file_name )
 {
+    QString file_ext = file_name.split( "." ).back();
 
-    QString id = "FILE:" + file_name;
+    for( QString ext : QVector<QString> { "h", "hpp", "c", "cpp"} )
+    {
+        if( file_ext == ext )
+            return "FILE:C++:" + file_name;
+    }
+
+    if( file_ext == "js" )
+        return "FILE:JS:" + file_name;
+
+    if( file_ext == "html" )
+        return "FILE:HTML:" + file_name;
+
+    if( file_ext == "php" )
+        return"FILE:PHP:" + file_name;
+
+    return "FILE:TEXT:" + file_name;
+}
+
+QString TypeController::NewHtmlBlocksEditorId( QString file_name )
+{
+    QString file_ext = file_name.split( "." ).back();
+
+    if( file_ext == "prj" )
+        return "BLOCKS:PRJ:" + file_name;
+
+    if( file_ext == "sql" )
+        return "BLOCKS:SQL:" + file_name;
+
+    return "BLOCKS:TEXT:" + file_name;
+}
+
+void TypeController::OpenFileUiEditor( QString file_name )
+{
+    QString id = NewFileNameId( file_name );
 
     if( MainWindow().TextEditorContainer().HasId( id ) )
     {
@@ -167,13 +212,20 @@ void TypeController::OpenFileEditorWidget( QString file_name )
         MainWindow().TextEditorContainer().Close( id );
     }
 
-    TypeUiTextEditor* text_editor;
-
-    text_editor = new TypeUiTextEditor( id, file_name, file_name.split( "/" ).back(), [file_name]( TypeUiEditor & editor_base )
+    TypeUiEditor::TypeSaveCallback save_callback = [file_name]( TypeUiEditor & editor_base )
     {
-        TypeUiTextEditor& editor = static_cast<TypeUiTextEditor&>( editor_base );
-        TypeController::SaveTextFile( file_name, editor.Text() );
-    } );
+        TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
+        SaveTextFile( file_name, editor->Text() );
+    };
+
+    TypeUiSyntaxHighlighter* syntax_highlighter = SyntaxHighlighterFactory().NewInstance( id.split( ":" )[1] );
+
+    TypeUiTextEditor* text_editor = new TypeUiTextEditor(
+        id, file_name, file_name.split( "/" ).back(), 0/*parent widget*/,
+        save_callback/*editor save callback*/,
+        syntax_highlighter/*syntax highlighter*/ );
+
+    text_editor->SetText( LoadTextFile( file_name ) );
 
     MainWindow().TextEditorContainer().Append( text_editor );
     MainWindow().TextEditorContainer().SetCurrent( id );
@@ -204,9 +256,9 @@ void TypeController::OnRecordsChanged()
     Document().UpdateHtml();
 }
 
-void TypeController::OnHtmlCodeChanged()
+void TypeController::OnHtmlBlocksChanged()
 {
-    MainWindow().UpdateHtmlCodeView();
+    MainWindow().UpdateHtmlTextView();
 }
 
 void TypeController::OnEditorContainerChanged()
@@ -218,6 +270,19 @@ void TypeController::OnSceneChanged()
 {
     MainWindow().UpdateSceneView();
 }
+
+void TypeController::OnActionNewProjectFile()
+{
+    Document().Clear();
+    MainWindow().SetTitle( "" );
+
+    // !!!
+    MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
+    MainWindow().HtmlBlocksEditor().SetHasChanged( false );
+    // TODO: multiple module support implementation
+
+}
+
 
 void TypeController::OnActionLoadProjectFile()
 {
@@ -247,6 +312,10 @@ void TypeController::OnActionLoadProjectFile()
         emit DirectoryChanged();
         MainWindow().SetTitle( Document().FileName() );
 
+        // !!!
+        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
+        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
+        // TODO: multiple module support implementation
         return;
     }
 
@@ -282,6 +351,10 @@ void TypeController::OnActionSaveProjectFile()
         emit DirectoryChanged();
         MainWindow().SetTitle( Document().FileName() );
 
+        // !!!
+        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
+        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
+        // TODO: multiple module support implementation
         return;
     }
 
@@ -316,6 +389,10 @@ void TypeController::OnActionLoadProjectSQL()
         emit DirectoryChanged();
         MainWindow().SetTitle( Document().FileName() );
 
+        // !!!
+        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
+        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
+        // TODO: multiple module support implementation
         return;
     }
 
@@ -351,13 +428,17 @@ void TypeController::OnActionSaveProjectSQL()
         emit DirectoryChanged();
         MainWindow().SetTitle( Document().FileName() );
 
+        // !!!
+        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
+        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
+        // TODO: multiple module support implementation
         return;
     }
 
     qDebug() << "Load project SQL error. Code " << error;
 }
 
-void TypeController::OnActionSaveHtmlCode()
+void TypeController::OnActionSaveHtmlBlocks()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -390,10 +471,8 @@ void TypeController::OnActionChangePropertyWidget()
 
     if( ( action_flags & FLAG_ACTION_PROPERTIES ) && has_selection )
     {
-        TypeRecord* record =
-            static_cast<TypeRecord*>(
-                *MainWindow().RecordExplorer().Selection().begin()
-            );
+        TypeVariantPtr<TypeRecord> record =
+            *MainWindow().RecordExplorer().Selection().begin();
 
         if( !( record->Flags() & FLAG_ACTION_PROPERTIES ) )
         {
@@ -634,10 +713,8 @@ void TypeController::OnActionOpenRecordInEditor()
 
     if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection )
     {
-        TypeRecord* record =
-            static_cast<TypeRecord*>(
-                *MainWindow().RecordExplorer().Selection().begin()
-            );
+        TypeVariantPtr<TypeRecord> record =
+            *MainWindow().RecordExplorer().Selection().begin();
 
         if( !( record->Flags() & FLAG_ACTION_OPEN ) )
         {
@@ -655,11 +732,6 @@ void TypeController::OnActionOpenRecordInEditor()
     }
 }
 
-void TypeController::OnActionNewProjectFile()
-{
-    Document().Clear();
-    MainWindow().SetTitle( "" );
-}
 
 void TypeController::OnActionNewFile()
 {
@@ -683,7 +755,7 @@ void TypeController::OnActionNewFile()
     TypeController::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
     emit FileExplorerChanged();
 
-    OpenFileEditorWidget( file_name );
+    OpenFileUiEditor( file_name );
 }
 
 void TypeController::OnActionCloseFile()
@@ -695,7 +767,7 @@ void TypeController::OnActionCloseFile()
     }
 
     MainWindow().TextEditorContainer().CloseCurrent();
-    emit TextEditorContainerChanged();
+    emit EditorContainerChanged();
 }
 
 void TypeController::OnActionCloseAllFiles()
@@ -707,7 +779,7 @@ void TypeController::OnActionCloseAllFiles()
     }
 
     MainWindow().TextEditorContainer().CloseAll();
-    emit TextEditorContainerChanged();
+    emit EditorContainerChanged();
 }
 
 void TypeController::OnActionSaveFile()
@@ -736,7 +808,7 @@ void TypeController::OnActionLoadFile()
         return;
     }
 
-    OpenFileEditorWidget( file_name );
+    OpenFileUiEditor( file_name );
 }
 
 void TypeController::OnActionExit()
@@ -744,7 +816,7 @@ void TypeController::OnActionExit()
     MainWindow().close();
 }
 
-void TypeController::OnActionRunHtmlCode()
+void TypeController::OnActionRunHtmlBlocks()
 {
     Document().UpdateHtml();
 
@@ -752,11 +824,11 @@ void TypeController::OnActionRunHtmlCode()
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_OUTPUT );
 }
 
-void TypeController::OnActionUpdateHtmlCode()
+void TypeController::OnActionUpdateHtmlBlocks()
 {
     Document().UpdateHtml();
 
-    MainWindow().UpdateHtmlCodeView();
+    MainWindow().UpdateHtmlTextView();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_CLIENT );
 }
 

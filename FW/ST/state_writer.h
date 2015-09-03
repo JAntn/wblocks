@@ -1,5 +1,5 @@
-#ifndef TypeSTATEWRITER_H
-#define TypeSTATEWRITER_H
+#ifndef STATEWRITER_H
+#define STATEWRITER_H
 
 #include <QStringList>
 
@@ -10,7 +10,7 @@ class TypeStateWriter : public TypeVariant
 {
 public:
 
-    TypeStateWriter( long flags = 0, TypeVariant* parent = 0 );
+    TypeStateWriter( long flags = 0, TypeVariant* Parent = 0 );
     ~TypeStateWriter();
 
     virtual void        Stop();
@@ -24,7 +24,7 @@ public:
 
 };
 
-#endif // TypeSTATEWRITER_H
+#endif // STATEWRITER_H
 
 #include "FW/ST/state_writer_database.h"
 #include "FW/ST/state_writer_stream.h"

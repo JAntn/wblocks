@@ -1,8 +1,8 @@
-#include "FW/UI/PR/ui_record_name_property.h"
-#include "ui_recordnameproperty.h"
+#include "FW/UI/PR/ui_recordname_property.h"
 #include "FW/controller.h"
+#include "ui_recordnameproperty.h"
 
-TypeUiRecordNameProperty::TypeUiRecordNameProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+TypeUiRecordNameProperty::TypeUiRecordNameProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent ):
     TypeUiProperty( on_changed, parent ),
     ui( new Ui::TypeUiRecordNameProperty )
 {
@@ -37,7 +37,7 @@ QString TypeUiRecordNameProperty::Value()
 
 void TypeUiRecordNameProperty::OnReturnPressed()
 {
-    if( !QRegExp( "[A-Za-z][\\w.]+" ).exactMatch( ui->LineEdit->text() ) )
+    if( !QRegExp( "[A-Za-z][\\w.]*" ).exactMatch( ui->LineEdit->text() ) )
     {
         TypeController::Message( tr( "Bad record name" ) );
         return;

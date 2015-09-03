@@ -1,11 +1,12 @@
-#ifndef TypeSCENELINE_H
-#define TypeSCENELINE_H
+#ifndef SCENELINE_H
+#define SCENELINE_H
 
 #include "FW/SC/scene_item.h"
+#include "FW/variant.h"
 #include "FW/macro.h"
 
 
-class TypeSceneLine : public QGraphicsLineItem
+class TypeSceneLine : public QGraphicsLineItem, public TypeVariant
 {
 public:
 
@@ -19,4 +20,4 @@ public:
     M_VALUE                  ( Color, Qt::GlobalColor )
 };
 
-#endif // TypeSCENELINE_H
+#endif // SCENELINE_H

@@ -1,16 +1,18 @@
 #include "FW/RC/record.h"
-#include "FW/UI/ui_record_context_menu.h"
-#include "FW/document.h"
-#include "FW/UI/ui_record_table_model.h"
+#include "FW/UI/ui_record_contextmenu.h"
+#include "FW/UI/ui_record_tablemodel.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/RC/struct_record.h"
-#include "FW/clipboard.h"
 #include "FW/UI/ui_main_window.h"
-#include "ui_mainwindow.h"
+#include "FW/document.h"
+#include "FW/context.h"
+#include "FW/clipboard.h"
+#include "ui_main_window.h"
 #include "ui_recordexplorer.h"
 
 TypeUiRecordExplorer::TypeUiRecordExplorer( TypeContext& context, TypeController& controller, QWidget* parent ) :
     QWidget( parent ),
+    TypeVariant(0),
     m_Context( &context ),
     m_Controller( &controller ),
     ui( new Ui::TypeUiRecordExplorer )

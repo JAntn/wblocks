@@ -1,5 +1,5 @@
-#ifndef TypeSCENE_H
-#define TypeSCENE_H
+#ifndef SCENE_H
+#define SCENE_H
 
 #include "FW/variant.h"
 #include "FW/macro.h"
@@ -16,7 +16,7 @@ class TypeScene : public TypeVariant
 {
 public:
 
-    explicit TypeScene( TypeDocument& document, TypeVariant* parent = 0 );
+    explicit TypeScene( TypeDocument& document, TypeVariant* Parent = 0 );
     ~TypeScene() override;
 
     static QString                GenerateId();
@@ -54,7 +54,7 @@ private:
 
 
 
-#endif // TypeSCENE_H
+#endif // SCENE_H
 
 #include "scene_item.h"
 

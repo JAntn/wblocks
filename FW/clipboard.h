@@ -1,16 +1,17 @@
-#ifndef TypeCLIPBOARD_H
-#define TypeCLIPBOARD_H
+#ifndef CLIPBOARD_H
+#define CLIPBOARD_H
 
 #include "FW/macro.h"
-#include "FW/RC/record.h"
-
 #include <QString>
+
+class TypeRecord;
+class TypeRecordStruct;
 
 class TypeClipboard : public TypeVariant
 {
 public:
 
-    explicit TypeClipboard( TypeVariant* parent = 0 );
+    explicit TypeClipboard( TypeVariant* Parent = 0 );
 
     void                Clear();
     void                Paste( TypeRecordStruct& record_struct, int position );
@@ -22,4 +23,4 @@ public:
     M_CONST_VALUE       ( Flags, long )
 };
 
-#endif // TypeCLIPBOARD_H
+#endif // CLIPBOARD_H

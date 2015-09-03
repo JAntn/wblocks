@@ -1,5 +1,5 @@
-#ifndef TypeUIBOOLPROPERTY_H
-#define TypeUIBOOLPROPERTY_H
+#ifndef UIBOOLPROPERTY_H
+#define UIBOOLPROPERTY_H
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -16,7 +16,7 @@ class TypeUiBoolProperty : public TypeUiProperty
 
 public:
 
-    TypeUiBoolProperty( QString tag_name, bool value, on_changed_t on_changed, QWidget* parent  = 0 );
+    TypeUiBoolProperty( QString tag_name, bool value, TypeSaveCallback save_callback, QWidget* parent  = 0 );
     ~TypeUiBoolProperty() override;
 
     bool        Value();
@@ -31,4 +31,4 @@ private:
     Ui::TypeUiBoolProperty* ui;
 };
 
-#endif // TypeUIBOOLPROPERTY_H
+#endif // UIBOOLPROPERTY_H

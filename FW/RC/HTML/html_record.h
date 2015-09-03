@@ -1,5 +1,5 @@
-#ifndef TypeHTML_RECORD_H
-#define TypeHTML_RECORD_H
+#ifndef HTMLRECORD_H
+#define HTMLRECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
@@ -7,21 +7,21 @@
 
 class TypeStateReader;
 class TypeStateWriter;
+class TypeBlockStream;
 
 class TypeHtmlRecord : public TypeStringRecord
 {
 
 public:
 
-    explicit TypeHtmlRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root = 0 );
-    TypeHtmlRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeHtmlRecord( TypeStateWriter& state, TypeVariant* Parent, TypeRecordStruct* root = 0 );
+    TypeHtmlRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
     ~TypeHtmlRecord() override;
 
-    QStringList         Html()  override;
+    void                Html( TypeBlockStream& block_stream )  override;
 
 private:
 
-    friend class        TypeUiScriptRecordProperties;
     friend class        TypeHtmlRecordFactory;
 };
 
@@ -33,9 +33,9 @@ public:
 
     TypeHtmlRecordFactory();
 
-    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*         NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*         NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
 
-#endif // TypeHTML_RECORD_H
+#endif // HTMLRECORD_H

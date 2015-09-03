@@ -1,6 +1,7 @@
-#include "FW/UI/ui_record_context_menu.h"
+#include "FW/UI/ui_record_contextmenu.h"
 #include "FW/RC/record.h"
 #include "FW/document.h"
+#include "FW/context.h"
 #include "FW/SC/scene.h"
 #include "FW/clipboard.h"
 #include "FW/UI/ui_add_record.h"
@@ -11,7 +12,7 @@
 #include <QTableView>
 
 TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, const QPoint& global_point, QObject* parent ):
-    QObject( parent ), m_Controller( &controller )
+    QObject( parent ), TypeVariant(0), m_Controller( &controller )
 {
     QMenu menu;
     bool has_selection = Controller().MainWindow().RecordExplorer().HasSelection();

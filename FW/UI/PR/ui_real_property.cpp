@@ -1,9 +1,9 @@
 #include "FW/UI/PR/ui_real_property.h"
-#include "ui_realproperty.h"
 #include "FW/controller.h"
+#include "ui_realproperty.h"
 
 
-TypeUiRealProperty::TypeUiRealProperty( QString tag_name, double value, on_changed_t on_changed, QWidget* parent ):
+TypeUiRealProperty::TypeUiRealProperty( QString tag_name, double value, TypeSaveCallback on_changed, QWidget* parent ):
     TypeUiProperty( on_changed, parent ),
     ui( new Ui::TypeUiRealProperty )
 {

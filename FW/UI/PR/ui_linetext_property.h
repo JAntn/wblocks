@@ -1,5 +1,5 @@
-#ifndef TypeUILINETEXTPROPERTY_H
-#define TypeUILINETEXTPROPERTY_H
+#ifndef UILINETEXTPROPERTY_H
+#define UILINETEXTPROPERTY_H
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -16,7 +16,7 @@ class TypeUiLineTextProperty : public TypeUiProperty
 
 public:
 
-    TypeUiLineTextProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    TypeUiLineTextProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent  = 0 );
     ~TypeUiLineTextProperty() override;
 
     QString                       Value();
@@ -31,4 +31,4 @@ private:
     Ui::TypeUiLineTextProperty*         ui;
 };
 
-#endif // TypeUILINETEXTPROPERTY_H
+#endif // UILINETEXTPROPERTY_H

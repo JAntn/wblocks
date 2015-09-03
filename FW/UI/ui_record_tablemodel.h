@@ -1,5 +1,5 @@
-#ifndef TypeUIRECORDTABLEMODEL_H
-#define TypeUIRECORDTABLEMODEL_H
+#ifndef UIRECORDTABLEMODEL_H
+#define UIRECORDTABLEMODEL_H
 
 #include "FW/macro.h"
 
@@ -29,5 +29,5 @@ public:
 };
 
 
-#endif // TypeUIRECORDTABLEMODEL_H
+#endif // UIRECORDTABLEMODEL_H
 

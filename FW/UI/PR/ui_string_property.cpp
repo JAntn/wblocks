@@ -1,7 +1,7 @@
 #include "FW/UI/PR/ui_string_property.h"
 #include "ui_stringproperty.h"
 
-TypeUiStringProperty::TypeUiStringProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+TypeUiStringProperty::TypeUiStringProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent ):
     TypeUiProperty( on_changed, parent ),
     ui( new Ui::TypeUiStringProperty )
 {

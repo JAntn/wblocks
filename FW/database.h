@@ -1,8 +1,8 @@
-#ifndef TypeDATABASE_H
-#define TypeDATABASE_H
+#ifndef DATABASE_H
+#define DATABASE_H
+
 #include "FW/variant.h"
 #include "FW/macro.h"
-
 #include <QString>
 #include <QObject>
 
@@ -11,7 +11,7 @@ class TypeDatabase : public TypeVariant
 
 public:
 
-    TypeDatabase( TypeVariant* parent = 0 );
+    TypeDatabase( TypeVariant* Parent = 0 );
     ~TypeDatabase() override;
 
     void                OpenDatabase( QString file_name );
@@ -27,4 +27,4 @@ public:
     int                 RowCount( QString class_name );
 };
 
-#endif // TypeDATABASE_H
+#endif // DATABASE_H

@@ -1,5 +1,5 @@
-#ifndef TypeSTATE_READER_H
-#define TypeSTATE_READER_H
+#ifndef STATEREADER_H
+#define STATEREADER_H
 
 #include <QStringList>
 
@@ -10,7 +10,7 @@ class TypeStateReader : public TypeVariant
 {
 public:
 
-    TypeStateReader( long flags = 0, TypeVariant* parent = 0 );
+    TypeStateReader( long flags = 0, TypeVariant* Parent = 0 );
     ~TypeStateReader() override;
 
     virtual void        Stop();

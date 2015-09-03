@@ -1,4 +1,4 @@
-
+#include "FW/BK/block_stream.h"
 #include "FW/RC/JS/js_real_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -21,9 +21,9 @@ TypeJsRealRecord::~TypeJsRealRecord()
     //void
 }
 
-QStringList TypeJsRealRecord::Script()
+void TypeJsRealRecord::Script( TypeBlockStream& block_stream )
 {
-    return  QStringList( "\n" + FullName() + " = " + Value() + ";" );
+    block_stream.Append( "\n" + FullName() + " = " + Value() + ";", Id() );
 }
 
 TypeJsRealRecordFactory::TypeJsRealRecordFactory()
@@ -31,12 +31,12 @@ TypeJsRealRecordFactory::TypeJsRealRecordFactory()
     m_RecordClass = "JsReal";
 }
 
-TypeRecord* TypeJsRealRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeJsRealRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeJsRealRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeJsRealRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeJsRealRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeJsRealRecord( state, parent, root );
 }

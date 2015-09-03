@@ -1,7 +1,7 @@
 #include "FW/SC/scene.h"
 #include "FW/RC/record.h"
 #include "FW/document.h"
-#include "FW/UI/ui_scene_item_context_menu.h"
+#include "FW/UI/ui_sceneitem_contextmenu.h"
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>

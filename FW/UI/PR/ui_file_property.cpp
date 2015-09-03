@@ -1,8 +1,9 @@
+#include "FW/tools.h"
 #include "FW/UI/PR/ui_file_property.h"
 #include "ui_fileproperty.h"
-#include <QFileDialog>
 
-TypeUiFileProperty::TypeUiFileProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+
+TypeUiFileProperty::TypeUiFileProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent ):
     TypeUiProperty( on_changed, parent ),
     ui( new Ui::TypeUiFileProperty )
 {

@@ -1,5 +1,5 @@
-#ifndef TypeUIREALPROPERTY_H
-#define TypeUIREALPROPERTY_H
+#ifndef UIREALPROPERTY_H
+#define UIREALPROPERTY_H
 
 #include "FW/macro.h"
 #include <QWidget>
@@ -17,7 +17,7 @@ class TypeUiRealProperty : public TypeUiProperty
 
 public:
 
-    TypeUiRealProperty( QString tag_name, double value, on_changed_t on_changed, QWidget* parent  = 0 );
+    TypeUiRealProperty( QString tag_name, double value, TypeSaveCallback on_changed, QWidget* parent  = 0 );
     ~TypeUiRealProperty() override;
 
     double                        Value();
@@ -32,4 +32,4 @@ private:
     Ui::TypeUiRealProperty* ui;
 };
 
-#endif // TypeUIREALPROPERTY_H
+#endif // UIREALPROPERTY_H

@@ -1,10 +1,12 @@
 #include "FW/document.h"
+#include "FW/controller.h"
 #include "FW/UI/ui_editor_container.h"
 #include "FW/UI/ED/ui_editor.h"
 #include <QVBoxLayout>
 
 TypeUiEditorContainer::TypeUiEditorContainer( TypeController& controller, QWidget* parent ):
     QWidget( parent ),
+    TypeVariant( 0 ),
     m_Controller( &controller )
 {
     m_TabWidget = new QTabWidget;
@@ -26,7 +28,7 @@ TypeUiEditorContainer::TypeUiEditorContainer( TypeController& controller, QWidge
 void TypeUiEditorContainer::Append( TypeUiEditor* editor )
 {
     m_TabWidget->addTab( editor, editor->TabName() );
-    emit Controller().TextEditorContainerChanged();
+    emit Controller().EditorContainerChanged();
 }
 
 void TypeUiEditorContainer::SetCurrent( QString id )
@@ -57,7 +59,7 @@ void TypeUiEditorContainer::Close( QString id )
         if( editor->Id() == id )
         {
             m_TabWidget->removeTab( index );
-            emit Controller().TextEditorContainerChanged();
+            emit Controller().EditorContainerChanged();
             return;
         }
     }
@@ -66,7 +68,7 @@ void TypeUiEditorContainer::Close( QString id )
 void TypeUiEditorContainer::Close( int index )
 {
     m_TabWidget->removeTab( index );
-    emit Controller().TextEditorContainerChanged();
+    emit Controller().EditorContainerChanged();
     return;
 }
 
@@ -74,13 +76,13 @@ void TypeUiEditorContainer::CloseCurrent()
 {
     int index = m_TabWidget->currentIndex();
     m_TabWidget->removeTab( index );
-    emit Controller().TextEditorContainerChanged();
+    emit Controller().EditorContainerChanged();
 }
 
 void TypeUiEditorContainer::CloseAll()
 {
     m_TabWidget->clear();
-    emit Controller().TextEditorContainerChanged();
+    emit Controller().EditorContainerChanged();
 }
 
 void TypeUiEditorContainer::Save( int index )

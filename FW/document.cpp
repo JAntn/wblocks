@@ -3,18 +3,15 @@
 #include "FW/SC/scene.h"
 #include "FW/database.h"
 #include "FW/document.h"
+#include "FW/context.h"
 #include "FW/htmlbuilder.h"
 #include "FW/clipboard.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_file_explorer.h"
-#include "FW/RC/script_file_record.h"
+#include "FW/RC/JS/js_script_file_record.h"
 #include "FW/config.h"
-#include <QMessageBox>
-#include <QStack>
-#include <QDebug>
-#include <QFileInfo>
-#include <QDir>
+#include "FW/tools.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
@@ -29,6 +26,8 @@ TypeDocument::TypeDocument( TypeController& controller, QString file_name, QStri
     m_Root              = new TypeRecordStruct( "root", this );
     m_Scene             = new TypeScene( *this, this );
     m_Context           = new TypeContext( Root(), Scene(), &Root(), this );
+    m_Html              = "";
+    m_HtmlBlockStream   = 0;
 }
 
 TypeDocument::~TypeDocument()
@@ -39,9 +38,10 @@ TypeDocument::~TypeDocument()
 void TypeDocument::UpdateHtml()
 {
     Controller().HtmlBuilder().Build( Root() );
-    m_Html = Controller().HtmlBuilder().Html().join( "" );
+    m_Html = Controller().HtmlBuilder().Text();
+    m_HtmlBlockStream = &Controller().HtmlBuilder().BlockStream();
 
-    emit Controller().HtmlCodeChanged();
+    emit Controller().HtmlBlocksChanged();
 }
 
 void TypeDocument::Clear()
@@ -84,10 +84,8 @@ int TypeDocument::SaveFile( QString file_name )
 
     TypeStateReaderStream record_state( out );
 
-    for( TypeVariant* variant : Root() )
+    for( TypeVariantPtr<TypeRecord> record : Root() )
     {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
-
         if( !record->GetState( record_state ) )
         {
             qDebug() << "Failed at reading record state"
@@ -149,7 +147,7 @@ int TypeDocument::LoadFile( QString file_name )
 
     while( !record_state.AtEnd() )
     {
-        if( Root().CreateRecord( record_state, -1, &Root() ) == 0 )
+        if( Root().NewRecord( record_state, -1, &Root() ) == 0 )
         {
             qDebug() << "Failed at writing record state"
                      << file_name;
@@ -217,11 +215,8 @@ int TypeDocument::SaveSQL( QString file_name )
 
     TypeStateReaderDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
 
-    for( TypeVariant* variant : Root() )
-    {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
+    for( TypeVariantPtr<TypeRecord> record : Root() )
         record->GetState( record_state );
-    }
 
     row.clear();
     row << FIELD( "RECORD_NUM" ) << QString::number( record_state.Count() );
@@ -272,7 +267,7 @@ int TypeDocument::LoadSQL( QString file_name )
     TypeStateWriterDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
 
     while( !record_state.AtEnd() )
-        Root().CreateRecord( record_state, -1, &Root() );
+        Root().NewRecord( record_state, -1, &Root() );
 
     // SCENE ITEMS TABLE
 

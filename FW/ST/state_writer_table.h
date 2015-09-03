@@ -1,5 +1,5 @@
-#ifndef TypeSTATEWRITERTABLE_H
-#define TypeSTATEWRITERTABLE_H
+#ifndef STATEWRITERTABLE_H
+#define STATEWRITERTABLE_H
 
 #include "FW/ST/state_writer.h"
 
@@ -7,7 +7,7 @@ class TypeStateWriterTable : public TypeStateWriter
 {
 public:
 
-    TypeStateWriterTable(QList<QStringList>& table, long flags = 0, TypeVariant* parent = 0 );
+    TypeStateWriterTable(QList<QStringList>& table, long flags = 0, TypeVariant* Parent = 0 );
     void                Next() override;
 
     M_CONST_POINTER     ( Table, QList<QStringList> )
@@ -15,4 +15,4 @@ public:
 
 };
 
-#endif // TypeSTATEWRITERTABLE_H
+#endif // STATEWRITERTABLE_H

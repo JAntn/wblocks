@@ -1,21 +1,22 @@
-#ifndef TypeUIPROPERTY_H
-#define TypeUIPROPERTY_H
+#ifndef UIPROPERTY_H
+#define UIPROPERTY_H
 
+#include "FW/variant.h"
 #include "FW/macro.h"
 #include <QWidget>
 #include <functional>
 
-class TypeUiProperty : public QWidget
+class TypeUiProperty : public QWidget, public TypeVariant
 {
     Q_OBJECT
 
 public:
 
-    typedef std::function<void( TypeUiProperty& )> on_changed_t;
+    typedef std::function<void( TypeUiProperty& )> TypeSaveCallback;
 
-    TypeUiProperty( on_changed_t on_changed, QWidget* parent );
+    TypeUiProperty( TypeSaveCallback save, QWidget* parent );
 
-    M_VALUE             ( ApplyChangesCallBack, on_changed_t )
+    M_VALUE             ( SaveCallback, TypeSaveCallback )
 
 public slots:
 
@@ -23,4 +24,4 @@ public slots:
 
 };
 
-#endif // TypeUIPROPERTY_H
+#endif // UIPROPERTY_H

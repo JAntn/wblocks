@@ -1,9 +1,8 @@
-#ifndef TypeCONTROLLER_H
-#define TypeCONTROLLER_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include "FW/macro.h"
 #include "FW/variant.h"
-
 #include <QObject>
 #include <QStringList>
 
@@ -15,6 +14,8 @@ class TypeConfig;
 class TypeDatabase;
 class TypeClipboard;
 class TypeHtmlBuilder;
+class TypeUiSyntaxHighlighter;
+class TypeUiSyntaxHighlighterFactory;
 
 class TypeController : public QObject, public TypeVariant
 {
@@ -36,12 +37,18 @@ public:
     M_POINTER           ( Database,    TypeDatabase )
     M_POINTER           ( HtmlBuilder, TypeHtmlBuilder )
     M_POINTER           ( Clipboard,   TypeClipboard )
+    M_VALUE             ( BinPath,     QString )
+    M_POINTER           ( SyntaxHighlighterFactory,   TypeUiSyntaxHighlighterFactory )
 
     void                ConnectSlots();
 
+    QString             NewFileNameId( QString file_name );
+    QString             NewHtmlBlocksEditorId(QString file_name);
+
     void                SetPropertyWidgetRecord( TypeRecord& record );
     void                OpenRecordEditorWidget( TypeRecord& record );
-    void                OpenFileEditorWidget( QString file_name );
+    void                OpenFileUiEditor( QString file_name );
+
 
 public slots:
 
@@ -51,12 +58,12 @@ public slots:
     void                OnFileExplorerChanged();
     void                OnRecordsChanged();
     void                OnSceneChanged();
-    void                OnHtmlCodeChanged();
+    void                OnHtmlBlocksChanged();
     void                OnEditorContainerChanged();
 
-    void                OnActionRunHtmlCode();
-    void                OnActionUpdateHtmlCode();
-    void                OnActionSaveHtmlCode();
+    void                OnActionRunHtmlBlocks();
+    void                OnActionUpdateHtmlBlocks();
+    void                OnActionSaveHtmlBlocks();
 
     void                OnActionNewProjectFile();
     void                OnActionLoadProjectFile();
@@ -89,9 +96,9 @@ signals:
     void                FileExplorerChanged();
     void                RecordsChanged();
     void                SceneChanged();
-    void                HtmlCodeChanged();
-    void                TextEditorContainerChanged();
+    void                HtmlBlocksChanged();
+    void                EditorContainerChanged();
 
 };
 
-#endif // TypeCONTROLLER_H
+#endif // CONTROLLER_H

@@ -110,7 +110,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <property name="movable">
          <bool>true</bool>
@@ -190,23 +190,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QTextEdit" name="TextEdit">
-            <property name="undoRedoEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="lineWrapMode">
-             <enum>QTextEdit::NoWrap</enum>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="acceptRichText">
-             <bool>false</bool>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="HtmlTextLayout"/>
           </item>
          </layout>
         </widget>
@@ -287,7 +271,11 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <layout class="QVBoxLayout" name="PropertiesLayout"/>
+               <layout class="QVBoxLayout" name="PropertiesLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+               </layout>
               </item>
               <item>
                <spacer name="verticalSpacer">
@@ -333,7 +321,7 @@
      <x>0</x>
      <y>0</y>
      <width>979</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

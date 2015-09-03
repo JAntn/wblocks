@@ -1,10 +1,11 @@
-#include "clipboard.h"
-#include "document.h"
 #include "FW/SC/scene.h"
 #include "FW/SC/scene_item.h"
+#include "FW/RC/record.h"
 #include "FW/RC/record_struct.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
+#include "FW/clipboard.h"
+#include "FW/document.h"
 
 TypeClipboard::TypeClipboard( TypeVariant* parent ):
     TypeVariant( parent )
@@ -60,7 +61,7 @@ void TypeClipboard::Paste( TypeRecordStruct& record_struct, int position )
     TypeStateWriterTable writer( table, m_Flags );
 
     while( !writer.AtEnd() )
-        record_struct.CreateRecord( writer, iter );
+        record_struct.NewRecord( writer, iter );
 
     Clear();
 }

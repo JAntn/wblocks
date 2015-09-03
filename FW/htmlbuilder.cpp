@@ -1,9 +1,13 @@
+#include "FW/BK/block_stream.h"
 #include "FW/RC/record.h"
 #include "FW/htmlbuilder.h"
 #include "FW/RC/record_struct.h"
+#include "FW/BK/block.h"
+#include "FW/tools.h"
+
 
 TypeHtmlBuilder::TypeHtmlBuilder( TypeVariant* parent ):
-    TypeVariant( parent )
+    TypeVariant( parent ), m_BlockStream( 0 )
 {
     // void
 }
@@ -15,26 +19,37 @@ TypeHtmlBuilder::~TypeHtmlBuilder()
 
 void TypeHtmlBuilder::Build( TypeRecordStruct& root )
 {
-    m_Html.clear();
+    if( m_BlockStream != 0 )
+        delete m_BlockStream;
 
-    m_Html
-    << "\n<!DOCTYPE html>"
-    << "\n<html>\n"
-    << "\n<script>\n";
+    m_BlockStream = new TypeBlockStream( this );
 
-    for( TypeVariant* variant : root )
-    {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
-        m_Html << record->Script();
-    }
-    m_Html << "\n</script>\n";
+    BlockStream().Append(
+        "\n<!DOCTYPE html>"
+        "\n<html>"
+        "\n<script>",
+        "" );
 
-    for( TypeVariant* variant : root )
-    {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
-        m_Html << record->Html();
-    }
+    for( TypeVariantPtr<TypeRecord> record : root )
+        record->Script( BlockStream() );
 
-    m_Html << "\n</html>";
+    BlockStream().Append( "\n</script>", "" );
+
+    for( TypeVariantPtr<TypeRecord> record : root )
+        record->Html( BlockStream() );
+
+    BlockStream().Append( "\n</html>", "" );
 }
+
+QString TypeHtmlBuilder::Text()
+{
+    QStringList html;
+
+    for( TypeVariantPtr<TypeBlock> block : BlockStream() )
+        html << block->Text();
+
+    return html.join( "" );
+}
+
+
 

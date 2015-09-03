@@ -1,6 +1,6 @@
 #include "FW/RC/real_record.h"
 #include "FW/UI/PR/ui_real_property.h"
-#include "FW/UI/PR/ui_record_name_property.h"
+#include "FW/UI/PR/ui_recordname_property.h"
 #include <QVBoxLayout>
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -62,13 +62,13 @@ TypeRealRecordFactory::TypeRealRecordFactory()
     m_RecordClass = "Real";
 }
 
-TypeRecord* TypeRealRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeRealRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
     TypeRealRecord* record = new TypeRealRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-TypeRecord* TypeRealRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeRealRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
     TypeRealRecord* record = new TypeRealRecord( state, parent, root );
     return record;

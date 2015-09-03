@@ -1,5 +1,5 @@
-#ifndef TypeSCENE_ITEM_CONTEXT_MENU_H
-#define TypeSCENE_ITEM_CONTEXT_MENU_H
+#ifndef SCENE_ITEM_CONTEXT_MENU_H
+#define SCENE_ITEM_CONTEXT_MENU_H
 
 #include "FW/macro.h"
 
@@ -30,4 +30,4 @@ public slots:
 
 };
 
-#endif // TypeSCENE_ITEM_CONTEXT_MENU_H
+#endif // SCENE_ITEM_CONTEXT_MENU_H

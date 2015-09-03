@@ -1,6 +1,6 @@
 #include "FW/config.h"
-#include <QFile>
-#include <QDir>
+#include "FW/tools.h"
+#include "FW/controller.h"
 
 TypeConfig::TypeConfig( QString config_path, TypeVariant* parent ):
     TypeVariant( parent )

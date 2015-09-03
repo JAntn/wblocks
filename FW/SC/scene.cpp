@@ -1,5 +1,5 @@
 #include "FW/SC/scene.h"
-#include "FW/macro.h"
+#include "FW/tools.h"
 #include "FW/ST/state_writer.h"
 #include "FW/RC/record.h"
 #include "FW/SC/scene_line.h"
@@ -94,19 +94,20 @@ void TypeScene::UpdateLines()
                 TypeRecord* record_target = &target->Record();
 
                 if( record_from->Referencee() == record_target )
-                    m_Lines.append( new TypeSceneLine( *from, *target, Qt::green) );
+                    m_Lines.append( new TypeSceneLine( *from, *target, Qt::green ) );
             }
         }
         else if( from->Record().Struct() != 0 )
         {
             QList<TypeReferenceRecord*> reference_list;
 
-            for( TypeVariant* variant : *from->Record().Struct() )
+            for( TypeVariantPtr<TypeRecord> record : *from->Record().Struct() )
             {
-                TypeRecord* reference = static_cast<TypeRecord*> ( variant );
-
-                if( reference->Class() == "Reference" )
-                    reference_list.append( static_cast<TypeReferenceRecord*> ( reference ) );
+                if( record->Class() == "Reference" )
+                {
+                    TypeVariantPtr<TypeReferenceRecord> reference( record );
+                    reference_list.append( reference );
+                }
             }
 
             for( TypeReferenceRecord* record : reference_list )
@@ -116,7 +117,7 @@ void TypeScene::UpdateLines()
                     TypeRecord* record_target = &target->Record();
 
                     if( record->Referencee() == record_target )
-                        m_Lines.append( new TypeSceneLine( *from, *target, Qt::blue) );
+                        m_Lines.append( new TypeSceneLine( *from, *target, Qt::blue ) );
                 }
             }
         }

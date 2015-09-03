@@ -1,8 +1,8 @@
-#ifndef TypeVARIANT_H
-#define TypeVARIANT_H
+#ifndef VARIANT_H
+#define VARIANT_H
 
 #include "FW/macro.h"
-#include <QString>
+#include <QList>
 
 class TypeVariantStruct;
 
@@ -16,20 +16,21 @@ class TypeVariant
 {
 public:
 
-    TypeVariant( TypeVariant* parent = 0 );
+    TypeVariant( TypeVariant* Parent = 0 );
     virtual ~TypeVariant();
 
-    void                               SetParent( TypeVariant* parent = 0 );
-    TypeVariant*                         Parent() const;
+    void                               SetParent( TypeVariant* Parent = 0 );
+    TypeVariant*                       Parent() const;
 
     M_VALUE                            ( Childreen, QList<TypeVariant*> )
 
 private:
 
-    TypeVariant*                         m_Parent;
+    TypeVariant*                       m_Parent;
     friend class                       TypeVariantStruct;
 };
 
-#endif // TypeVARIANT_H
+
+#endif // VARIANT_H
 
 #include "FW/variant_struct.h"

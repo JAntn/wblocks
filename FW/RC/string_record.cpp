@@ -4,7 +4,7 @@
 #include "FW/ST/state_writer.h"
 #include "FW/RC/record.h"
 #include <QHBoxLayout>
-#include <FW/UI/PR/ui_record_name_property.h>
+#include <FW/UI/PR/ui_recordname_property.h>
 
 TypeStringRecord::TypeStringRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
     TypeRecord( id, name, value, parent, root )
@@ -62,12 +62,12 @@ TypeStringRecordFactory::TypeStringRecordFactory()
     m_RecordClass = "String";
 }
 
-TypeRecord* TypeStringRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeStringRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeStringRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeStringRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeStringRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
     return new TypeStringRecord( state, parent, root );
 }

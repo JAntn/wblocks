@@ -1,7 +1,7 @@
-#include "FW/UI/PR/ui_line_text_property.h"
+#include "FW/UI/PR/ui_linetext_property.h"
 #include "ui_linetextproperty.h"
 
-TypeUiLineTextProperty::TypeUiLineTextProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent ):
+TypeUiLineTextProperty::TypeUiLineTextProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent ):
     TypeUiProperty( on_changed, parent ),
     ui( new Ui::TypeUiLineTextProperty )
 {

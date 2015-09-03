@@ -1,10 +1,10 @@
+#include "FW/tools.h"
 #include "FW/UI/PR/ui_property.h"
 #include "FW/UI/PR/ui_integer_property.h"
-#include "ui_integerproperty.h"
-#include <QRegExp>
 #include "FW/controller.h"
+#include "ui_integerproperty.h"
 
-TypeUiIntegerProperty::TypeUiIntegerProperty( QString tag_name, long value, TypeUiProperty::on_changed_t on_changed, QWidget* parent ):
+TypeUiIntegerProperty::TypeUiIntegerProperty( QString tag_name, long value, TypeUiProperty::TypeSaveCallback on_changed, QWidget* parent ):
     TypeUiProperty( on_changed, parent ),
     ui( new Ui::TypeUiIntegerProperty )
 {

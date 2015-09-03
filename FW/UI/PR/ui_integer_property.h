@@ -1,5 +1,5 @@
-#ifndef TypeUIINTEGERPROPERTY
-#define TypeUIINTEGERPROPERTY
+#ifndef UIINTEGERPROPERTY
+#define UIINTEGERPROPERTY
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -16,7 +16,7 @@ class TypeUiIntegerProperty : public TypeUiProperty
 
 public:
 
-    TypeUiIntegerProperty( QString tag_name, long value, on_changed_t on_changed, QWidget* parent  = 0 );
+    TypeUiIntegerProperty( QString tag_name, long value, TypeSaveCallback on_changed, QWidget* parent  = 0 );
     ~TypeUiIntegerProperty() override;
 
     long                          Value();
@@ -31,4 +31,4 @@ private:
     Ui::TypeUiIntegerProperty* ui;
 };
 
-#endif // TypeUIINTEGERPROPERTY
+#endif // UIINTEGERPROPERTY

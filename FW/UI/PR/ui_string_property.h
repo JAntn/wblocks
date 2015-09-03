@@ -1,5 +1,5 @@
-#ifndef TypeUISTRINGPROPERTY_H
-#define TypeUISTRINGPROPERTY_H
+#ifndef UISTRINGPROPERTY_H
+#define UISTRINGPROPERTY_H
 
 #include "FW/macro.h"
 #include "FW/UI/PR/ui_property.h"
@@ -16,7 +16,7 @@ class TypeUiStringProperty : public TypeUiProperty
 
 public:
 
-    TypeUiStringProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    TypeUiStringProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent  = 0 );
     ~TypeUiStringProperty() override;
 
     QString                       Value();
@@ -31,4 +31,4 @@ private:
     Ui::TypeUiStringProperty*         ui;
 };
 
-#endif // TypeUISTRINGPROPERTY_H
+#endif // UISTRINGPROPERTY_H

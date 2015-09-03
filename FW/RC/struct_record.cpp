@@ -1,9 +1,10 @@
 #include "FW/RC/struct_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include "FW/UI/PR/ui_record_name_property.h"
+#include "FW/UI/PR/ui_recordname_property.h"
 #include <QVBoxLayout>
 #include <FW/UI/PR/ui_string_property.h>
+#include "FW/tools.h"
 
 TypeStructRecord::TypeStructRecord( QString id, QString name, QString value, TypeVariant* parent, TypeRecordStruct* root ):
     TypeRecord( id, name, value, parent, root )
@@ -42,25 +43,18 @@ TypeRecordStruct* TypeStructRecord::Struct()
     return m_Records;
 }
 
-QStringList TypeStructRecord::Html()
+void TypeStructRecord::Html( TypeBlockStream& block_stream )
 {
-    QStringList html;
-
-    for( TypeVariant* variant : Records() )
-        html << static_cast<TypeRecord*>( variant )->Html() ;
-
-    return html;
+    for( TypeVariantPtr<TypeRecord> record : Records() )
+        record->Html( block_stream ) ;
 }
 
-QStringList TypeStructRecord::Script()
+void TypeStructRecord::Script( TypeBlockStream& block_stream )
 {
-    QStringList script;
-    script << ( "\n" + FullName() + " = {} ;" );
+    block_stream.Append( "\n" + FullName() + " = {} ;", Id() );
 
-    for( TypeVariant* variant : Records() )
-        script << static_cast<TypeRecord*>( variant )->Script() ;
-
-    return script;
+    for( TypeVariantPtr<TypeRecord> record : Records() )
+        record->Script( block_stream ) ;
 }
 
 bool TypeStructRecord::GetState( TypeStateReader& state )
@@ -72,11 +66,8 @@ bool TypeStructRecord::GetState( TypeStateReader& state )
     row.append( m_Class );
     state.Read( row );
 
-    for( TypeVariant* variant : Records() )
-    {
-        TypeRecord* record = static_cast<TypeRecord*>( variant );
+    for( TypeVariantPtr<TypeRecord> record : Records() )
         record->GetState( state );
-    }
 
     return true;
 }
@@ -101,7 +92,7 @@ bool TypeStructRecord::SetState( TypeStateWriter& state, TypeRecordStruct* root 
     long size = m_Value.toLong();
 
     for( long count = 0; count < size; ++count )
-        Records().CreateRecord( state, -1, root );
+        Records().NewRecord( state, -1, root );
 
     return true;
 }
@@ -133,13 +124,13 @@ TypeStructRecordFactory::TypeStructRecordFactory()
     m_RecordClass = "Struct";
 }
 
-TypeRecord* TypeStructRecordFactory::CreateInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root  )
+TypeRecord* TypeStructRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root  )
 {
     TypeStructRecord* record = new TypeStructRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
     return record;
 }
 
-TypeRecord* TypeStructRecordFactory::CreateInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeStructRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
 {
     TypeStructRecord* record = new TypeStructRecord( state, parent, root );
     return record;

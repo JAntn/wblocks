@@ -1,5 +1,5 @@
-#ifndef TypeREAL_RECORD_H
-#define TypeREAL_RECORD_H
+#ifndef REALRECORD_H
+#define REALRECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
@@ -11,8 +11,8 @@ class TypeRealRecord : public TypeRecord
 {
 public:
 
-    explicit TypeRealRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
-    TypeRealRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeRealRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    TypeRealRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
     ~TypeRealRecord() override;
 
     QWidget*            PropertyWidget( TypeController& controller ) override;
@@ -30,8 +30,8 @@ public:
 
     TypeRealRecordFactory();
 
-    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // TypeREAL_RECORD_H
+#endif // REALRECORD_H

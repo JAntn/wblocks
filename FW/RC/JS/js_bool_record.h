@@ -1,5 +1,5 @@
-#ifndef TypeJS_BOOL_RECORD_H
-#define TypeJS_BOOL_RECORD_H
+#ifndef JSBOOLRECORD_H
+#define JSBOOLRECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/bool_record.h"
@@ -11,11 +11,11 @@ class TypeJsBoolRecord : public TypeBoolRecord
 {
 public:
 
-    explicit TypeJsBoolRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
-    TypeJsBoolRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeJsBoolRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    TypeJsBoolRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
     ~TypeJsBoolRecord() override;
 
-    QStringList         Script()    override;
+    void                Script(TypeBlockStream& block_stream)    override;
 
 private:
 
@@ -30,8 +30,8 @@ public:
 
     TypeJsBoolRecordFactory();
 
-    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           CreateInstance(TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*         NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*         NewInstance(TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // TypeJS_BOOL_RECORD_H
+#endif // JSBOOLRECORD_H

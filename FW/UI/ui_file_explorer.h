@@ -1,9 +1,10 @@
-#ifndef UI_FILE_EXPLORER_VIEW_H
-#define UI_FILE_EXPLORER_VIEW_H
+#ifndef UIFILEEXPLORER_H
+#define UIFILEEXPLORER_H
 
-#include <QWidget>
+#include "FW/variant.h"
 #include "FW/macro.h"
 #include <QStringListModel>
+#include <QWidget>
 
 class TypeDocument;
 class TypeController;
@@ -13,7 +14,7 @@ namespace Ui
 class TypeUiFileExplorer;
 }
 
-class TypeUiFileExplorer : public QWidget
+class TypeUiFileExplorer : public QWidget, public TypeVariant
 {
     Q_OBJECT
 
@@ -40,8 +41,7 @@ public slots:
 private:
 
     QString                       FullPath();
-
-    Ui::TypeUiFileExplorer* ui;
+    Ui::TypeUiFileExplorer*       ui;
 };
 
-#endif // UI_FILE_EXPLORER_VIEW_H
+#endif // UIFILEEXPLORER_H

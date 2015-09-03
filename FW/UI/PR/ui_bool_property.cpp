@@ -2,8 +2,8 @@
 #include "ui_boolproperty.h"
 
 
-TypeUiBoolProperty::TypeUiBoolProperty( QString tag_name, bool value, on_changed_t on_changed, QWidget* parent ) :
-    TypeUiProperty( on_changed, parent ),
+TypeUiBoolProperty::TypeUiBoolProperty(QString tag_name, bool value, TypeSaveCallback save_callback, QWidget* parent ) :
+    TypeUiProperty( save_callback, parent ),
     ui( new Ui::TypeUiBoolProperty )
 {
     ui->setupUi( this );

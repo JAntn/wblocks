@@ -1,26 +1,28 @@
-#ifndef TypeUIEDITOR_H
-#define TypeUIEDITOR_H
+#ifndef UIEDITOR_H
+#define UIEDITOR_H
 
-#include <QWidget>
-#include "FW/macro.h"
-#include <functional>
+#include "FW/tools.h"
 
-class TypeUiEditor : public QWidget
+class TypeUiEditor : public QWidget, public TypeVariant
 {
     Q_OBJECT
 
 public:
 
-    typedef std::function<void( TypeUiEditor& )> save_callback_t;
+    typedef std::function<void( TypeUiEditor& )> TypeSaveCallback;
 
-    explicit TypeUiEditor( QString id, QString name, QString tab_name, save_callback_t save_callback, QWidget* parent = 0 );
+    explicit TypeUiEditor( QString id, QString name, QString tab_name,
+                           QWidget* parent = 0,
+                           TypeSaveCallback save_callback = &TypeUiEditor::empty_save_callback );
     ~TypeUiEditor();
 
     M_CONST_VALUE                ( Id,                QString )
     M_VALUE                      ( Name,              QString )
     M_VALUE                      ( TabName,           QString )
     M_VALUE                      ( HasChanged,        bool )
-    M_VALUE                      ( SaveCallBack,      save_callback_t )
+    M_VALUE                      ( SaveCallback,      TypeSaveCallback )
+
+    static void empty_save_callback( TypeUiEditor&){}
 
 public slots:
 
@@ -28,4 +30,4 @@ public slots:
 
 };
 
-#endif // TypeUIEDITOR_H
+#endif // UIEDITOR_H

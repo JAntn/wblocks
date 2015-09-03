@@ -34,10 +34,6 @@
                                            const __VAR_TYPE& __VAR_NAME() const {return m_##__VAR_NAME;}
 
 
-
-#include <QDebug>
-#include <QList>
-
 #define FLAG_ACTION_ALL          0xFFFF
 #define FLAG_ACTION_ADD          0x0001
 #define FLAG_ACTION_REMOVE       0x0002

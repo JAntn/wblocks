@@ -1,5 +1,5 @@
-#ifndef TypeJS_INTEGER_RECORD_H
-#define TypeJS_INTEGER_RECORD_H
+#ifndef JS_INTEGERRECORD_H
+#define JS_INTEGERRECORD_H
 
 #include "FW/RC/integer_record.h"
 #include "FW/macro.h"
@@ -11,11 +11,11 @@ class TypeJsIntegerRecord : public TypeIntegerRecord
 {
 public:
 
-    explicit TypeJsIntegerRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
-    TypeJsIntegerRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeJsIntegerRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    TypeJsIntegerRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
     ~TypeJsIntegerRecord() override;
 
-    QStringList         Script()    override;
+    void                Script( TypeBlockStream& block_stream )    override;
 
 private:
 
@@ -30,8 +30,8 @@ public:
 
     TypeJsIntegerRecordFactory();
 
-    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // TypeJS_INTEGER_RECORD_H
+#endif // JS_INTEGERRECORD_H

@@ -1,5 +1,5 @@
-#ifndef TypeREFERENCE_RECORD_H
-#define TypeREFERENCE_RECORD_H
+#ifndef REFERENCERECORD_H
+#define REFERENCERECORD_H
 
 #include "FW/macro.h"
 #include "FW/RC/record.h"
@@ -14,18 +14,18 @@ class TypeReferenceRecord : public TypeRecord
 
 public:
 
-    explicit TypeReferenceRecord( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
-    TypeReferenceRecord( QString id, QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeReferenceRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    TypeReferenceRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
     ~TypeReferenceRecord() override;
 
     bool                GetState( TypeStateReader& state ) override;
-    bool                SetState( TypeStateWriter& state, TypeRecordStruct* root = 0) override;
-    QWidget*            PropertyWidget(TypeController& controller ) override;
+    bool                SetState( TypeStateWriter& state, TypeRecordStruct* root = 0 ) override;
+    QWidget*            PropertyWidget( TypeController& controller ) override;
 
     QString             Value() override;
-    void                SetValue(QString full_name) override;
+    void                SetValue( QString full_name ) override;
 
-    TypeRecord*           Referencee();
+    TypeRecord*         Referencee();
 
     M_POINTER           ( Root,  TypeRecordStruct )
 
@@ -43,8 +43,8 @@ public:
 
     TypeReferenceRecordFactory();
 
-    TypeRecord*           CreateInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           CreateInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
 };
 
-#endif // TypeREFERENCE_RECORD_H
+#endif // REFERENCERECORD_H

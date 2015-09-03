@@ -1,5 +1,5 @@
-#ifndef TypeUIFILEPROPERTY_H
-#define TypeUIFILEPROPERTY_H
+#ifndef UIFILEPROPERTY_H
+#define UIFILEPROPERTY_H
 
 #include "FW/UI/PR/ui_property.h"
 #include "FW/macro.h"
@@ -17,7 +17,7 @@ class TypeUiFileProperty : public TypeUiProperty
 
 public:
 
-    TypeUiFileProperty( QString tag_name, QString value, on_changed_t on_changed, QWidget* parent  = 0 );
+    TypeUiFileProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent  = 0 );
     ~TypeUiFileProperty() override;
 
     QString                       Value();
@@ -33,4 +33,4 @@ private:
     Ui::TypeUiFileProperty* ui;
 };
 
-#endif // TypeUIFILEPROPERTY_H
+#endif // UIFILEPROPERTY_H
