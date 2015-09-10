@@ -12,6 +12,7 @@
 #include "FW/RC/JS/js_script_file_record.h"
 #include "FW/config.h"
 #include "FW/tools.h"
+#include "FW/RC/root_struct.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
@@ -19,44 +20,34 @@
 TypeDocument::TypeDocument( TypeController& controller, QString file_name, QString path, TypeVariant* parent ):
     TypeVariant( parent ), m_Controller( &controller )
 {
-    TypeRecordStruct::InitFactoryList();
+    TypeStruct::InitFactoryList();
 
     m_FileName          = file_name;
     m_Path              = path;
-    m_Root              = new TypeRecordStruct( "root", this );
-    m_Scene             = new TypeScene( *this, this );
+    m_Root              = new TypeRootStruct( this );
+    m_Scene             = new TypeScene( controller, this );
     m_Context           = new TypeContext( Root(), Scene(), &Root(), this );
-    m_Html              = "";
-    m_HtmlBlockStream   = 0;
 }
 
 TypeDocument::~TypeDocument()
 {
-    // void
+    delete m_Root;
 }
 
 void TypeDocument::UpdateHtml()
 {
     Controller().HtmlBuilder().Build( Root() );
-    m_Html = Controller().HtmlBuilder().Text();
-    m_HtmlBlockStream = &Controller().HtmlBuilder().BlockStream();
 
-    emit Controller().HtmlBlocksChanged();
+    emit Controller().HtmlTextChanged();
 }
 
 void TypeDocument::Clear()
 {
-    Context().SetRecords( Root() );
+    Context().SetStruct( Root() );
     Root().Clear();
     Scene().Clear();
-    Html().clear();
-
-    //
-    // Controller().Clipboard().Clear();
 
     emit Controller().RecordsChanged();
-
-    // UPDATE CONFIG FILE
 
     SetFileName( "" );
     SetPath( "" );
@@ -70,9 +61,7 @@ int TypeDocument::SaveFile( QString file_name )
 
     if( !file.open( QIODevice::WriteOnly ) )
     {
-        qDebug() << "Failed to open file to write"
-                 << file_name;
-        // code
+        qDebug() << "Failed to open file to write" << file_name;
         return 1;
     }
 
@@ -88,9 +77,7 @@ int TypeDocument::SaveFile( QString file_name )
     {
         if( !record->GetState( record_state ) )
         {
-            qDebug() << "Failed at reading record state"
-                     << file_name;
-            // code
+            qDebug() << "Failed at reading record state" << file_name;
             return 2;
         }
     }
@@ -105,9 +92,7 @@ int TypeDocument::SaveFile( QString file_name )
     {
         if( !item->GetState( scene_state ) )
         {
-            qDebug() << "Failed at reading scene state"
-                     << file_name;
-            // code
+            qDebug() << "Failed at reading scene state" << file_name;
             return 3;
         }
 
@@ -129,7 +114,7 @@ int TypeDocument::LoadFile( QString file_name )
     {
         qDebug() << "Failed to open file to read"
                  << file_name;
-        // code
+
         return 1;
     }
 
@@ -149,9 +134,7 @@ int TypeDocument::LoadFile( QString file_name )
     {
         if( Root().NewRecord( record_state, -1, &Root() ) == 0 )
         {
-            qDebug() << "Failed at writing record state"
-                     << file_name;
-            // code
+            qDebug() << "Failed at writing record state" << file_name;
             return 2;
         }
     }
@@ -162,11 +145,9 @@ int TypeDocument::LoadFile( QString file_name )
 
     while( !scene_state.AtEnd() )
     {
-        if( Scene().CreateItem( scene_state ) == 0 )
+        if( Scene().NewItem( scene_state ) == 0 )
         {
-            qDebug() << "Failed at writing scene state"
-                     << file_name;
-            // code
+            qDebug() << "Failed at writing scene state" << file_name;
             return 3;
         }
     }
@@ -184,7 +165,12 @@ int TypeDocument::LoadFile( QString file_name )
 int TypeDocument::SaveSQL( QString file_name )
 {
     QFile::remove( file_name );
-    Controller().Database().OpenDatabase( file_name );
+
+    if( !Controller().Database().OpenDatabase( file_name ) )
+    {
+        qDebug() << "Failed to open file to read" << file_name;
+        return 1;
+    }
 
     // SETUP TABLE
 
@@ -216,7 +202,13 @@ int TypeDocument::SaveSQL( QString file_name )
     TypeStateReaderDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ) );
 
     for( TypeVariantPtr<TypeRecord> record : Root() )
-        record->GetState( record_state );
+    {
+        if( !record->GetState( record_state ) )
+        {
+            qDebug() << "Failed at reading record state" << file_name;
+            return 2;
+        }
+    }
 
     row.clear();
     row << FIELD( "RECORD_NUM" ) << QString::number( record_state.Count() );
@@ -235,7 +227,14 @@ int TypeDocument::SaveSQL( QString file_name )
     TypeStateReaderDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ) );
 
     for( TypeSceneItem* item : Scene().Items() )
-        item->GetState( scene_state );
+    {
+        if( !item->GetState( scene_state ) )
+        {
+            qDebug() << "Failed at reading scene state" << file_name;
+            return 3;
+        }
+
+    }
 
     row.clear();
     row << FIELD( "SCENEITEM_NUM" ) << QString::number( scene_state.Count()  );
@@ -251,7 +250,13 @@ int TypeDocument::SaveSQL( QString file_name )
 int TypeDocument::LoadSQL( QString file_name )
 {
     Clear();
-    Controller().Database().OpenDatabase( file_name );
+
+    if( !Controller().Database().OpenDatabase( file_name ) )
+    {
+        qDebug() << "Failed to open file to read" << file_name;
+        return 1;
+    }
+
     QStringList row;
     row = Controller().Database().GetRecord( FIELD( "SETUP_TABLE" ), FIELD( "ROW" ), FIELD( "RECORD_ID_COUNT" ) );
     TypeRecordFactory::m_IdCount = row[1].toLong();
@@ -267,14 +272,26 @@ int TypeDocument::LoadSQL( QString file_name )
     TypeStateWriterDatabase record_state( Controller().Database(), FIELD( "RECORD_TABLE" ), FIELD( "ROW" ), record_size );
 
     while( !record_state.AtEnd() )
-        Root().NewRecord( record_state, -1, &Root() );
+    {
+        if( Root().NewRecord( record_state, -1, &Root() ) == 0 )
+        {
+            qDebug() << "Failed at writing record state" << file_name;
+            return 2;
+        }
+    }
 
     // SCENE ITEMS TABLE
 
     TypeStateWriterDatabase scene_state( Controller().Database(), FIELD( "SCENE_TABLE" ), FIELD( "ROW" ), scene_size );
 
     while( !scene_state.AtEnd() )
-        Scene().CreateItem( scene_state );
+    {
+        if( Scene().NewItem( scene_state ) == 0 )
+        {
+            qDebug() << "Failed at writing scene state" << file_name;
+            return 3;
+        }
+    }
 
     Controller().Database().CloseDatabase();
     emit Controller().RecordsChanged();

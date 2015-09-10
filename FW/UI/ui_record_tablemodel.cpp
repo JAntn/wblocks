@@ -1,4 +1,4 @@
-#include "FW/RC/record_struct.h"
+#include "FW/RC/struct.h"
 #include "FW/RC/record.h"
 #include "FW/document.h"
 #include "FW/context.h"
@@ -16,9 +16,9 @@ int TypeUiRecordTableModel::columnCount( const QModelIndex& ) const
     return 3;
 }
 
-TypeUiRecordTableModel::TypeUiRecordTableModel( TypeDocument& document, QObject* parent ):
+TypeUiRecordTableModel::TypeUiRecordTableModel(TypeStruct& struct_val, QObject* parent ):
     QAbstractTableModel( parent ),
-    m_Document( &document )
+    m_Struct( &struct_val )
 {
     // void
 }
@@ -30,7 +30,7 @@ TypeUiRecordTableModel::~TypeUiRecordTableModel()
 
 int TypeUiRecordTableModel::rowCount( const QModelIndex& ) const
 {
-    return Records().Size();
+    return Struct().Size();
 }
 
 QVariant TypeUiRecordTableModel::data( const QModelIndex& index, int role ) const
@@ -39,13 +39,13 @@ QVariant TypeUiRecordTableModel::data( const QModelIndex& index, int role ) cons
         return QVariant();
 
     if ( index.row() >=
-            Records().Size() )
+            Struct().Size() )
 
         return QVariant();
 
     if ( role == Qt::DisplayRole )
     {
-        TypeRecord* record = Records().FromIndex( index.row() );
+        TypeRecord* record = Struct().FromIndex( index.row() );
 
         if( index.column() == 2 )
             return record->Class();
@@ -75,16 +75,4 @@ QVariant TypeUiRecordTableModel::headerData( int section, Qt::Orientation orient
     else
         return section;
 }
-
-TypeRecordStruct& TypeUiRecordTableModel::Records() const
-{
-    return Document().Context().Records();
-}
-
-
-
-
-
-
-
 

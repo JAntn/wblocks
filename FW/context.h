@@ -1,22 +1,21 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
-#include "FW/macro.h"
-#include "FW/variant.h"
+#include "FW/tools.h"
 
-class TypeRecordStruct;
+class TypeStruct;
 class TypeScene;
 
 class TypeContext : public TypeVariant
 {
 public:
 
-    TypeContext( TypeRecordStruct& records, TypeScene& scene, TypeRecordStruct* root = 0, TypeVariant* Parent = 0 );
+    TypeContext( TypeStruct& records, TypeScene& scene, TypeStruct* root = 0, TypeVariant* Parent = 0 );
     ~TypeContext() override;
 
-    M_POINTER           ( Records, TypeRecordStruct )
-    M_POINTER           ( Scene,   TypeScene )
-    M_POINTER           ( Root,    TypeRecordStruct )
+    M_REFERENCE         ( Struct,  TypeStruct )
+    M_REFERENCE         ( Scene,   TypeScene )
+    M_REFERENCE         ( Root,    TypeStruct )
 
 };
 

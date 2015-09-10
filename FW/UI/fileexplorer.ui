@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>380</width>
+    <width>390</width>
     <height>242</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>390</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -23,7 +29,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>0</height>
+           <height>22</height>
           </size>
          </property>
         </widget>
@@ -39,11 +45,24 @@
          <property name="maximumSize">
           <size>
            <width>60</width>
-           <height>20</height>
+           <height>22</height>
           </size>
          </property>
          <property name="text">
           <string>Up</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../resource.qrc">
+           <normaloff>:/Icons/rcc/22x22/actions/go-up.png</normaloff>:/Icons/rcc/22x22/actions/go-up.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -58,11 +77,24 @@
          <property name="maximumSize">
           <size>
            <width>60</width>
-           <height>20</height>
+           <height>22</height>
           </size>
          </property>
          <property name="text">
           <string>Root</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../../resource.qrc">
+           <normaloff>:/Icons/rcc/22x22/actions/go-home.png</normaloff>:/Icons/rcc/22x22/actions/go-home.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -72,15 +104,12 @@
       <widget class="QListView" name="ListView">
        <property name="minimumSize">
         <size>
-         <width>360</width>
+         <width>0</width>
          <height>0</height>
         </size>
        </property>
        <property name="editTriggers">
         <set>QAbstractItemView::DoubleClicked</set>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -88,6 +117,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

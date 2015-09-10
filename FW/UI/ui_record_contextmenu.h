@@ -1,9 +1,7 @@
 #ifndef UIRECORDCONTEXTMENU_H
 #define UIRECORDCONTEXTMENU_H
 
-#include "FW/variant.h"
-#include "FW/macro.h"
-#include <QObject>
+#include "FW/tools.h"
 
 class TypeRecord;
 class TypeController;
@@ -14,11 +12,11 @@ class TypeUiRecordContextMenu : public QObject, public TypeVariant
 
 public:
 
-    TypeUiRecordContextMenu( TypeController& controller, const QPoint& global_point, QObject* parent = 0 );
+    TypeUiRecordContextMenu(TypeController& controller, long action_flags, bool has_selection, const QPoint& global_point, QObject* parent = 0 );
     ~TypeUiRecordContextMenu() override;
 
-    M_POINTER           ( Controller, TypeController )
+    M_REFERENCE                             ( Controller, TypeController )
 
 };
 
-#endif // UIRECORDCONTEXTMENU_H
+#endif // UIRECORDCONTEXTMENU2_H

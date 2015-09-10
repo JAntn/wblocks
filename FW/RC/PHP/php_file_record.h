@@ -2,9 +2,8 @@
 #define PHPFILERECORD_H
 
 #include "FW/RC/file_record.h"
-#include "FW/macro.h"
 
-class TypeRecordStruct;
+class TypeStruct;
 class TypeUiEditor;
 class TypeController;
 
@@ -16,8 +15,8 @@ class TypePhpFileRecord: public TypeFileRecord
 
 public:
 
-    explicit TypePhpFileRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
-    TypePhpFileRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypePhpFileRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeStruct* root = 0 );
+    TypePhpFileRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeStruct* root = 0 );
     ~TypePhpFileRecord() override;
 
     TypeUiEditor*       EditorWidget( QString id, TypeController& controller ) override;
@@ -36,8 +35,8 @@ public:
 
     TypePhpFileRecordFactory();
 
-    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
 };
 
 #endif // PHPFILERECORD_H

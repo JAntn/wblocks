@@ -2,8 +2,7 @@
 #define UIEDITORCONTAINER_H
 
 #include <QTabWidget>
-#include "FW/macro.h"
-#include "FW/variant.h"
+#include "FW/tools.h"
 
 class TypeUiEditor;
 class TypeController;
@@ -35,8 +34,8 @@ public:
     void                          SetCurrent( int index );
     void                          SetCurrent( QString id );
 
-    M_CONST_POINTER               ( TabWidget,  QTabWidget )
-    M_POINTER                     ( Controller, TypeController )
+    M_REFERENCE_READONLY            ( TabWidget,  QTabWidget )
+    M_REFERENCE                   ( Controller, TypeController )
 
 public slots:
 

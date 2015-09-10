@@ -2,8 +2,7 @@
 #define SCENELINE_H
 
 #include "FW/SC/scene_item.h"
-#include "FW/variant.h"
-#include "FW/macro.h"
+#include "FW/tools.h"
 
 
 class TypeSceneLine : public QGraphicsLineItem, public TypeVariant
@@ -15,8 +14,8 @@ public:
 
     void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 ) override;
 
-    M_POINTER                ( From, TypeSceneItem )
-    M_POINTER                ( Target, TypeSceneItem )
+    M_REFERENCE              ( From, TypeSceneItem )
+    M_REFERENCE              ( Target, TypeSceneItem )
     M_VALUE                  ( Color, Qt::GlobalColor )
 };
 

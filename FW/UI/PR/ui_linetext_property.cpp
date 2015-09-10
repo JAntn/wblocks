@@ -35,7 +35,7 @@ QString TypeUiLineTextProperty::Value()
 
 void TypeUiLineTextProperty::OnReturnPressed()
 {
-    OnApplyChanges();
+    OnActionSave();
 }
 
 

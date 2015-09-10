@@ -1,0 +1,44 @@
+#ifndef STRUCT_H
+#define STRUCT_H
+
+#include "FW/tools.h"
+
+class TypeRecord;
+class TypeRecordFactory;
+class TypeStateReader;
+class TypeStateWriter;
+
+class TypeStruct : public TypeVariantStruct
+{
+public:
+
+    explicit TypeStruct( TypeVariant* Parent = 0 );
+    ~TypeStruct() override;
+
+    virtual TypeRecord*                          ParentRecord();
+    virtual TypeStruct*                          ParentStruct();
+
+    TypeRecord*                                  NewRecord( TypeStateWriter& state, int position = -1, TypeStruct* root = 0 );
+    TypeRecord*                                  NewRecord( QString name, QString value, QString class_name, int position = -1, TypeStruct* root = 0 );
+    TypeRecord*                                  NewRecord( TypeStateWriter& state, iterator position, TypeStruct* root = 0 );
+    TypeRecord*                                  NewRecord( QString name, QString value, QString class_name, iterator position, TypeStruct* root = 0 );
+
+    TypeRecord*                                  FromIndex( int row ) const;
+    TypeRecord*                                  FromId( QString record_id, bool deep = false ) const;
+    TypeRecord*                                  FromName(QString record_name , bool deep = false) const;
+
+    int                                          GetIndex( TypeRecord* record ) const;
+
+    static TypeRecordFactory*                    FactoryFromName( QString class_name );
+    static const QList<TypeRecordFactory*>&      FactoryList() ;
+    static void                                  InitFactoryList();
+
+    M_VALUE                                      ( Flags, long )
+
+private:
+
+    static QList<TypeRecordFactory*>             m_FactoryList;
+};
+
+
+#endif // STRUCT_H

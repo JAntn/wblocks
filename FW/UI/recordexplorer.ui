@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
+    <width>390</width>
     <height>240</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
+    <width>390</width>
     <height>0</height>
    </size>
   </property>
@@ -33,7 +33,7 @@
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>20</height>
+         <height>22</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -49,7 +49,7 @@
        <property name="minimumSize">
         <size>
          <width>60</width>
-         <height>20</height>
+         <height>22</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -61,6 +61,19 @@
        <property name="text">
         <string>Up</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../resource.qrc">
+         <normaloff>:/Icons/rcc/22x22/actions/go-up.png</normaloff>:/Icons/rcc/22x22/actions/go-up.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -68,7 +81,7 @@
        <property name="minimumSize">
         <size>
          <width>60</width>
-         <height>20</height>
+         <height>22</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -80,6 +93,19 @@
        <property name="text">
         <string>Root</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../resource.qrc">
+         <normaloff>:/Icons/rcc/22x22/actions/go-home.png</normaloff>:/Icons/rcc/22x22/actions/go-home.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -88,21 +114,21 @@
     <widget class="QTableView" name="TableView">
      <property name="minimumSize">
       <size>
-       <width>360</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>
+     <property name="locale">
+      <locale language="English" country="UnitedStates"/>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::DoubleClicked</set>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>true</bool>
      </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::ExtendedSelection</enum>
@@ -111,7 +137,7 @@
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
      <property name="showGrid">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="gridStyle">
       <enum>Qt::NoPen</enum>
@@ -147,6 +173,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

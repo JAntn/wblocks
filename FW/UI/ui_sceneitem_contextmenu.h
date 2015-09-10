@@ -1,12 +1,11 @@
 #ifndef SCENE_ITEM_CONTEXT_MENU_H
 #define SCENE_ITEM_CONTEXT_MENU_H
 
-#include "FW/macro.h"
-
+#include "FW/tools.h"
 #include <QGraphicsSceneMouseEvent>
-#include <QObject>
 
 class TypeSceneItem;
+class TypeController;
 
 class TypeUiSceneItemContextMenu : public QObject
 {
@@ -14,19 +13,21 @@ class TypeUiSceneItemContextMenu : public QObject
 
 public:
 
-    TypeUiSceneItemContextMenu( TypeSceneItem& item,
+    TypeUiSceneItemContextMenu( TypeController& controller, TypeSceneItem& item,
                               QGraphicsSceneContextMenuEvent* event,
                               QObject* parent = 0 );
 
     ~TypeUiSceneItemContextMenu() override;
 
-    M_POINTER           ( SceneItem, TypeSceneItem )
+    M_REFERENCE         ( SceneItem, TypeSceneItem )
+    M_REFERENCE         ( Controller, TypeController )
 
 public slots:
 
-    void                OnEditRecordProperties();
-    void                OnRemove();
-    void                OnRemoveFromScene();
+    void                OnActionChangePropertyWidget();
+    void                OnActionRemoveRecord();
+    void                OnActionRemoveSceneItem();
+    void                OnActionOpenRecordInEditor();
 
 };
 

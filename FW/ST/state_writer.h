@@ -1,10 +1,8 @@
 #ifndef STATEWRITER_H
 #define STATEWRITER_H
 
-#include <QStringList>
-
-#include "FW/macro.h"
-#include "FW/variant.h"
+#include "FW/tools.h"
+#include "FW/ST/state_flags.h"
 
 class TypeStateWriter : public TypeVariant
 {
@@ -18,9 +16,9 @@ public:
     virtual bool        AtEnd();
     virtual void        Next() = 0;
 
-    M_CONST_VALUE       ( Data,       QStringList )
-    M_CONST_VALUE       ( Flags,      long )
-    M_CONST_VALUE       ( Count,      long )
+    M_VALUE_READONLY    ( Data,       QStringList )
+    M_VALUE_READONLY    ( Flags,      long )
+    M_VALUE_READONLY    ( Count,      long )
 
 };
 

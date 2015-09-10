@@ -1,8 +1,8 @@
-#include "FW/BK/block_stream.h"
+#include "FW/BK/html_block_stream.h"
 #include "FW/RC/record.h"
 #include "FW/htmlbuilder.h"
-#include "FW/RC/record_struct.h"
-#include "FW/BK/block.h"
+#include "FW/RC/struct.h"
+#include "FW/BK/html_block.h"
 #include "FW/tools.h"
 
 
@@ -17,26 +17,27 @@ TypeHtmlBuilder::~TypeHtmlBuilder()
     // void
 }
 
-void TypeHtmlBuilder::Build( TypeRecordStruct& root )
+void TypeHtmlBuilder::Build( TypeStruct& root )
 {
     if( m_BlockStream != 0 )
         delete m_BlockStream;
 
-    m_BlockStream = new TypeBlockStream( this );
+    m_BlockStream = new TypeHtmlBlockStream( this );
 
     BlockStream().Append(
         "\n<!DOCTYPE html>"
-        "\n<html>"
-        "\n<script>",
+        "\n<html>",
         "" );
+
+    for( TypeVariantPtr<TypeRecord> record : root )
+        record->Html( BlockStream() );
+
+    BlockStream().Append( "\n<script>", "" );
 
     for( TypeVariantPtr<TypeRecord> record : root )
         record->Script( BlockStream() );
 
     BlockStream().Append( "\n</script>", "" );
-
-    for( TypeVariantPtr<TypeRecord> record : root )
-        record->Html( BlockStream() );
 
     BlockStream().Append( "\n</html>", "" );
 }
@@ -45,8 +46,39 @@ QString TypeHtmlBuilder::Text()
 {
     QStringList html;
 
-    for( TypeVariantPtr<TypeBlock> block : BlockStream() )
+    for( TypeVariantPtr<TypeHtmlBlock> block : BlockStream() )
+    {
         html << block->Text();
+    }
+
+    return html.join( "" );
+}
+
+QString TypeHtmlBuilder::FormattedText()
+{
+
+    QString html_block = "<span style=\"background-color:White\">";
+    QString html_not_editable = "<span style=\"background-color:WhiteSmoke\">";
+    QString html_selected = "<span style=\"background-color:PaleGreen\">";
+    QString html_end = "</span>";
+    QStringList html;
+
+    for( TypeVariantPtr<TypeHtmlBlock> block : BlockStream() )
+    {
+
+        QString text = block->Text();
+        text = text.toHtmlEscaped();
+        text = text.replace("\n","<br>");
+        text = text.replace("\t","&nbsp;&nbsp;&nbsp;&nbsp;");
+        text = text.replace(" ","&nbsp;");
+
+        if( block->RecordId().isEmpty() )
+            html << html_not_editable << text << html_end;
+        else if( block->Selected() )
+            html << html_selected << text << html_end;
+        else if( !block->Selected() )
+            html << html_block << text << html_end;
+    }
 
     return html.join( "" );
 }

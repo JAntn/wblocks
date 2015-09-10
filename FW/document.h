@@ -1,14 +1,11 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-#include "FW/macro.h"
-#include "FW/variant.h"
-
-#include <QFile>
-#include <QObject>
+#include "FW/tools.h"
 
 class TypeScene;
-class TypeRecordStruct;
+class TypeStruct;
+class TypeStructRecord;
 class TypeScript;
 class TypeDatabase;
 class TypeRecord;
@@ -16,7 +13,8 @@ class TypeSceneItem;
 class TypeController;
 class TypeContext;
 class TypeClipboard;
-class TypeBlockStream;
+class TypeHtmlBlockStream;
+class TypeRootStruct;
 
 class TypeDocument : public TypeVariant
 {
@@ -32,14 +30,14 @@ public:
     void                UpdateHtml();
     void                Clear();
 
-    M_VALUE             ( Html,            QString )
-    M_POINTER           ( HtmlBlockStream, TypeBlockStream )
+    //M_VALUE             ( Html,            QString )
+    //M_REFERENCE         ( HtmlBlockStream, TypeHtmlBlockStream )
     M_VALUE             ( FileName,        QString )
     M_VALUE             ( Path,            QString )
-    M_POINTER           ( Root,            TypeRecordStruct )
-    M_POINTER           ( Scene,           TypeScene )
-    M_POINTER           ( Context,         TypeContext )
-    M_POINTER           ( Controller,      TypeController )
+    M_REFERENCE         ( Root,            TypeRootStruct )
+    M_REFERENCE         ( Scene,           TypeScene )
+    M_REFERENCE         ( Context,         TypeContext )
+    M_REFERENCE         ( Controller,      TypeController )
 
 };
 

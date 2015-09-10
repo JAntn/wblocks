@@ -1,7 +1,7 @@
 #ifndef UITEXTEDITOR_H
 #define UITEXTEDITOR_H
 
-#include "FW/macro.h"
+#include "FW/tools.h"
 #include "FW/UI/ED/ui_editor.h"
 
 class TypeUiSyntaxHighlighter;
@@ -25,23 +25,24 @@ public:
                                TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
     ~TypeUiTextEditor();
 
-    virtual QString                    Text();
-    virtual void                       SetText( QString text, bool signal_block = false );
-    void                               SetSyntaxHighlighter( TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
+    QString                                 Text();
+    void                                    SetText( QString text );
+    void                                    SetFormattedText( QString text );
 
-protected:
+    void                                    SetSyntaxHighlighter( TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
+    void                                    UpdateTitle();
 
-    QTextEdit&                         TextEditWidget();
-    QLineEdit&                         NameLineEditWidget();
+    M_VALUE                                 ( ShowTitleAsterisc, bool )
 
 public slots:
 
-    void                               OnTextChanged();
+    void                                    OnTextChanged();
+    void                                    OnTextSaved();
 
-private:
+protected:
 
-    TypeUiSyntaxHighlighter*           m_SyntaxHighlighter;
-    Ui::TypeUiTextEditor*              ui;
+    TypeUiSyntaxHighlighter*                m_SyntaxHighlighter;
+    Ui::TypeUiTextEditor*                   ui;
 };
 
 #endif // UITEXTEDITOR_H

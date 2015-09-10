@@ -1,7 +1,7 @@
 #include "FW/SC/scene.h"
 #include "FW/SC/scene_item.h"
 #include "FW/RC/record.h"
-#include "FW/RC/record_struct.h"
+#include "FW/RC/struct.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/clipboard.h"
@@ -38,21 +38,11 @@ void TypeClipboard::Cut( const QList<TypeRecord*>& records )
     m_Flags = 0;
 }
 
-void TypeClipboard::Paste( TypeRecordStruct& record_struct, int position )
+void TypeClipboard::Paste( TypeStruct& record_struct, int position )
 {
+    // make a deep copy of clipboard contents
+
     QList<QStringList> table;
-    QList<TypeVariant*>::iterator iter;
-
-    if ( position < 0 )
-        iter = record_struct.end();
-    else
-    {
-        iter = record_struct.begin();
-
-        for( int count = 0; count < position; count++ )
-            ++iter;
-    }
-
     TypeStateReaderTable reader( table );
 
     for( TypeRecord* record : Data() )
@@ -61,7 +51,7 @@ void TypeClipboard::Paste( TypeRecordStruct& record_struct, int position )
     TypeStateWriterTable writer( table, m_Flags );
 
     while( !writer.AtEnd() )
-        record_struct.NewRecord( writer, iter );
+        record_struct.NewRecord( writer, position );
 
     Clear();
 }

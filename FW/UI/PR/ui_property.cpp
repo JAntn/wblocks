@@ -8,7 +8,13 @@ TypeUiProperty::TypeUiProperty( TypeUiProperty::TypeSaveCallback on_changed , QW
     // void
 }
 
-void TypeUiProperty::OnApplyChanges(  )
+bool TypeUiProperty::empty_save_callback( TypeUiProperty& )
 {
-    m_SaveCallback( *this );
+    return true;
+}
+
+void TypeUiProperty::OnActionSave(  )
+{
+    if( m_SaveCallback( *this ) )
+        emit HasSaved();
 }

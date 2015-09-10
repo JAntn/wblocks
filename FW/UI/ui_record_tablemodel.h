@@ -1,11 +1,10 @@
 #ifndef UIRECORDTABLEMODEL_H
 #define UIRECORDTABLEMODEL_H
 
-#include "FW/macro.h"
-
+#include "FW/tools.h"
 #include <QAbstractTableModel>
 
-class TypeRecordStruct;
+class TypeStruct;
 class TypeDocument;
 
 class TypeUiRecordTableModel : public QAbstractTableModel
@@ -14,7 +13,7 @@ class TypeUiRecordTableModel : public QAbstractTableModel
 
 public:
 
-    explicit TypeUiRecordTableModel( TypeDocument& document, QObject* parent = 0 );
+    explicit TypeUiRecordTableModel( TypeStruct& struct_val, QObject* parent = 0 );
     ~TypeUiRecordTableModel() override;
 
     int                           rowCount( const QModelIndex& parent = QModelIndex() ) const override;
@@ -22,9 +21,7 @@ public:
     QVariant                      data( const QModelIndex& index, int role ) const override;
     QVariant                      headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const override;
 
-    TypeRecordStruct&               Records() const;
-
-    M_POINTER                     ( Document, TypeDocument )
+    M_REFERENCE                   ( Struct, TypeStruct )
 
 };
 

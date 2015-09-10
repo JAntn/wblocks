@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>979</width>
-    <height>761</height>
+    <width>894</width>
+    <height>804</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,19 +21,23 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QTabWidget" name="LeftTabWidget">
-       <property name="minimumSize">
-        <size>
-         <width>400</width>
-         <height>600</height>
-        </size>
-       </property>
        <property name="tabPosition">
         <enum>QTabWidget::West</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
        </property>
        <widget class="QWidget" name="RecordExplorerTab">
+        <attribute name="icon">
+         <iconset resource="../../resource.qrc">
+          <normaloff>:/Icons/rcc/22x22/emotes/face-monkey.png</normaloff>:/Icons/rcc/22x22/emotes/face-monkey.png</iconset>
+        </attribute>
         <attribute name="title">
          <string>Records</string>
         </attribute>
@@ -63,6 +67,10 @@
         </layout>
        </widget>
        <widget class="QWidget" name="FileExplorerTab">
+        <attribute name="icon">
+         <iconset resource="../../resource.qrc">
+          <normaloff>:/Icons/rcc/22x22/places/folder.png</normaloff>:/Icons/rcc/22x22/places/folder.png</iconset>
+        </attribute>
         <attribute name="title">
          <string>Files</string>
         </attribute>
@@ -110,12 +118,22 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
         </property>
         <property name="movable">
          <bool>true</bool>
         </property>
         <widget class="QWidget" name="Scene">
+         <attribute name="icon">
+          <iconset resource="../../resource.qrc">
+           <normaloff>:/Icons/rcc/22x22/mimetypes/x-office-presentation.png</normaloff>:/Icons/rcc/22x22/mimetypes/x-office-presentation.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Scene</string>
          </attribute>
@@ -136,11 +154,55 @@
            <number>0</number>
           </property>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="ButtonAddScene">
+              <property name="text">
+               <string>Add</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../resource.qrc">
+                <normaloff>:/Icons/rcc/22x22/actions/list-add.png</normaloff>:/Icons/rcc/22x22/actions/list-add.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QGraphicsView" name="GraphicsView"/>
           </item>
          </layout>
         </widget>
         <widget class="QWidget" name="Editor">
+         <attribute name="icon">
+          <iconset resource="../../resource.qrc">
+           <normaloff>:/Icons/rcc/22x22/mimetypes/text-x-generic.png</normaloff>:/Icons/rcc/22x22/mimetypes/text-x-generic.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Editor</string>
          </attribute>
@@ -161,17 +223,129 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" name="EditorLayout">
+           <layout class="QVBoxLayout" name="EditorLayoutTop">
             <property name="spacing">
              <number>0</number>
             </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="sizeConstraint">
+               <enum>QLayout::SetMinimumSize</enum>
+              </property>
+              <item>
+               <widget class="QPushButton" name="ButtonNewFile">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>New</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/document-new.png</normaloff>:/Icons/rcc/22x22/actions/document-new.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ButtonOpenFile">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Open</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/document-open.png</normaloff>:/Icons/rcc/22x22/actions/document-open.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ButtonSaveFile">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Save</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/document-save.png</normaloff>:/Icons/rcc/22x22/actions/document-save.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="EditorLayout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+             </layout>
+            </item>
            </layout>
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="Client">
+        <widget class="QWidget" name="HtmlText">
+         <attribute name="icon">
+          <iconset resource="../../resource.qrc">
+           <normaloff>:/Icons/rcc/22x22/mimetypes/text-html.png</normaloff>:/Icons/rcc/22x22/mimetypes/text-html.png</iconset>
+         </attribute>
          <attribute name="title">
-          <string>Client</string>
+          <string>Html</string>
          </attribute>
          <layout class="QVBoxLayout" name="_2">
           <property name="spacing">
@@ -190,13 +364,144 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" name="HtmlTextLayout"/>
+           <layout class="QVBoxLayout" name="HtmlTextLayoutTop">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="ButtonRecordAdd">
+                <property name="text">
+                 <string>Add</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/list-add.png</normaloff>:/Icons/rcc/22x22/actions/list-add.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ButtonPaste">
+                <property name="text">
+                 <string>Paste</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/edit-paste.png</normaloff>:/Icons/rcc/22x22/actions/edit-paste.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ButtonCopy">
+                <property name="text">
+                 <string>Copy</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/edit-copy.png</normaloff>:/Icons/rcc/22x22/actions/edit-copy.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ButtonCut">
+                <property name="text">
+                 <string>Cut</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/edit-cut.png</normaloff>:/Icons/rcc/22x22/actions/edit-cut.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ButtonRemove">
+                <property name="text">
+                 <string>remove</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/actions/edit-clear.png</normaloff>:/Icons/rcc/22x22/actions/edit-clear.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="HtmlTextLayout"/>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="Output">
+        <widget class="QWidget" name="HtmlWeb">
+         <attribute name="icon">
+          <iconset resource="../../resource.qrc">
+           <normaloff>:/Icons/rcc/22x22/mimetypes/image-x-generic.png</normaloff>:/Icons/rcc/22x22/mimetypes/image-x-generic.png</iconset>
+         </attribute>
          <attribute name="title">
-          <string>Output</string>
+          <string>Web</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
@@ -220,6 +525,46 @@
              <number>0</number>
             </property>
             <item>
+             <layout class="QHBoxLayout" name="horizontal_2">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="ButtonUpdateWeb">
+                <property name="text">
+                 <string>Update</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../resource.qrc">
+                  <normaloff>:/Icons/rcc/22x22/mimetypes/image-x-generic.png</normaloff>:/Icons/rcc/22x22/mimetypes/image-x-generic.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
              <widget class="QWebView" name="WebView">
               <property name="url">
                <url>
@@ -237,7 +582,7 @@
         <property name="minimumSize">
          <size>
           <width>400</width>
-          <height>200</height>
+          <height>240</height>
          </size>
         </property>
         <property name="tabPosition">
@@ -246,7 +591,17 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
         <widget class="QWidget" name="PropertiesTab">
+         <attribute name="icon">
+          <iconset resource="../../resource.qrc">
+           <normaloff>:/Icons/rcc/22x22/categories/preferences-system.png</normaloff>:/Icons/rcc/22x22/categories/preferences-system.png</iconset>
+         </attribute>
          <attribute name="title">
           <string>Properties</string>
          </attribute>
@@ -320,7 +675,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>979</width>
+     <width>894</width>
      <height>21</height>
     </rect>
    </property>
@@ -347,21 +702,21 @@
     <addaction name="ActionCut"/>
     <addaction name="ActionPaste"/>
     <addaction name="separator"/>
-    <addaction name="ActionAdd_to_scene"/>
-    <addaction name="separator"/>
     <addaction name="ActionAdd"/>
     <addaction name="ActionRemove"/>
     <addaction name="separator"/>
     <addaction name="ActionProperties"/>
     <addaction name="ActionOpen_In_Editor"/>
+    <addaction name="separator"/>
+    <addaction name="ActionAdd_to_scene"/>
    </widget>
    <widget class="QMenu" name="menuScript">
     <property name="title">
-     <string>Client</string>
+     <string>Html</string>
     </property>
-    <addaction name="ActionRunClientScript"/>
-    <addaction name="ActionUpdateClientScript"/>
-    <addaction name="ActionSaveClientScript"/>
+    <addaction name="ActionRunHtmlFile"/>
+    <addaction name="ActionUpdateHtmlFile"/>
+    <addaction name="ActionSaveHtmlFile"/>
    </widget>
    <widget class="QMenu" name="menuFile_2">
     <property name="title">
@@ -383,31 +738,55 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="ActionFileLoad">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-open.png</normaloff>:/Icons/rcc/22x22/actions/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>Load</string>
    </property>
   </action>
   <action name="ActionFileSave">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-save.png</normaloff>:/Icons/rcc/22x22/actions/document-save.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="ActionAdd">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/list-add.png</normaloff>:/Icons/rcc/22x22/actions/list-add.png</iconset>
+   </property>
    <property name="text">
     <string>Add</string>
    </property>
   </action>
   <action name="ActionNew">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-new.png</normaloff>:/Icons/rcc/22x22/actions/document-new.png</iconset>
+   </property>
    <property name="text">
     <string>New</string>
    </property>
   </action>
   <action name="ActionExit">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/system-log-out.png</normaloff>:/Icons/rcc/22x22/actions/system-log-out.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
   <action name="ActionFind">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/edit-find.png</normaloff>:/Icons/rcc/22x22/actions/edit-find.png</iconset>
+   </property>
    <property name="text">
     <string>Find</string>
    </property>
@@ -422,47 +801,83 @@
     <string>Save SQL</string>
    </property>
   </action>
-  <action name="ActionRunClientScript">
+  <action name="ActionRunHtmlFile">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/mimetypes/image-x-generic.png</normaloff>:/Icons/rcc/22x22/mimetypes/image-x-generic.png</iconset>
+   </property>
    <property name="text">
     <string>Run</string>
    </property>
   </action>
-  <action name="ActionSaveClientScript">
+  <action name="ActionSaveHtmlFile">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-save.png</normaloff>:/Icons/rcc/22x22/actions/document-save.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="ActionRemove">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/edit-clear.png</normaloff>:/Icons/rcc/22x22/actions/edit-clear.png</iconset>
+   </property>
    <property name="text">
     <string>Remove</string>
    </property>
   </action>
   <action name="ActionCopy">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/edit-copy.png</normaloff>:/Icons/rcc/22x22/actions/edit-copy.png</iconset>
+   </property>
    <property name="text">
     <string>Copy</string>
    </property>
   </action>
   <action name="ActionPaste">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/edit-paste.png</normaloff>:/Icons/rcc/22x22/actions/edit-paste.png</iconset>
+   </property>
    <property name="text">
     <string>Paste</string>
    </property>
   </action>
   <action name="ActionEdit">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/categories/preferences-system.png</normaloff>:/Icons/rcc/22x22/categories/preferences-system.png</iconset>
+   </property>
    <property name="text">
     <string>Edit</string>
    </property>
   </action>
   <action name="ActionAdd_to_scene">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/list-add.png</normaloff>:/Icons/rcc/22x22/actions/list-add.png</iconset>
+   </property>
    <property name="text">
     <string>Add to scene</string>
    </property>
   </action>
   <action name="ActionCut">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/edit-cut.png</normaloff>:/Icons/rcc/22x22/actions/edit-cut.png</iconset>
+   </property>
    <property name="text">
     <string>Cut</string>
    </property>
   </action>
   <action name="ActionNewEditorFile">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-new.png</normaloff>:/Icons/rcc/22x22/actions/document-new.png</iconset>
+   </property>
    <property name="text">
     <string>New</string>
    </property>
@@ -478,6 +893,10 @@
    </property>
   </action>
   <action name="ActionSaveEditorFile">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-save.png</normaloff>:/Icons/rcc/22x22/actions/document-save.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
@@ -488,21 +907,37 @@
    </property>
   </action>
   <action name="ActionLoadEditorFile">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-open.png</normaloff>:/Icons/rcc/22x22/actions/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>Load</string>
    </property>
   </action>
-  <action name="ActionUpdateClientScript">
+  <action name="ActionUpdateHtmlFile">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/mimetypes/text-html.png</normaloff>:/Icons/rcc/22x22/mimetypes/text-html.png</iconset>
+   </property>
    <property name="text">
     <string>Update</string>
    </property>
   </action>
   <action name="ActionProperties">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../rcc/22x22/categories/preferences-system.png</normaloff>../../rcc/22x22/categories/preferences-system.png</iconset>
+   </property>
    <property name="text">
     <string>Properties</string>
    </property>
   </action>
   <action name="ActionOpen_In_Editor">
+   <property name="icon">
+    <iconset resource="../../resource.qrc">
+     <normaloff>:/Icons/rcc/22x22/actions/document-open.png</normaloff>:/Icons/rcc/22x22/actions/document-open.png</iconset>
+   </property>
    <property name="text">
     <string>Open In Editor</string>
    </property>
@@ -516,6 +951,169 @@
    <header>QtWebKitWidgets/QWebView</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../../resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>ButtonNewFile</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionNewEditorFile</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>677</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonOpenFile</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionLoadEditorFile</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonSaveFile</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionSaveEditorFile</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>514</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonRecordAdd</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionAdd</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>434</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonCut</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionCut</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>474</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonCopy</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionCopy</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>514</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonPaste</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionPaste</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>554</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonRemove</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionRemove</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>610</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonAddScene</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionAdd_to_scene</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonUpdateWeb</sender>
+   <signal>clicked()</signal>
+   <receiver>ActionRunHtmlFile</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

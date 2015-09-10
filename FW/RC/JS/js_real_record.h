@@ -1,7 +1,6 @@
 #ifndef JSREALRECORD_H
 #define JSREALRECORD_H
 
-#include "FW/macro.h"
 #include "FW/RC/real_record.h"
 
 class TypeStateWriter;
@@ -11,11 +10,11 @@ class TypeJsRealRecord : public TypeRealRecord
 {
 public:
 
-    explicit TypeJsRealRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
-    TypeJsRealRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeJsRealRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeStruct* root = 0 );
+    TypeJsRealRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeStruct* root = 0 );
     ~TypeJsRealRecord() override;
 
-    void                Script(TypeBlockStream& block_stream) override;
+    void                Script(TypeHtmlBlockStream& block_stream) override;
 
 private:
 
@@ -30,8 +29,8 @@ public:
 
     TypeJsRealRecordFactory();
 
-    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
-    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
 };
 
 #endif // JS_REALRECORD_H

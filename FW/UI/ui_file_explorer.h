@@ -1,10 +1,8 @@
 #ifndef UIFILEEXPLORER_H
 #define UIFILEEXPLORER_H
 
-#include "FW/variant.h"
-#include "FW/macro.h"
+#include "FW/tools.h"
 #include <QStringListModel>
-#include <QWidget>
 
 class TypeDocument;
 class TypeController;
@@ -23,25 +21,25 @@ public:
     TypeUiFileExplorer( TypeController& controller, QWidget* parent = 0 );
     ~TypeUiFileExplorer();
 
-    M_VALUE                       ( Path,       QString )
-    M_VALUE                       ( ModelData,  QStringList )
-    M_POINTER                     ( Model,      QStringListModel )
-    M_POINTER                     ( Controller, TypeController )
+    M_VALUE                                 ( Path,       QString )
+    M_VALUE                                 ( ModelData,  QStringList )
+    M_REFERENCE                             ( Model,      QStringListModel )
+    M_REFERENCE                             ( Controller, TypeController )
 
-    void                          Update();
-    void                          Open( QString file_name );
+    void                                    Update();
+    void                                    Open( QString file_name );
 
 public slots:
 
-    void OnRootButtonClicked();
-    void OnUpButtonClicked();
-    void OnDoubleClicked( const QModelIndex& index );
-    void OnLineEditReturnPressed();
+    void                                    OnRootButtonClicked();
+    void                                    OnUpButtonClicked();
+    void                                    OnDoubleClicked( const QModelIndex& index );
+    void                                    OnLineEditReturnPressed();
 
 private:
 
-    QString                       FullPath();
-    Ui::TypeUiFileExplorer*       ui;
+    QString                                 FullPath();
+    Ui::TypeUiFileExplorer*                 ui;
 };
 
 #endif // UIFILEEXPLORER_H

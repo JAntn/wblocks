@@ -10,8 +10,8 @@ public:
     TypeStateWriterTable(QList<QStringList>& table, long flags = 0, TypeVariant* Parent = 0 );
     void                Next() override;
 
-    M_CONST_POINTER     ( Table, QList<QStringList> )
-    M_CONST_VALUE       ( Iter,  QList<QStringList>::iterator )
+    M_REFERENCE_READONLY  ( Table, QList<QStringList> )
+    M_VALUE_READONLY    ( Iter,  QList<QStringList>::iterator )
 
 };
 

@@ -1,9 +1,8 @@
 #ifndef UIRECORDNAMEPROPERTY_H
 #define UIRECORDNAMEPROPERTY_H
 
-#include "FW/macro.h"
+#include "FW/tools.h"
 #include "FW/UI/PR/ui_property.h"
-#include <QWidget>
 
 class TypeRecord;
 class TypeStringRecord;

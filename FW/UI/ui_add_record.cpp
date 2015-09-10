@@ -20,13 +20,13 @@ TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& conte
     QStringListModel* model = new QStringListModel( this );
     QStringList class_list;
 
-    for( TypeRecordFactory* record_factory : TypeRecordStruct::FactoryList() )
+    for( TypeRecordFactory* record_factory : TypeStruct::FactoryList() )
         class_list << record_factory->RecordClass();
 
     model->setStringList( class_list );
     ui->ListView->setModel( model );
     ui->ListView->setCurrentIndex( model->index( 0 ) );
-    ui->SpinBox->setMaximum( ( index < 0 ) ? Context().Records().Size() : index );
+    ui->SpinBox->setMaximum( ( index < 0 ) ? Context().Struct().Size() : index );
     ui->SpinBox->setMinimum( 0 );
     ui->SpinBox->setValue( index  );
     ui->LineEdit->setText( "" );
@@ -53,7 +53,7 @@ bool TypeUiAddRecord::CheckFormData() const
 {
     int index = ui->SpinBox->value();
 
-    if ( ( index > Context().Records().Size() ) || ( index < 0 ) )
+    if ( ( index > Context().Struct().Size() ) || ( index < 0 ) )
     {
         TypeController::Message( tr( "Position out of bounds" ) );
         return false;
@@ -72,7 +72,7 @@ void TypeUiAddRecord::OnButtonBoxAccepted()
 {
     if( CheckFormData() )
     {
-        auto iter = TypeRecordStruct::FactoryList().begin();
+        auto iter = TypeStruct::FactoryList().begin();
         int count = 0;
 
         while( count < ui->ListView->currentIndex().row() )
@@ -85,13 +85,13 @@ void TypeUiAddRecord::OnButtonBoxAccepted()
         QString name = ui->LineEdit->text();
         int index = ui->SpinBox->value();
 
-        TypeRecord* record = Context().Records().NewRecord(
+        TypeRecord* record = Context().Struct().NewRecord(
                                name, "", class_name, index, &Context().Root() );
 
         if( ui->CheckBox->isChecked() )
-            Context().Scene().CreateItem( *record );
+            Context().Scene().NewItem( *record );
 
-        Controller().SetPropertyWidgetRecord( *record );
+        emit Controller().SetActiveRecord( record );
         emit Controller().RecordsChanged();
         close();
     }

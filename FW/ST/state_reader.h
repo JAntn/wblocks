@@ -1,10 +1,9 @@
 #ifndef STATEREADER_H
 #define STATEREADER_H
 
-#include <QStringList>
+#include "FW/tools.h"
+#include "FW/ST/state_flags.h"
 
-#include "FW/macro.h"
-#include "FW/variant.h"
 
 class TypeStateReader : public TypeVariant
 {
@@ -17,8 +16,8 @@ public:
     virtual void        Read( QStringList& data) = 0;
     virtual bool        AtEnd();
 
-    M_CONST_VALUE       ( Flags,      long )
-    M_CONST_VALUE       ( Count,      long )
+    M_VALUE_READONLY    ( Flags,      long )
+    M_VALUE_READONLY    ( Count,      long )
 
 };
 

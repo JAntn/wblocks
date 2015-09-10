@@ -1,12 +1,12 @@
 #include "FW/controller.h"
 #include "FW/RC/record.h"
-#include "FW/RC/record_struct.h"
+#include "FW/RC/struct.h"
 #include "FW/SC/scene.h"
 #include "FW/UI/ED/ui_text_editor.h"
 #include "FW/UI/SH/ui_syntax_highlighter.h"
 #include "FW/UI/SH/ui_syntax_highlighter_factory.h"
 #include "FW/UI/ui_main_window.h"
-#include "FW/UI/ED/ui_html_blocks_editor.h"
+#include "FW/UI/ED/ui_html_text_view.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_add_record.h"
 #include "FW/UI/ui_editor_container.h"
@@ -119,9 +119,9 @@ void TypeController::ConnectSlots()
 
     connect(
         this,
-        TypeController::HtmlBlocksChanged,
+        TypeController::HtmlTextChanged,
         this,
-        TypeController::OnHtmlBlocksChanged );
+        TypeController::OnHtmlTextChanged );
 
     connect(
         this,
@@ -142,20 +142,15 @@ void TypeController::ConnectSlots()
         TypeController::OnEditorContainerChanged );
 }
 
-void TypeController::SetPropertyWidgetRecord( TypeRecord& record )
-{
-    MainWindow().SetPropertyWidget( record.PropertyWidget( *this ) );
-}
-
 void TypeController::OpenRecordEditorWidget( TypeRecord& record )
 {
     QString id = "RECORD:" + record.Id();
 
-    if( MainWindow().TextEditorContainer().HasId( id ) )
+    if( MainWindow().EditorContainer().HasId( id ) )
     {
         if( TypeController::AcceptMessage( QCoreApplication::translate( "TypeController", "Record already opened.\n\nLoad again?" ) ) )
         {
-            MainWindow().TextEditorContainer().Close( id );
+            MainWindow().EditorContainer().Close( id );
             MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
         }
 
@@ -187,35 +182,36 @@ QString TypeController::NewFileNameId( QString file_name )
     return "FILE:TEXT:" + file_name;
 }
 
-QString TypeController::NewHtmlBlocksEditorId( QString file_name )
+QString TypeController::NewHtmlTextViewId( QString file_name )
 {
     QString file_ext = file_name.split( "." ).back();
 
     if( file_ext == "prj" )
-        return "BLOCKS:PRJ:" + file_name;
+        return "STRUCT:PRJ:" + file_name;
 
     if( file_ext == "sql" )
-        return "BLOCKS:SQL:" + file_name;
+        return "STRUCT:SQL:" + file_name;
 
-    return "BLOCKS:TEXT:" + file_name;
+    return "STRUCT:UNKNOWN:" + file_name;
 }
 
 void TypeController::OpenFileUiEditor( QString file_name )
 {
     QString id = NewFileNameId( file_name );
 
-    if( MainWindow().TextEditorContainer().HasId( id ) )
+    if( MainWindow().EditorContainer().HasId( id ) )
     {
         if( !TypeController::AcceptMessage( tr( "File already open. Load again?" ) ) )
             return;
 
-        MainWindow().TextEditorContainer().Close( id );
+        MainWindow().EditorContainer().Close( id );
     }
 
     TypeUiEditor::TypeSaveCallback save_callback = [file_name]( TypeUiEditor & editor_base )
     {
         TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
         SaveTextFile( file_name, editor->Text() );
+        return true;
     };
 
     TypeUiSyntaxHighlighter* syntax_highlighter = SyntaxHighlighterFactory().NewInstance( id.split( ":" )[1] );
@@ -226,9 +222,11 @@ void TypeController::OpenFileUiEditor( QString file_name )
         syntax_highlighter/*syntax highlighter*/ );
 
     text_editor->SetText( LoadTextFile( file_name ) );
+    text_editor->SetHasChanged( false );
+    text_editor->UpdateTitle();
 
-    MainWindow().TextEditorContainer().Append( text_editor );
-    MainWindow().TextEditorContainer().SetCurrent( id );
+    MainWindow().EditorContainer().Append( text_editor );
+    MainWindow().EditorContainer().SetCurrent( id );
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
@@ -240,12 +238,12 @@ void TypeController::OnDirectoryChanged()
 
 void TypeController::OnRecordExplorerChanged()
 {
-    MainWindow().UpdateMenubar();
+    MainWindow().UpdateActions();
 }
 
 void TypeController::OnFileExplorerChanged()
 {
-    MainWindow().UpdateMenubar();
+    MainWindow().UpdateActions();
 }
 
 void TypeController::OnRecordsChanged()
@@ -256,14 +254,14 @@ void TypeController::OnRecordsChanged()
     Document().UpdateHtml();
 }
 
-void TypeController::OnHtmlBlocksChanged()
+void TypeController::OnHtmlTextChanged()
 {
     MainWindow().UpdateHtmlTextView();
 }
 
 void TypeController::OnEditorContainerChanged()
 {
-    MainWindow().UpdateMenubar();
+    MainWindow().UpdateActions();
 }
 
 void TypeController::OnSceneChanged()
@@ -276,11 +274,9 @@ void TypeController::OnActionNewProjectFile()
     Document().Clear();
     MainWindow().SetTitle( "" );
 
-    // !!!
-    MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
-    MainWindow().HtmlBlocksEditor().SetHasChanged( false );
-    // TODO: multiple module support implementation
-
+    MainWindow().HtmlTextView().SetName( "" );
+    MainWindow().HtmlTextView().SetHasChanged( false );
+    MainWindow().HtmlTextView().UpdateTitle();
 }
 
 
@@ -296,7 +292,7 @@ void TypeController::OnActionLoadProjectFile()
 
     if( file_name.isEmpty() )
     {
-        qDebug() << "File Selection failed";
+        qDebug() << "File selection cancelled";
         return;
     }
 
@@ -306,16 +302,14 @@ void TypeController::OnActionLoadProjectFile()
     {
         qDebug() << "Load project successfull";
 
+        MainWindow().HtmlTextView().SetName( Document().FileName() );
+        MainWindow().HtmlTextView().OnActionSave();
+
         Config().SetProjectFileName( Document().FileName() );
         Config().SetProjectPath( Document().Path() );
         QDir().setCurrent( Config().ProjectPath() );
         emit DirectoryChanged();
-        MainWindow().SetTitle( Document().FileName() );
 
-        // !!!
-        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
-        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
-        // TODO: multiple module support implementation
         return;
     }
 
@@ -334,7 +328,7 @@ void TypeController::OnActionSaveProjectFile()
 
     if( file_name.isEmpty() )
     {
-        qDebug() << "File Selection failed";
+        qDebug() << "File selection cancelled";
         return;
     }
 
@@ -345,16 +339,14 @@ void TypeController::OnActionSaveProjectFile()
     {
         qDebug() << "Save project successfull";
 
+        MainWindow().HtmlTextView().SetName( Document().FileName() );
+        MainWindow().HtmlTextView().OnActionSave();
+
         Config().SetProjectFileName( Document().FileName() );
         Config().SetProjectPath( Document().Path() );
         QDir().setCurrent( Config().ProjectPath() );
         emit DirectoryChanged();
-        MainWindow().SetTitle( Document().FileName() );
 
-        // !!!
-        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
-        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
-        // TODO: multiple module support implementation
         return;
     }
 
@@ -373,7 +365,7 @@ void TypeController::OnActionLoadProjectSQL()
 
     if( file_name.isEmpty() )
     {
-        qDebug() << "File Selection failed";
+        qDebug() << "File selection canceled";
         return;
     }
 
@@ -383,16 +375,14 @@ void TypeController::OnActionLoadProjectSQL()
     {
         qDebug() << "Load project SQL successfull";
 
+        MainWindow().HtmlTextView().SetName( Document().FileName() );
+        MainWindow().HtmlTextView().OnActionSave();
+
         Config().SetProjectFileName( Document().FileName() );
         Config().SetProjectPath( Document().Path() );
         QDir().setCurrent( Config().ProjectPath() );
         emit DirectoryChanged();
-        MainWindow().SetTitle( Document().FileName() );
 
-        // !!!
-        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
-        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
-        // TODO: multiple module support implementation
         return;
     }
 
@@ -411,7 +401,7 @@ void TypeController::OnActionSaveProjectSQL()
 
     if( file_name.isEmpty() )
     {
-        qDebug() << "File Selection failed";
+        qDebug() << "File selection canceled";
         return;
     }
 
@@ -422,23 +412,21 @@ void TypeController::OnActionSaveProjectSQL()
     {
         qDebug() << "Load project SQL successfull";
 
+        MainWindow().HtmlTextView().SetName( Document().FileName() );
+        MainWindow().HtmlTextView().OnActionSave();
+
         Config().SetProjectFileName( Document().FileName() );
         Config().SetProjectPath( Document().Path() );
         QDir().setCurrent( Config().ProjectPath() );
         emit DirectoryChanged();
-        MainWindow().SetTitle( Document().FileName() );
 
-        // !!!
-        MainWindow().HtmlBlocksEditor().SetFileTitle( Document().FileName() );
-        MainWindow().HtmlBlocksEditor().SetHasChanged( false );
-        // TODO: multiple module support implementation
         return;
     }
 
     qDebug() << "Load project SQL error. Code " << error;
 }
 
-void TypeController::OnActionSaveHtmlBlocks()
+void TypeController::OnActionSaveHtmlFile()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
@@ -458,7 +446,7 @@ void TypeController::OnActionSaveHtmlBlocks()
 
     TypeController::SaveTextFile(
         file_name,
-        Document().Html()
+        HtmlBuilder().Text()
     );
 
     MainWindow().UpdateFileExplorer();
@@ -466,42 +454,36 @@ void TypeController::OnActionSaveHtmlBlocks()
 
 void TypeController::OnActionChangePropertyWidget()
 {
-    long action_flags = Document().Context().Records().Flags() ;
+    long action_flags = Document().Context().Struct().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
-    if( ( action_flags & FLAG_ACTION_PROPERTIES ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_ACTIVATE ) && has_selection )
     {
         TypeVariantPtr<TypeRecord> record =
             *MainWindow().RecordExplorer().Selection().begin();
 
-        if( !( record->Flags() & FLAG_ACTION_PROPERTIES ) )
+        if( !( record->Flags() & FLAG_ACTION_ACTIVATE ) )
         {
-            qDebug() << "FLAG_ACTION_PROPERTIES is disabled on Record:"
+            qDebug() << "FLAG_ACTION_ACTIVATE is disabled on record"
                      << record->Name();
             return;
         }
 
-        SetPropertyWidgetRecord( *record );
+        emit SetActiveRecord( record );
 
     }
     else
     {
         if( has_selection )
-        {
-            qDebug() << "FLAG_ACTION_PROPERTIES is disabled on Struct:"
-                     << Document().Context().Records().Name();
-        }
+            qDebug() << "FLAG_ACTION_ACTIVATE is disabled on parent struct";
         else
-        {
-            qDebug() << "Change record properties: nothing selected"
-                     << Document().Context().Records().Name();
-        }
+            qDebug() << "Change record properties: nothing selected";
     }
 }
 
 void TypeController::OnActionRemoveRecord()
 {
-    long action_flags = Document().Context().Records().Flags() ;
+    long action_flags = Document().Context().Struct().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
     if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection )
@@ -523,11 +505,12 @@ void TypeController::OnActionRemoveRecord()
         {
             if( !( record->Flags() & FLAG_ACTION_REMOVE ) )
             {
-                qDebug() << "FLAG_ACTION_REMOVE is disabled on Record:"
-                         << record->Name();
+                qDebug() << "FLAG_ACTION_REMOVE is disabled on record" << record->Name();
                 return;
             }
         }
+
+        emit SetActiveRecord(0);
 
         for( TypeRecord* record : selection_list )
             delete record;
@@ -535,20 +518,16 @@ void TypeController::OnActionRemoveRecord()
         emit RecordsChanged();
     }
     else
-    {
-        qDebug() << "FLAG_ACTION_REMOVE is disabled on Struct:"
-                 << Document().Context().Records().Name();
-    }
+        qDebug() << "FLAG_ACTION_REMOVE is disabled on parent struct.";
 }
 
 void TypeController::OnActionAddRecord()
 {
-    long action_flags = Document().Context().Records().Flags() ;
+    long action_flags = Document().Context().Struct().Flags() ;
 
     if( !( action_flags & FLAG_ACTION_ADD ) )
     {
-        qDebug() << "FLAG_ACTION_ADD is disabled on Struct:"
-                 << Document().Context().Records().Name();
+        qDebug() << "FLAG_ACTION_ADD is disabled on parent struct.";
         return;
     }
 
@@ -557,7 +536,7 @@ void TypeController::OnActionAddRecord()
     if ( MainWindow().RecordExplorer().HasSelection() )
     {
         TypeRecord* front = MainWindow().RecordExplorer().Selection().front();
-        position = Document().Context().Records().GetIndex( front );
+        position = Document().Context().Struct().GetIndex( front );
     }
 
     QWidget* dialog;
@@ -569,13 +548,13 @@ void TypeController::OnActionAddRecord()
         return;
     }
 
-    dialog = new TypeUiAddRecord( *this, Document().Context(), -1,  &MainWindow() );
+    dialog = new TypeUiAddRecord( *this, Document().Context(), -1, &MainWindow() );
     dialog->show();
 }
 
 void TypeController::OnActionAddSceneItem()
 {
-    long action_flags = Document().Context().Records().Flags();
+    long action_flags = Document().Context().Struct().Flags();
 
     if( ( action_flags & FLAG_ACTION_ADD_SCENE ) &&
             MainWindow().RecordExplorer().HasSelection() )
@@ -586,29 +565,28 @@ void TypeController::OnActionAddSceneItem()
         {
             if( !( record->Flags() & FLAG_ACTION_ADD_SCENE ) )
             {
-                qDebug() << "FLAG_ACTION_ADD_SCENE is disabled on Record:"
+                qDebug() << "FLAG_ACTION_ADD_SCENE is disabled on record"
                          << record->Name();
                 return;
             }
         }
 
         for( TypeRecord* record : selection_list )
-            Document().Context().Scene().CreateItem( *record );
+            Document().Context().Scene().NewItem( *record );
 
         MainWindow().SetCurrentTab( MAINWINDOW_TAB_SCENE );
         emit SceneChanged();
     }
     else
     {
-        qDebug() << "FLAG_ACTION_ADD_SCENE is disabled on Struct:"
-                 << Document().Context().Records().Name();
+        qDebug() << "FLAG_ACTION_ADD_SCENE is disabled on parent struct.";
         return;
     }
 }
 
 void TypeController::OnActionCopyRecord()
 {
-    long action_flags = Document().Context().Records().Flags();
+    long action_flags = Document().Context().Struct().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
     if( ( action_flags & FLAG_ACTION_COPY ) && has_selection )
@@ -619,27 +597,26 @@ void TypeController::OnActionCopyRecord()
         {
             if( !( record->Flags() & FLAG_ACTION_CUT ) )
             {
-                qDebug() << "FLAG_ACTION_CUT is disabled on Record:"
+                qDebug() << "FLAG_ACTION_CUT is disabled on record"
                          << record->Name();
                 return;
             }
         }
 
         Clipboard().Copy( selection_list );
-        MainWindow().UpdateMenubar();
+        MainWindow().UpdateActions();
     }
     else
     {
-        qDebug() << "FLAG_ACTION_COPY is disabled on Struct:"
-                 << Document().Context().Records().Name();
+        qDebug() << "FLAG_ACTION_COPY is disabled on parent struct";
         return;
     }
 }
 
 void TypeController::OnActionPasteRecord()
 {
-    long action_flags = Document().Context().Records().Flags();
-    bool has_selection = MainWindow().RecordExplorer().HasSelection();
+    long action_flags = Document().Context().Struct().Flags();
+    bool has_selection = MainWindow().RecordExplorer().HasSelection(); //This function lies ('la lia?=
     int position = -1;
 
     if( action_flags & FLAG_ACTION_PASTE )
@@ -647,11 +624,13 @@ void TypeController::OnActionPasteRecord()
         if( has_selection )
         {
             QList<TypeRecord*> selection_list = MainWindow().RecordExplorer().Selection();
-            position = Document().Context().Records().GetIndex( selection_list.front() );
+
+            if( !selection_list.empty() )
+                position = Document().Context().Struct().GetIndex( selection_list.front() );
         }
 
         Clipboard().Paste(
-            Document().Context().Records(),
+            Document().Context().Struct(),
             position
         );
 
@@ -660,15 +639,14 @@ void TypeController::OnActionPasteRecord()
     }
     else
     {
-        qDebug() << "FLAG_ACTION_PASTE is disabled on Struct:"
-                 << Document().Context().Records().Name();
+        qDebug() << "FLAG_ACTION_PASTE is disabled on parent struct";
         return;
     }
 }
 
 void TypeController::OnActionCutRecord()
 {
-    long action_flags = Document().Context().Records().Flags();
+    long action_flags = Document().Context().Struct().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
     if( ( action_flags & FLAG_ACTION_CUT ) && has_selection )
@@ -679,7 +657,7 @@ void TypeController::OnActionCutRecord()
         {
             if( !( record->Flags() & FLAG_ACTION_CUT ) )
             {
-                qDebug() << "FLAG_ACTION_CUT is disabled on Record:"
+                qDebug() << "FLAG_ACTION_CUT is disabled on record"
                          << record->Name();
                 return;
             }
@@ -700,15 +678,14 @@ void TypeController::OnActionCutRecord()
     }
     else
     {
-        qDebug() << "FLAG_ACTION_CUT is disabled on Struct:"
-                 << Document().Context().Records().Name();
+        qDebug() << "FLAG_ACTION_CUT is disabled on parent struct";
         return;
     }
 }
 
 void TypeController::OnActionOpenRecordInEditor()
 {
-    long action_flags = Document().Context().Records().Flags() ;
+    long action_flags = Document().Context().Struct().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
 
     if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection )
@@ -718,18 +695,14 @@ void TypeController::OnActionOpenRecordInEditor()
 
         if( !( record->Flags() & FLAG_ACTION_OPEN ) )
         {
-            qDebug() << "FLAG_ACTION_OPEN is disabled on Record:"
-                     << record->Name();
+            qDebug() << "FLAG_ACTION_OPEN is disabled on record" << record->Name();
             return;
         }
 
         OpenRecordEditorWidget( *record );
     }
     else
-    {
-        qDebug() << "FLAG_ACTION_OPEN is disabled on Struct:"
-                 << Document().Context().Records().Name();
-    }
+        qDebug() << "FLAG_ACTION_OPEN is disabled on parent struct.";
 }
 
 
@@ -740,17 +713,21 @@ void TypeController::OnActionNewFile()
             &MainWindow(),
             tr( "New File" ),
             tr( "untitled.js" ),
-            tr( "JS Files (*.js)" )
+            tr( "JS Files (*.js); PHP files (*.php); CSS files (*.css)" )
         );
 
     if( file_name.isEmpty() )
         return;
 
-    if( QFileInfo( file_name ).exists() )
-    {
-        if( !TypeController::AcceptMessage( tr( "File already exists. Overwrite?" ) ) )
-            return;
-    }
+// *  QFileDialog has showed a message like the following example:
+// *
+//
+//    if( QFileInfo( file_name ).exists() )
+//    {
+//        if( !TypeController::AcceptMessage( tr( "File already exists. Overwrite?" ) ) )
+//            return;
+//    }
+
 
     TypeController::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
     emit FileExplorerChanged();
@@ -762,11 +739,11 @@ void TypeController::OnActionCloseFile()
 {
     if( TypeController::AcceptMessage( tr( "Save changes?" ) ) )
     {
-        MainWindow().TextEditorContainer().SaveCurrent();
+        MainWindow().EditorContainer().SaveCurrent();
         emit FileExplorerChanged();
     }
 
-    MainWindow().TextEditorContainer().CloseCurrent();
+    MainWindow().EditorContainer().CloseCurrent();
     emit EditorContainerChanged();
 }
 
@@ -774,22 +751,22 @@ void TypeController::OnActionCloseAllFiles()
 {
     if( TypeController::AcceptMessage( tr( "Save changes?" ) ) )
     {
-        MainWindow().TextEditorContainer().SaveAll();
+        MainWindow().EditorContainer().SaveAll();
         emit FileExplorerChanged();
     }
 
-    MainWindow().TextEditorContainer().CloseAll();
+    MainWindow().EditorContainer().CloseAll();
     emit EditorContainerChanged();
 }
 
 void TypeController::OnActionSaveFile()
 {
-    MainWindow().TextEditorContainer().SaveCurrent();
+    MainWindow().EditorContainer().SaveCurrent();
 }
 
 void TypeController::OnActionSaveAllFiles()
 {
-    MainWindow().TextEditorContainer().SaveAll();
+    MainWindow().EditorContainer().SaveAll();
 }
 
 void TypeController::OnActionLoadFile()
@@ -802,13 +779,26 @@ void TypeController::OnActionLoadFile()
             tr( "JS Files (*.js)" )
         );
 
+    if( file_name.isEmpty() )
+        return;
+
     if( !QFileInfo( file_name ).exists() )
     {
-        TypeController::Message( tr( "File doesn't exists" ) );
+        TypeController::Message( tr( "File not found" ) );
         return;
     }
 
     OpenFileUiEditor( file_name );
+}
+
+void TypeController::OnLeftTabCurrentChanged( int )
+{
+    MainWindow().UpdateActions();
+}
+
+void TypeController::OnRightTabCurrentChanged( int )
+{
+    //void
 }
 
 void TypeController::OnActionExit()
@@ -816,21 +806,17 @@ void TypeController::OnActionExit()
     MainWindow().close();
 }
 
-void TypeController::OnActionRunHtmlBlocks()
+void TypeController::OnActionUpdateHtmlWeb()
 {
     Document().UpdateHtml();
 
-    MainWindow().UpdateWebView();
+    MainWindow().UpdateHtmlWebView();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_OUTPUT );
 }
 
-void TypeController::OnActionUpdateHtmlBlocks()
+void TypeController::OnActionUpdateHtmlText()
 {
     Document().UpdateHtml();
-
-    MainWindow().UpdateHtmlTextView();
-    MainWindow().SetCurrentTab( MAINWINDOW_TAB_CLIENT );
+    MainWindow().SetCurrentTab( MAINWINDOW_TAB_HTML );
 }
-
-
 

@@ -1,8 +1,7 @@
 #ifndef UIADDRECORD_H
 #define UIADDRECORD_H
 
-#include "FW/macro.h"
-#include "FW/variant.h"
+#include "FW/tools.h"
 #include <QDialog>
 
 class TypeRecord;
@@ -26,8 +25,8 @@ public:
 
     bool                CheckFormData() const;
 
-    M_POINTER           ( Context,    TypeContext )
-    M_POINTER           ( Controller, TypeController )
+    M_REFERENCE         ( Context,    TypeContext )
+    M_REFERENCE         ( Controller, TypeController )
 
 public slots:
 

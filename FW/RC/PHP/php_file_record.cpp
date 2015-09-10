@@ -1,21 +1,21 @@
 #include "FW/tools.h"
 #include "FW/RC/PHP/php_file_record.h"
-#include "FW/RC/record_struct.h"
+#include "FW/RC/struct.h"
 #include "FW/RC/file_record.h"
 #include "FW/UI/PR/ui_file_property.h"
 #include "FW/UI/ED/ui_text_editor.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
-#include "FW/BK/block_stream.h"
+#include "FW/BK/html_block_stream.h"
 #include "FW/UI/SH/ui_syntax_highlighter_factory.h"
 
-TypePhpFileRecord::TypePhpFileRecord( QString id, QString name, QString value,  TypeVariant* parent, TypeRecordStruct* root ):
+TypePhpFileRecord::TypePhpFileRecord( QString id, QString name, QString value,  TypeVariant* parent, TypeStruct* root ):
     TypeFileRecord( id, name, value, parent, root )
 {
     m_Class = "PhpFile";
 }
 
-TypePhpFileRecord::TypePhpFileRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+TypePhpFileRecord::TypePhpFileRecord( TypeStateWriter& state, TypeVariant* parent, TypeStruct* root ):
     TypeFileRecord( state, parent, root )
 {
     m_Class = "PhpFile";
@@ -39,10 +39,12 @@ TypeUiEditor* TypePhpFileRecord::EditorWidget( QString id, TypeController& contr
         TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
         TypeController::SaveTextFile( FileFullName(), editor->Text() );
         emit controller.RecordsChanged();
+        return true;
     },
     syntax_highlighter );
 
     text_editor->SetText( TypeController::LoadTextFile( FileFullName() ) );
+    text_editor->SetHasChanged(false);
 
     return text_editor;
 }
@@ -52,12 +54,12 @@ TypePhpFileRecordFactory::TypePhpFileRecordFactory()
     m_RecordClass = "PhpFile";
 }
 
-TypeRecord* TypePhpFileRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypePhpFileRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeStruct* root )
 {
     return new TypePhpFileRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypePhpFileRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypePhpFileRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeStruct* root )
 {
     return new TypePhpFileRecord( state, parent, root );
 }

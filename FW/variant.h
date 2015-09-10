@@ -1,7 +1,7 @@
 #ifndef VARIANT_H
 #define VARIANT_H
 
-#include "FW/macro.h"
+#include "FW/tools/macro.h"
 #include <QList>
 
 class TypeVariantStruct;

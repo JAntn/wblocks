@@ -4,7 +4,8 @@
 #include "FW/UI/ui_main_window.h"
 #include "FW/config.h"
 #include "FW/document.h"
-#include "FW/RC/record_struct.h"
+#include "FW/RC/root_struct.h"
+#include "FW/RC/struct_record.h"
 #include "FW/SC/scene.h"
 #include "FW/htmlbuilder.h"
 
@@ -49,7 +50,7 @@ int main( int argc, char* argv[] )
                 "String"
             );
 
-        controller.Document().Scene().CreateItem( *string_record );
+        controller.Document().Scene().NewItem( *string_record );
     }
     else
     {

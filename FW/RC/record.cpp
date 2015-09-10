@@ -1,12 +1,13 @@
 #include "FW/RC/record.h"
 #include "FW/UI/PR/ui_recordname_property.h"
 #include "FW/UI/PR/ui_linetext_property.h"
+#include "FW/UI/PR/ui_label_property.h"
 #include <QVBoxLayout>
 #include "FW/UI/ui_editor_container.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ED/ui_text_editor.h"
-#include "FW/BK/block_stream.h"
+#include "FW/BK/html_block_stream.h"
 #include "FW/tools.h"
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ QString TypeRecordFactory::IdCount()
 /////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
 
-TypeRecord::TypeRecord( QString id, QString name, QString value, TypeVariant* parent, TypeRecordStruct* ) :
+TypeRecord::TypeRecord( QString id, QString name, QString value, TypeVariant* parent, TypeStruct* ) :
     TypeVariant( parent ),
     m_Id( id ),
     m_Name( name ),
@@ -38,7 +39,7 @@ TypeRecord::TypeRecord( QString id, QString name, QString value, TypeVariant* pa
     SetFlags( FLAG_ACTION_ALL );
 }
 
-TypeRecord::TypeRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* ):
+TypeRecord::TypeRecord( TypeStateWriter& state, TypeVariant* parent, TypeStruct* ):
     TypeRecord( "", "", "", parent )
 {
     SetState( state );
@@ -72,7 +73,7 @@ bool TypeRecord::GetState( TypeStateReader& state )
     return true;
 }
 
-bool TypeRecord::SetState( TypeStateWriter& state, TypeRecordStruct* )
+bool TypeRecord::SetState( TypeStateWriter& state, TypeStruct* )
 {
     QStringList row;
     state.Write( row );
@@ -92,6 +93,9 @@ bool TypeRecord::SetState( TypeStateWriter& state, TypeRecordStruct* )
 QWidget* TypeRecord::PropertyWidget( TypeController& controller )
 {
 
+    QWidget* class_widget;
+    class_widget = new TypeUiLabelProperty( "Class", Class() );
+
     QWidget* name_widget;
 
     name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
@@ -99,7 +103,7 @@ QWidget* TypeRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
-
+        return true;
     } );
 
     QWidget* value_widget;
@@ -109,10 +113,12 @@ QWidget* TypeRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiLineTextProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
+        return true;
     } );
 
 
     QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( class_widget );
     layout->addWidget( name_widget );
     layout->addWidget( value_widget );
 
@@ -133,39 +139,53 @@ TypeUiEditor* TypeRecord::EditorWidget( QString id, TypeController& controller )
         TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
         SetValue( editor->Text() );
         emit controller.RecordsChanged();
+        return true;
     } );
 
     text_editor->SetText( Value() );
+    text_editor->SetHasChanged(false);
 
     return text_editor;
 }
 
-TypeRecordStruct* TypeRecord::Struct()
+TypeStruct* TypeRecord::Struct()
 {
     return 0;
 }
 
-void TypeRecord::Html( TypeBlockStream& )
+TypeStruct* TypeRecord::ParentStruct()
+{
+    return TypeVariantPtr<TypeStruct>( this->Parent() );
+}
+
+TypeRecord* TypeRecord::ParentRecord()
+{
+    TypeStruct* parent_struct = this->ParentStruct();
+
+    if( parent_struct != 0 )
+        return parent_struct->ParentRecord();
+
+    return 0;
+}
+
+void TypeRecord::Html( TypeHtmlBlockStream& )
 {
     // void
 }
 
-void TypeRecord::Script( TypeBlockStream& )
+void TypeRecord::Script( TypeHtmlBlockStream& )
 {
     // void
 }
 
-QString TypeRecord::FullName() const
+QString TypeRecord::FullName()
 {
-    auto* record_struct = static_cast<TypeRecordStruct*>( Parent() );
+    TypeRecord* parent_record = this->ParentRecord();
 
-    if( record_struct->Name() != "root" )
-    {
-        TypeVariantPtr<TypeRecord> record( record_struct->Parent() );
-        return record->FullName() + "." + Name();
-    }
+    if( parent_record != 0 )
+        return parent_record->FullName() + "." + this->Name();
 
-    return Name();
+    return this->Name();
 }
 
 TypeRecordFactory::TypeRecordFactory() :
@@ -174,12 +194,12 @@ TypeRecordFactory::TypeRecordFactory() :
     // void
 }
 
-TypeRecord* TypeRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeStruct* root )
 {
     return new TypeRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeStruct* root )
 {
     return new TypeRecord( state, parent, root );
 }

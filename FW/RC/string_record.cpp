@@ -4,15 +4,16 @@
 #include "FW/ST/state_writer.h"
 #include "FW/RC/record.h"
 #include <QHBoxLayout>
+#include <FW/UI/PR/ui_label_property.h>
 #include <FW/UI/PR/ui_recordname_property.h>
 
-TypeStringRecord::TypeStringRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+TypeStringRecord::TypeStringRecord( QString id, QString name, QString value, TypeVariant* parent , TypeStruct* root ):
     TypeRecord( id, name, value, parent, root )
 {
     m_Class = "String";
 }
 
-TypeStringRecord::TypeStringRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root  ):
+TypeStringRecord::TypeStringRecord( TypeStateWriter& state, TypeVariant* parent, TypeStruct* root  ):
     TypeRecord( "", "", "", parent, root )
 {
     m_Class = "String";
@@ -26,6 +27,8 @@ TypeStringRecord::~TypeStringRecord()
 
 QWidget* TypeStringRecord::PropertyWidget( TypeController& controller )
 {
+    QWidget* class_widget;
+    class_widget = new TypeUiLabelProperty( "Class", Class() );
 
     QWidget* name_widget;
 
@@ -34,7 +37,7 @@ QWidget* TypeStringRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
-
+        return true;
     } );
 
     QWidget* value_widget;
@@ -44,10 +47,12 @@ QWidget* TypeStringRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiStringProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
+        return true;
     } );
 
 
     QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( class_widget );
     layout->addWidget( name_widget );
     layout->addWidget( value_widget );
 
@@ -62,12 +67,12 @@ TypeStringRecordFactory::TypeStringRecordFactory()
     m_RecordClass = "String";
 }
 
-TypeRecord* TypeStringRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeStringRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent , TypeStruct* root )
 {
     return new TypeStringRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeStringRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root )
+TypeRecord* TypeStringRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeStruct* root )
 {
     return new TypeStringRecord( state, parent, root );
 }

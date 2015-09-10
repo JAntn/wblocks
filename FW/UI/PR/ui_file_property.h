@@ -2,8 +2,7 @@
 #define UIFILEPROPERTY_H
 
 #include "FW/UI/PR/ui_property.h"
-#include "FW/macro.h"
-#include <QWidget>
+#include "FW/tools.h"
 
 
 namespace Ui

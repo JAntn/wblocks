@@ -2,7 +2,7 @@
 #define UIMAINWINDOW_H
 
 #include "FW/variant.h"
-#include "FW/macro.h"
+#include "FW/tools.h"
 #include <QMainWindow>
 
 class TypeController;
@@ -13,7 +13,8 @@ class TypeUiFileExplorer;
 class TypeConfig;
 class TypeDocument;
 class TypeUiEditor;
-class TypeUiHtmlBlocksEditor;
+class TypeUiHtmlTextView;
+class TypeRecord;
 
 namespace Ui
 {
@@ -26,28 +27,30 @@ class TypeUiMainWindow : public QMainWindow, public TypeVariant
 
 public:
 
-    explicit TypeUiMainWindow( TypeController& controller,QWidget* parent = 0 );
+    explicit TypeUiMainWindow( TypeController& controller, QWidget* parent = 0 );
     ~TypeUiMainWindow() override;
+
 
     void                          UpdateRecordExplorer();
     void                          UpdateFileExplorer();
     void                          UpdateHtmlTextView();
-    void                          UpdateWebView();
+    void                          UpdateHtmlWebView();
     void                          UpdateSceneView();
-    void                          UpdateMenubar();
+    void                          UpdateActions();
 
     void                          InitConnections();
     void                          closeEvent( QCloseEvent* ) override;
     void                          SetTitle( QString title );
     void                          SetCurrentTab( int index );
 
-    M_POINTER                     ( Controller,          TypeController )
-    M_POINTER                     ( Document,            TypeDocument )
-    M_POINTER                     ( RecordExplorer,      TypeUiRecordExplorer )
-    M_POINTER                     ( FileExplorer,        TypeUiFileExplorer )
-    M_POINTER                     ( TextEditorContainer, TypeUiEditorContainer )
-    M_POINTER                     ( HtmlBlocksEditor,    TypeUiHtmlBlocksEditor )
+    M_REFERENCE                   ( Controller,          TypeController )
+    M_REFERENCE                   ( Document,            TypeDocument )
+    M_REFERENCE                   ( RecordExplorer,      TypeUiRecordExplorer )
+    M_REFERENCE                   ( FileExplorer,        TypeUiFileExplorer )
+    M_REFERENCE                   ( EditorContainer,     TypeUiEditorContainer )
+    M_REFERENCE                   ( HtmlTextView,        TypeUiHtmlTextView )
 
+    void                          SetPropertyWidgetRecord( TypeRecord* record );
     void                          SetPropertyWidget( QWidget* widget );
     void                          OpenEditorWidget( TypeUiEditor* widget );
 
@@ -55,11 +58,12 @@ private:
 
     QWidget*                      m_PropertiesWidget;
     Ui::TypeUiMainWindow*         ui;
+
 };
 
 #define MAINWINDOW_TAB_SCENE   0
 #define MAINWINDOW_TAB_EDITOR  1
-#define MAINWINDOW_TAB_CLIENT  2
+#define MAINWINDOW_TAB_HTML  2
 #define MAINWINDOW_TAB_OUTPUT  3
 
 #endif // UIMAINWINDOW_H

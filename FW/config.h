@@ -1,8 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "FW/variant.h"
-#include "FW/macro.h"
+#include "FW/tools.h"
 
 class TypeConfig : public TypeVariant
 {

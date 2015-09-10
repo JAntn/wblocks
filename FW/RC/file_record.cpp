@@ -4,9 +4,10 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include <QVBoxLayout>
+#include <FW/UI/PR/ui_label_property.h>
 
 
-TypeFileRecord::TypeFileRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+TypeFileRecord::TypeFileRecord( QString id, QString name, QString value, TypeVariant* parent , TypeStruct* root ):
     TypeRecord( id, name, value, parent, root )
 {
     m_Class = "File";
@@ -15,7 +16,7 @@ TypeFileRecord::TypeFileRecord( QString id, QString name, QString value, TypeVar
         m_Value = "untitled";
 }
 
-TypeFileRecord::TypeFileRecord( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root ):
+TypeFileRecord::TypeFileRecord( TypeStateWriter& state, TypeVariant* parent, TypeStruct* root ):
     TypeRecord( "", "", "", parent, root )
 {
     m_Class = "File";
@@ -29,6 +30,9 @@ TypeFileRecord::~TypeFileRecord()
 
 QWidget* TypeFileRecord::PropertyWidget( TypeController& controller )
 {
+    QWidget* class_widget;
+    class_widget = new TypeUiLabelProperty( "Class", Class() );
+
     QWidget* name_widget;
 
     name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
@@ -36,6 +40,7 @@ QWidget* TypeFileRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
+        return true;
     } );
 
     QWidget* value_widget;
@@ -45,10 +50,12 @@ QWidget* TypeFileRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiFileProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
+        return true;
     } );
 
 
     QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( class_widget );
     layout->addWidget( name_widget );
     layout->addWidget( value_widget );
 
@@ -75,12 +82,12 @@ QString TypeFileRecord::FileFullName()
     return Value();
 }
 
-TypeRecord* TypeFileRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeFileRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeStruct* root )
 {
     return new TypeFileRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeFileRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeFileRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeStruct* root )
 {
     return new TypeFileRecord( state, parent, root );
 }

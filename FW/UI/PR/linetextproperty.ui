@@ -33,7 +33,7 @@
        <property name="minimumSize">
         <size>
          <width>80</width>
-         <height>0</height>
+         <height>22</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -43,7 +43,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Value:</string>
+        <string>Value</string>
        </property>
       </widget>
      </item>
@@ -52,8 +52,14 @@
        <property name="minimumSize">
         <size>
          <width>300</width>
-         <height>0</height>
+         <height>22</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier New</family>
+         <pointsize>9</pointsize>
+        </font>
        </property>
       </widget>
      </item>

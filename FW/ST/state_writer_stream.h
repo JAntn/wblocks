@@ -10,7 +10,7 @@ public:
     TypeStateWriterStream( QDataStream& data_stream, long flags = 0, TypeVariant* Parent = 0 );
     void                Next() override;
 
-    M_CONST_POINTER     ( DataStream, QDataStream )
+    M_REFERENCE_READONLY  ( DataStream, QDataStream )
 
 };
 

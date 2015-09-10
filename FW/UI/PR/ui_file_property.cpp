@@ -44,7 +44,7 @@ void TypeUiFileProperty::SetValue(QString value)
 
 void TypeUiFileProperty::OnReturnPressed()
 {
-    OnApplyChanges();
+    OnActionSave();
 }
 
 void TypeUiFileProperty::OnSelectButtonClicked()
@@ -63,7 +63,7 @@ void TypeUiFileProperty::OnSelectButtonClicked()
     }
 
     ui->LineEdit->setText( file_name );
-    OnApplyChanges();
+    OnActionSave();
 }
 
 

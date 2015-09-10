@@ -3,6 +3,7 @@
 #include "FW/UI/ui_record_tablemodel.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/RC/struct_record.h"
+#include "FW/RC/root_struct.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/document.h"
 #include "FW/context.h"
@@ -12,14 +13,22 @@
 
 TypeUiRecordExplorer::TypeUiRecordExplorer( TypeContext& context, TypeController& controller, QWidget* parent ) :
     QWidget( parent ),
-    TypeVariant(0),
+    TypeVariant( 0 ),
     m_Context( &context ),
     m_Controller( &controller ),
+    m_ActiveRecord( 0 ),
     ui( new Ui::TypeUiRecordExplorer )
 {
     ui->setupUi( this );
-    m_RecordTableModel = new TypeUiRecordTableModel( Controller().Document(), this );
+    m_RecordTableModel = new TypeUiRecordTableModel( Controller().Document().Context().Struct(), this );
     ui->TableView->setModel( m_RecordTableModel );
+
+    connect(
+        &controller,
+        TypeController::SetActiveRecord,
+        this,
+        TypeUiRecordExplorer::ActivateRecord
+    );
 
     connect(
         ui->TableView,
@@ -71,8 +80,14 @@ TypeUiRecordExplorer::~TypeUiRecordExplorer()
 
 void TypeUiRecordExplorer::Update()
 {
-    ui->LineEdit->setText( Context().Records().FullName() );
+    if( &Context().Struct() != &Context().Root() )
+        ui->LineEdit->setText( Context().Struct().ParentRecord()->FullName() );
+    else
+        ui->LineEdit->setText( "" );
+
+    m_RecordTableModel->SetStruct( Context().Struct() );
     m_RecordTableModel->layoutChanged();
+
     emit Controller().RecordExplorerChanged();
 }
 
@@ -84,7 +99,7 @@ QList<TypeRecord*> TypeUiRecordExplorer::Selection()
 
     for( auto index : index_list )
     {
-        TypeRecord* record = Context().Records().FromIndex( index.row() );
+        TypeRecord* record = Context().Struct().FromIndex( index.row() );
 
         record_list.append( record );
     }
@@ -102,71 +117,127 @@ bool TypeUiRecordExplorer::HasSelection()
     return ui->TableView->selectionModel()->hasSelection();
 }
 
-void TypeUiRecordExplorer::Activate( TypeRecord* record )
+void TypeUiRecordExplorer::OpenRecord( TypeRecord* record )
 {
+    SetActiveRecord( record );
+
     if( record == 0 )
         return;
 
     if( record->Struct() != 0 )
     {
-        Context().SetRecords( *( record->Struct() ) );
+        Context().SetStruct( *( record->Struct() ) );
         Update();
         return;
     }
 
-    Context().SetRecords( *static_cast<TypeRecordStruct*>( record->Parent() ) );
+    Context().SetStruct( *record->ParentStruct() );
     Update();
-    Controller().SetPropertyWidgetRecord( *record );
+
+    // Select the row
+    int row = record->ParentStruct()->GetIndex( record );
+    ui->TableView->selectRow( row );
+}
+
+void TypeUiRecordExplorer::ActivateRecord( TypeRecord* record )
+{
+    if( ActiveRecord() == record )
+        return;
+
+    SetActiveRecord( record );
+
+    if( ActiveRecord() == 0 )
+        return;
+
+    Context().SetStruct( *ActiveRecord()->ParentStruct() );
+    Update();
+
+    // Select the row
+    int row = ActiveRecord()->ParentStruct()->GetIndex( ActiveRecord() );
+    ui->TableView->selectRow( row );
 }
 
 void TypeUiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
 {
     QPoint global_point = ui->TableView->viewport()->mapToGlobal( point );
     QModelIndex index = ui->TableView->indexAt( point );
+    TypeRecord* record = 0;
 
     if( index.row() >= 0 )
-        ui->TableView->selectionModel()->setCurrentIndex( index, QItemSelectionModel::Select );
+    {
+        //ui->TableView->selectionModel()->setCurrentIndex( index, QItemSelectionModel::Select );
+        record = Context().Struct().FromIndex( index.row() );
+    }
 
-    TypeUiRecordContextMenu context_menu( Controller(), global_point );
+    ActivateRecord( record );
+    long action_flags = Context().Struct().Flags();
+    bool has_selection = false;
+
+    if( record != 0 )
+        has_selection = true;
+
+    TypeUiRecordContextMenu context_menu( Controller(), action_flags, has_selection, global_point, this );
 }
 
 void TypeUiRecordExplorer::OnDoubleClicked( const QModelIndex& index )
 {
-    Activate( Context().Records().FromIndex( index.row() ) );
+    TypeRecord* record = Context().Struct().FromIndex( index.row() );
+    OpenRecord( record );
+
+    emit Controller().SetActiveRecord( record );
 }
 
 void TypeUiRecordExplorer::OnRootButtonClicked()
 {
-    Context().SetRecords( Controller().Document().Root() );
+    Context().SetStruct( Controller().Document().Root() );
     Update();
+
+    emit Controller().SetActiveRecord( 0 );
 }
 
 void TypeUiRecordExplorer::OnUpButtonClicked()
 {
-    if( ( & Context().Records() ) != ( & Controller().Document().Root() ) )
+    if( &Context().Struct() != ( & Controller().Document().Root() ) )
     {
-        TypeRecord* record = static_cast<TypeRecord*>( Context().Records().Parent() );
-        TypeRecordStruct* parent = static_cast<TypeRecordStruct*>( record->Parent() );
-        Context().SetRecords( *parent );
+        Context().SetStruct( *Context().Struct().ParentStruct() );
         Update();
+
+        emit Controller().SetActiveRecord( 0 );
     }
 }
 
 void TypeUiRecordExplorer::OnSelectionChanged( const QItemSelection&, const QItemSelection&  )
 {
-    Controller().MainWindow().UpdateMenubar();
+    Controller().MainWindow().UpdateActions();
+
+    if( HasSelection() )
+    {
+        TypeVariantPtr<TypeRecord> record = *Selection().begin();
+
+        emit Controller().SetActiveRecord( record );
+
+        return;
+    }
+
+    emit Controller().SetActiveRecord( 0 );
 }
 
 void TypeUiRecordExplorer::OnLineEditReturnPressed()
 {
-    QString full_name = ui->LineEdit->text();
+    QString record_name = ui->LineEdit->text();
 
-    if( full_name == "" )
+    if( record_name == "" )
     {
-        Context().SetRecords( Controller().Document().Root() );
+        Context().SetStruct( Controller().Document().Root() );
         Update();
+
+        emit Controller().SetActiveRecord( 0 );
         return;
     }
 
-    Activate( Controller().Document().Root().FromFullName( full_name ) );
+    TypeRootStruct& root = Controller().Document().Root();
+    TypeRecord* record = root.FromName( record_name, true );
+    OpenRecord( record );
+
+    emit Controller().SetActiveRecord( record );
 }

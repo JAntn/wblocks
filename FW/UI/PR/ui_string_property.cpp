@@ -36,7 +36,7 @@ QString TypeUiStringProperty::Value()
 
 void TypeUiStringProperty::OnApplyButtonClicked()
 {
-    OnApplyChanges();
+    OnActionSave();
 }
 
 

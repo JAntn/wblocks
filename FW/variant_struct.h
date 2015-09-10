@@ -2,7 +2,7 @@
 #define VARIANTSTRUCT_H
 
 #include "FW/variant.h"
-#include "FW/macro.h"
+#include "FW/tools/macro.h"
 #include <QList>
 
 class TypeVariantStruct : public TypeVariant

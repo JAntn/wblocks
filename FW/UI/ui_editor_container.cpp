@@ -28,6 +28,8 @@ TypeUiEditorContainer::TypeUiEditorContainer( TypeController& controller, QWidge
 void TypeUiEditorContainer::Append( TypeUiEditor* editor )
 {
     m_TabWidget->addTab( editor, editor->TabName() );
+    m_TabWidget->setCurrentWidget( editor );
+
     emit Controller().EditorContainerChanged();
 }
 

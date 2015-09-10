@@ -7,7 +7,7 @@
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_editor_container.h"
 #include "FW/UI/ui_file_explorer.h"
-#include "FW/UI/ED/ui_html_blocks_editor.h"
+#include "FW/UI/ED/ui_html_text_view.h"
 #include "FW/document.h"
 #include "FW/context.h"
 #include "FW/controller.h"
@@ -20,6 +20,7 @@
 #include <QGraphicsTextItem>
 #include <QGraphicsView>
 #include <QtWebKitWidgets>
+#include "FW/tools.h"
 
 
 TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent ):
@@ -34,7 +35,7 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
     m_FileExplorer = 0;
     m_Document = 0;
     m_PropertiesWidget = 0;
-    m_HtmlBlocksEditor = 0;
+    m_HtmlTextView = 0;
 
     // SETUP USER INTERFACE
 
@@ -42,30 +43,23 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
 
     m_RecordExplorer = new TypeUiRecordExplorer( controller.Document().Context(), Controller(), this );
     m_FileExplorer = new TypeUiFileExplorer( controller, this );
-    m_TextEditorContainer = new TypeUiEditorContainer( controller, this );
+    m_EditorContainer = new TypeUiEditorContainer( controller, this );
 
     ui->RecordExplorerLayout->addWidget( m_RecordExplorer );
-    ui->EditorLayout->addWidget( m_TextEditorContainer );
+    ui->EditorLayout->addWidget( m_EditorContainer );
     ui->FileExplorerLayout->addWidget( m_FileExplorer );
     ui->GraphicsView->setScene( &Controller().Document().Scene().Graphics() );
 
-    // !!!
-
-    m_HtmlBlocksEditor = new TypeUiHtmlBlocksEditor(
+    m_HtmlTextView = new TypeUiHtmlTextView(
         controller,
-        controller.NewHtmlBlocksEditorId( controller.Document().FileName() ),
+        controller.NewHtmlTextViewId( controller.Document().FileName() ),
         controller.Document().FileName(),
         controller.Document().FileName().split( "/" ).back(),
         this,
         &TypeUiEditor::empty_save_callback,
         controller.SyntaxHighlighterFactory().NewInstance( "HTML" ) );
 
-    ui->HtmlTextLayout->addWidget( m_HtmlBlocksEditor );
-
-    // TODO: multiple module support implementation
-    // + TypeUiHtmlBlocksEditor: to implement interface to multiple module tab container
-    // + to implement a tab container class
-    // + to implement multiple document load n save etc
+    ui->HtmlTextLayout->addWidget( m_HtmlTextView );
 
     QRect screen_size = QApplication::desktop()->availableGeometry( this );
     resize( QSize( screen_size.width() * 0.8, screen_size.height() * 0.8 ) );
@@ -74,12 +68,9 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
     InitConnections();
 
     emit Controller().RecordsChanged();
-    SetCurrentTab( MAINWINDOW_TAB_SCENE );
 
-    // !!!
-    HtmlBlocksEditor().SetFileTitle( controller.Document().FileName() );
-    HtmlBlocksEditor().SetHasChanged( false );
-    //
+    UpdateActions();
+    SetCurrentTab( MAINWINDOW_TAB_SCENE );
 }
 
 TypeUiMainWindow::~TypeUiMainWindow()
@@ -93,6 +84,12 @@ TypeUiMainWindow::~TypeUiMainWindow()
 void TypeUiMainWindow::InitConnections()
 {
     Controller().ConnectSlots();
+
+    connect(
+        &Controller(),
+        TypeController::SetActiveRecord,
+        this,
+        TypeUiMainWindow::SetPropertyWidgetRecord );
 
     connect(
         ui->ActionExit,
@@ -125,22 +122,28 @@ void TypeUiMainWindow::InitConnections()
         TypeController::OnActionSaveProjectSQL );
 
     connect(
-        ui->ActionSaveClientScript,
+        ui->ActionSaveHtmlFile,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionSaveHtmlBlocks );
+        TypeController::OnActionSaveHtmlFile );
 
     connect(
-        ui->ActionUpdateClientScript,
+        ui->ActionUpdateHtmlFile,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionUpdateHtmlBlocks );
+        TypeController::OnActionUpdateHtmlText );
 
     connect(
-        ui->ActionRunClientScript,
+        ui->ActionRunHtmlFile,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionRunHtmlBlocks );
+        TypeController::OnActionUpdateHtmlWeb );
+
+    connect(
+        ui->LeftTabWidget,
+        QTabWidget::currentChanged,
+        &Controller(),
+        TypeController::OnLeftTabCurrentChanged );
 
     connect(
         ui->ActionAdd,
@@ -254,7 +257,7 @@ void TypeUiMainWindow::closeEvent( QCloseEvent* )
             qDebug() << "File Selection failed";
         else
         {
-            TextEditorContainer().SaveAll();
+            EditorContainer().SaveAll();
 
             if( file_name.split( "." ).back() == "prj" )
                 Controller().Document().SaveFile( file_name );
@@ -262,6 +265,12 @@ void TypeUiMainWindow::closeEvent( QCloseEvent* )
                 Controller().Document().SaveSQL( file_name );
         }
     }
+}
+
+void TypeUiMainWindow::OpenEditorWidget( TypeUiEditor* widget )
+{
+    EditorContainer().Append( widget );
+    SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
 void TypeUiMainWindow::SetTitle( QString title )
@@ -277,20 +286,37 @@ void TypeUiMainWindow::SetCurrentTab( int index )
     ui->TabWidget->setCurrentIndex( index );
 }
 
+void TypeUiMainWindow::SetPropertyWidgetRecord( TypeRecord* record )
+{
+    if( record != 0 )
+    {
+        SetPropertyWidget( record->PropertyWidget( Controller() ) );
+        return;
+    }
+
+    SetPropertyWidget( 0 );
+}
+
 void TypeUiMainWindow::SetPropertyWidget( QWidget* widget )
 {
     if( m_PropertiesWidget != 0 )
         delete m_PropertiesWidget;
 
     m_PropertiesWidget = widget;
-    m_PropertiesWidget->setParent( this );
-    ui->PropertiesLayout->addWidget( widget );
+
+    if( m_PropertiesWidget != 0 )
+    {
+        m_PropertiesWidget->setParent( this );
+        ui->PropertiesLayout->addWidget( widget );
+    }
 }
 
-void TypeUiMainWindow::OpenEditorWidget( TypeUiEditor* widget )
+void TypeUiMainWindow::UpdateHtmlWebView()
 {
-    TextEditorContainer().Append( widget );
-    SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+    Controller().Document().UpdateHtml();
+
+    ui->WebView->setHtml( Controller().HtmlBuilder().Text() );
+    ui->WebView->show();
 }
 
 void TypeUiMainWindow::UpdateRecordExplorer()
@@ -307,17 +333,19 @@ void TypeUiMainWindow::UpdateFileExplorer()
 
 void TypeUiMainWindow::UpdateHtmlTextView()
 {
-    HtmlBlocksEditor().UpdateText();
+    HtmlTextView().UpdateView();
 }
 
 void TypeUiMainWindow::UpdateSceneView()
 {
-    Controller().Document().Scene().UpdateLines();
+    Controller().Document().Scene().UpdateView();
 }
 
-void TypeUiMainWindow::UpdateMenubar()
+void TypeUiMainWindow::UpdateActions()
 {
-    // Update Record menu
+    //
+    // Update records related actions depending of record flags
+
     {
         QList<QAction*> actions =
         {
@@ -338,7 +366,7 @@ void TypeUiMainWindow::UpdateMenubar()
             FLAG_ACTION_PASTE,
             FLAG_ACTION_ADD,
             FLAG_ACTION_ADD_SCENE,
-            FLAG_ACTION_PROPERTIES,
+            FLAG_ACTION_ACTIVATE,
             FLAG_ACTION_REMOVE,
             FLAG_ACTION_OPEN
         };
@@ -347,13 +375,16 @@ void TypeUiMainWindow::UpdateMenubar()
 
         for( auto action : actions )
         {
-            if( Controller().Document().Context().Records().Flags() & ( *iter ) )
+            if( Controller().Document().Context().Struct().Flags() & ( *iter ) )
                 action->setEnabled( true );
             else
                 action->setEnabled( false );
 
             ++iter;
         }
+
+        //
+        // Update records related actions related to selection behavior
 
         if( !RecordExplorer().HasSelection() )
         {
@@ -363,16 +394,18 @@ void TypeUiMainWindow::UpdateMenubar()
             ui->ActionRemove->setEnabled( false );
             ui->ActionOpen_In_Editor->setEnabled( false );
             ui->ActionProperties->setEnabled( false );
-
         }
 
         if( Controller().Clipboard().Empty() )
             ui->ActionPaste->setEnabled( false );
     }
 
-    // Update Text Edit Container
+    //
+    // Update actions in case there is not any file
+    // in text editor container
+
     {
-        if( TextEditorContainer().Size() == 0 )
+        if( EditorContainer().Size() == 0 )
         {
             ui->ActionSaveAllEditorFiles->setEnabled( false );
             ui->ActionSaveEditorFile->setEnabled( false );
@@ -387,12 +420,35 @@ void TypeUiMainWindow::UpdateMenubar()
             ui->ActionCloseEditorFile->setEnabled( true );
         }
     }
+
+    //
+    // Update actions in case record explorer is not visible
+
+    {
+        if( ui->RecordExplorerTab->isVisible() )
+        {
+
+            ui->ActionAdd->setVisible( true );
+            ui->ActionRemove->setVisible( true );
+            ui->ActionCopy->setVisible( true );
+            ui->ActionCut->setVisible( true );
+            ui->ActionPaste->setVisible( true );
+            ui->ActionAdd_to_scene->setVisible( true );
+            ui->ActionOpen_In_Editor->setVisible( true );
+            ui->ActionProperties->setVisible( true );
+        }
+        else
+        {
+            ui->ActionAdd->setVisible( false );
+            ui->ActionRemove->setVisible( false );
+            ui->ActionCopy->setVisible( false );
+            ui->ActionCut->setVisible( false );
+            ui->ActionPaste->setVisible( false );
+            ui->ActionAdd_to_scene->setVisible( false );
+            ui->ActionOpen_In_Editor->setVisible( false );
+            ui->ActionProperties->setVisible( false );
+        }
+    }
 }
 
-void TypeUiMainWindow::UpdateWebView()
-{
-    Controller().Document().UpdateHtml();
 
-    ui->WebView->setHtml( Controller().Document().Html() );
-    ui->WebView->show();
-}

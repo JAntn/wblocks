@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>150</height>
+    <height>204</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -44,11 +44,17 @@
          <property name="minimumSize">
           <size>
            <width>80</width>
-           <height>20</height>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>22</height>
           </size>
          </property>
          <property name="text">
-          <string>Value:</string>
+          <string>Value</string>
          </property>
         </widget>
        </item>
@@ -59,8 +65,8 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -69,12 +75,37 @@
      </item>
      <item>
       <layout class="QVBoxLayout" name="Layout3">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
-        <layout class="QHBoxLayout" name="Layout3_2">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QPushButton" name="ApplyButton">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="text">
             <string>Apply</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../resource.qrc">
+             <normaloff>:/Icons/rcc/22x22/actions/view-refresh.png</normaloff>:/Icons/rcc/22x22/actions/view-refresh.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>22</width>
+             <height>22</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -86,7 +117,7 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
-             <height>20</height>
+             <height>22</height>
             </size>
            </property>
           </spacer>
@@ -94,7 +125,18 @@
         </layout>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="PlainTextEdit"/>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPlainTextEdit" name="PlainTextEdit">
+           <property name="font">
+            <font>
+             <family>Courier New</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -102,6 +144,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

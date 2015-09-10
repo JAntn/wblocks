@@ -10,7 +10,7 @@ public:
     TypeStateReaderTable(QList<QStringList>& table, long flags = 0, TypeVariant* Parent = 0 );
     void                Read( QStringList& row ) override;
 
-    M_CONST_POINTER     ( Table, QList<QStringList> )
+    M_REFERENCE_READONLY  ( Table, QList<QStringList> )
 };
 
 #endif // STATEREADERTABLE_H

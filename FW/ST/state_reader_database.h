@@ -1,8 +1,8 @@
 #ifndef STATEREADERDATABASE_H
 #define STATEREADERDATABASE_H
 
-#include <FW/ST/state_reader.h>
-#include <FW/database.h>
+#include "FW/ST/state_reader.h"
+#include "FW/database.h"
 
 class TypeStateReaderDatabase : public TypeStateReader
 {
@@ -13,9 +13,9 @@ public:
 
     void                Read( QStringList& data ) override;
 
-    M_CONST_POINTER     ( Database, TypeDatabase )
-    M_CONST_VALUE       ( TableName, QString )
-    M_CONST_VALUE       ( FieldName, QString )
+    M_REFERENCE_READONLY  ( Database, TypeDatabase )
+    M_VALUE_READONLY    ( TableName, QString )
+    M_VALUE_READONLY    ( FieldName, QString )
 };
 
 #endif // STATEREADERDATABASE_H

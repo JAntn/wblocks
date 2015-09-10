@@ -1,10 +1,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include "FW/variant.h"
-#include "FW/macro.h"
-#include <QString>
-#include <QObject>
+#include "FW/tools.h"
 
 class TypeDatabase : public TypeVariant
 {
@@ -14,7 +11,7 @@ public:
     TypeDatabase( TypeVariant* Parent = 0 );
     ~TypeDatabase() override;
 
-    void                OpenDatabase( QString file_name );
+    bool                OpenDatabase( QString file_name );
     void                CloseDatabase();
     QString             GetDatabaseName();
     void                CreateTable( QString class_name, QStringList field_list );

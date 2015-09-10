@@ -44,6 +44,6 @@ void TypeUiRealProperty::OnReturnPressed()
         return;
     }
 
-    OnApplyChanges();
+    OnActionSave();
 }
 

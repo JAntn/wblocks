@@ -4,16 +4,17 @@
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include <QVBoxLayout>
+#include <FW/UI/PR/ui_label_property.h>
 
 
-TypeReferenceRecord::TypeReferenceRecord( QString id, QString name, QString value, TypeVariant* parent , TypeRecordStruct* root ):
+TypeReferenceRecord::TypeReferenceRecord( QString id, QString name, QString value, TypeVariant* parent , TypeStruct* root ):
     TypeRecord( id, name, value, parent, root )
 {
     m_Class = "Reference";
     m_Root = root;
 }
 
-TypeReferenceRecord::TypeReferenceRecord( TypeStateWriter& state, TypeVariant* parent , TypeRecordStruct* root ):
+TypeReferenceRecord::TypeReferenceRecord( TypeStateWriter& state, TypeVariant* parent , TypeStruct* root ):
     TypeRecord( "", "", "", parent, root )
 {
     m_Class = "Reference";
@@ -28,6 +29,9 @@ TypeReferenceRecord::~TypeReferenceRecord()
 
 QWidget* TypeReferenceRecord::PropertyWidget( TypeController& controller )
 {
+    QWidget* class_widget;
+    class_widget = new TypeUiLabelProperty( "Class", Class() );
+
     QWidget* name_widget;
 
     name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
@@ -35,7 +39,7 @@ QWidget* TypeReferenceRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetName( property.Value() );
         emit controller.RecordsChanged();
-
+        return true;
     } );
 
     QWidget* value_widget;
@@ -45,10 +49,12 @@ QWidget* TypeReferenceRecord::PropertyWidget( TypeController& controller )
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         SetValue( property.Value() );
         emit controller.RecordsChanged();
+        return true;
     } );
 
 
     QVBoxLayout* layout = new QVBoxLayout;
+    layout->addWidget( class_widget );
     layout->addWidget( name_widget );
     layout->addWidget( value_widget );
 
@@ -72,9 +78,9 @@ QString TypeReferenceRecord::Value()
     return "";
 }
 
-void TypeReferenceRecord::SetValue( QString full_name )
+void TypeReferenceRecord::SetValue( QString record_name )
 {
-    TypeRecord* record =  Root().FromFullName( full_name );
+    TypeRecord* record =  Root().FromName( record_name, true );
 
     if( record != 0 )
     {
@@ -102,7 +108,7 @@ bool TypeReferenceRecord::GetState( TypeStateReader& state )
     return true;
 }
 
-bool TypeReferenceRecord::SetState( TypeStateWriter& state , TypeRecordStruct* root )
+bool TypeReferenceRecord::SetState( TypeStateWriter& state , TypeStruct* root )
 {
     m_Root = root;
 
@@ -126,12 +132,12 @@ TypeReferenceRecordFactory::TypeReferenceRecordFactory()
     m_RecordClass = "Reference";
 }
 
-TypeRecord* TypeReferenceRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeReferenceRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeStruct* root )
 {
     return new TypeReferenceRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
 }
 
-TypeRecord* TypeReferenceRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeRecordStruct* root )
+TypeRecord* TypeReferenceRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent, TypeStruct* root )
 {
     return new TypeReferenceRecord( state, parent, root );
 }

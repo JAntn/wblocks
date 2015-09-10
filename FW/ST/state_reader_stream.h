@@ -11,7 +11,7 @@ public:
     void                Read( QStringList& row ) override;
     void                Stop() override;
 
-    M_CONST_POINTER     ( DataStream, QDataStream )
+    M_REFERENCE_READONLY  ( DataStream, QDataStream )
 };
 
 

@@ -44,7 +44,7 @@ void TypeUiIntegerProperty::OnReturnPressed()
         return;
     }
 
-    OnApplyChanges();
+    OnActionSave();
 }
 
 

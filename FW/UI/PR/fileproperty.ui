@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>30</height>
+    <height>38</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,11 +33,11 @@
        <property name="minimumSize">
         <size>
          <width>80</width>
-         <height>0</height>
+         <height>22</height>
         </size>
        </property>
        <property name="text">
-        <string>File:</string>
+        <string>File</string>
        </property>
       </widget>
      </item>
@@ -46,8 +46,14 @@
        <property name="minimumSize">
         <size>
          <width>300</width>
-         <height>0</height>
+         <height>22</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier New</family>
+         <pointsize>9</pointsize>
+        </font>
        </property>
       </widget>
      </item>
@@ -56,12 +62,27 @@
        <property name="text">
         <string>Select</string>
        </property>
+       <property name="icon">
+        <iconset resource="../../../resource.qrc">
+         <normaloff>:/Icons/rcc/22x22/places/folder.png</normaloff>:/Icons/rcc/22x22/places/folder.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

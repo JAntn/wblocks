@@ -11,27 +11,25 @@
 #include <QModelIndexList>
 #include <QTableView>
 
-TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, const QPoint& global_point, QObject* parent ):
-    QObject( parent ), TypeVariant(0), m_Controller( &controller )
+TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, long action_flags, bool has_selection, const QPoint& global_point, QObject* parent ):
+    QObject( parent ), TypeVariant( 0 ), m_Controller( &controller )
 {
-    QMenu menu;
-    bool has_selection = Controller().MainWindow().RecordExplorer().HasSelection();
-    long action_flags = Controller().Document().Context().Records().Flags();
 
-    if( ( action_flags & FLAG_ACTION_COPY ) && has_selection )
+    QMenu menu;
+
+    if( ( action_flags & FLAG_ACTION_COPY ) && has_selection   )
     {
         QAction* action_copy = menu.addAction( tr( "Copy" ) );
         connect( action_copy, QAction::triggered, &Controller(), TypeController::OnActionCopyRecord );
-
     }
 
-    if( ( action_flags & FLAG_ACTION_CUT ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_CUT ) && has_selection  )
     {
         QAction* action_copy = menu.addAction( tr( "Cut" ) );
         connect( action_copy, QAction::triggered, &Controller(), TypeController::OnActionCutRecord );
     }
 
-    if( ( action_flags & FLAG_ACTION_PASTE ) && !Controller().Clipboard().Empty() )
+    if( ( action_flags & FLAG_ACTION_PASTE )  && ( !controller.Clipboard().Empty() ) )
     {
         QAction* action_paste = menu.addAction( tr( "Paste" ) );
         connect( action_paste, QAction::triggered, &Controller(), TypeController::OnActionPasteRecord );
@@ -40,19 +38,13 @@ TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, co
     if( !menu.isEmpty() )
         menu.addSeparator();
 
-    if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection  )
     {
-        QAction* action_openrecord = menu.addAction( tr( "Open.." ) );
+        QAction* action_openrecord = menu.addAction( tr( "Open" ) );
         connect( action_openrecord, QAction::triggered, &Controller(), TypeController::OnActionOpenRecordInEditor );
     }
 
-    if( ( action_flags & FLAG_ACTION_PROPERTIES ) && has_selection )
-    {
-        QAction* action_1 = menu.addAction( tr( "Properties.." ) );
-        connect( action_1, QAction::triggered, &Controller(), TypeController::OnActionChangePropertyWidget );
-    }
-
-    if( ( action_flags & FLAG_ACTION_ADD_SCENE ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_ADD_SCENE ) && has_selection  )
     {
         QAction* action_3 = menu.addAction( tr( "Add to scene" ) );
         connect( action_3, QAction::triggered, &Controller(), TypeController::OnActionAddSceneItem );
@@ -67,7 +59,7 @@ TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, co
         connect( action_2, QAction::triggered, &Controller(), TypeController::OnActionAddRecord );
     }
 
-    if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection )
+    if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection  )
     {
         QAction* action_4 = menu.addAction( tr( "Remove" ) );
         connect( action_4, QAction::triggered, &Controller(), TypeController::OnActionRemoveRecord );

@@ -42,6 +42,6 @@ void TypeUiBoolProperty::SetValue( bool value )
 
 void TypeUiBoolProperty::OnCurrentIndexChanged( int )
 {
-    OnApplyChanges();
+    OnActionSave();
 }
 

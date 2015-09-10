@@ -1,11 +1,10 @@
 #ifndef HTMLBUILDER_H
 #define HTMLBUILDER_H
 
-#include "FW/variant.h"
-#include "FW/macro.h"
+#include "FW/tools.h"
 
-class TypeBlockStream;
-class TypeRecordStruct;
+class TypeHtmlBlockStream;
+class TypeStruct;
 
 class TypeHtmlBuilder : public TypeVariant
 {
@@ -14,10 +13,11 @@ public:
     explicit TypeHtmlBuilder( TypeVariant* Parent = 0 );
     ~TypeHtmlBuilder() override;
 
-    void                      Build( TypeRecordStruct& root );
+    void                      Build( TypeStruct& root );
     QString                   Text();
+    QString                   FormattedText();
 
-    M_POINTER                ( BlockStream,  TypeBlockStream )
+    M_REFERENCE              ( BlockStream,  TypeHtmlBlockStream )
 };
 
 #endif // HTMLBUILDER_H

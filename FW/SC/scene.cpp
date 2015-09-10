@@ -22,9 +22,9 @@ QString TypeScene::IdCount()
 
 ////////////////////////////////////////////////////////////////////////
 
-TypeScene::TypeScene( TypeDocument& document, TypeVariant* parent ) :
+TypeScene::TypeScene( TypeController& controller, TypeVariant* parent ) :
     TypeVariant( parent ),
-    m_Document( &document ),
+    m_Controller( &controller ),
     m_TopZ( 0 )
 {
     m_Graphics = new QGraphicsScene();
@@ -35,17 +35,17 @@ TypeScene::~TypeScene()
     delete m_Graphics;
 }
 
-TypeSceneItem* TypeScene::CreateItem( TypeStateWriter& state )
+TypeSceneItem* TypeScene::NewItem( TypeStateWriter& state )
 {
     return new TypeSceneItem( *this, state );
 }
 
-TypeSceneItem* TypeScene::CreateItem( TypeRecord& record )
+TypeSceneItem* TypeScene::NewItem( TypeRecord& record )
 {
     return new TypeSceneItem( *this, record, 100 + ( qrand() % 40 - 80 ), 100 + ( qrand() % 40 - 80 ) );
 }
 
-TypeSceneItem* TypeScene::CreateItem( TypeRecord& record, qreal x, qreal y, qreal z )
+TypeSceneItem* TypeScene::NewItem( TypeRecord& record, qreal x, qreal y, qreal z )
 {
     return new TypeSceneItem( *this, record, x, y, z );
 }
@@ -79,8 +79,11 @@ void TypeScene::BringFront( TypeSceneItem& item )
     item.setZValue( m_TopZ );
 }
 
-void TypeScene::UpdateLines()
+void TypeScene::UpdateView()
 {
+
+    // Update lines
+
     ClearLines();
 
     for( TypeSceneItem* from : Items() )

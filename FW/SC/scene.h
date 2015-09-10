@@ -1,14 +1,12 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "FW/variant.h"
-#include "FW/macro.h"
-#include <QObject>
+#include "FW/tools.h"
 #include <QGraphicsScene>
 
 class TypeSceneItem;
 class TypeRecord;
-class TypeDocument;
+class TypeController;
 class TypeStateWriter;
 class TypeSceneLine;
 
@@ -16,40 +14,37 @@ class TypeScene : public TypeVariant
 {
 public:
 
-    explicit TypeScene( TypeDocument& document, TypeVariant* Parent = 0 );
+    explicit TypeScene( TypeController& controller, TypeVariant* Parent = 0 );
     ~TypeScene() override;
 
-    static QString                GenerateId();
-    static QString                IdCount();
+    static QString                          GenerateId();
+    static QString                          IdCount();
 
-    TypeSceneItem*                  CreateItem( TypeStateWriter& state );
-    TypeSceneItem*                  CreateItem( TypeRecord& record );
-    TypeSceneItem*                  CreateItem( TypeRecord& record, qreal x, qreal y, qreal z = -1 );
+    void                                    Clear();
+    int                                     Size();
+    TypeSceneItem*                          NewItem( TypeStateWriter& state );
+    TypeSceneItem*                          NewItem( TypeRecord& record );
+    TypeSceneItem*                          NewItem( TypeRecord& record, qreal x, qreal y, qreal z = -1 );
+    QList<TypeSceneItem*>                   FromRecord( TypeRecord& record ) const;
 
-    QList<TypeSceneItem*>           FromRecord( TypeRecord& record ) const;
+    void                                    BringFront( TypeSceneItem& sc );
 
-    void                          Clear();
-    int                           Size();
+    void                                    UpdateView();
+    void                                    ClearLines();
 
-    void                          BringFront( TypeSceneItem& sc );
-
-    void                          UpdateLines();
-    void                          ClearLines();
-
-    M_POINTER                     ( Graphics,       QGraphicsScene )
-    M_POINTER                     ( Document,       TypeDocument )
-    M_VALUE                       ( TopZ,           double )
-    M_VALUE                       ( Items,          QList<TypeSceneItem*> )
-    M_VALUE                       ( Lines,          QList<TypeSceneLine*> )
+    M_REFERENCE                             ( Controller,     TypeController )
+    M_REFERENCE                             ( Graphics,       QGraphicsScene )
+    M_VALUE                                 ( TopZ,           double )
+    M_VALUE                                 ( Items,          QList<TypeSceneItem*> )
+    M_VALUE                                 ( Lines,          QList<TypeSceneLine*> )
 
 private:
 
-    static long                   m_IdCount;
+    static long                             m_IdCount;
 
-    friend class                  TypeDocument;
-    friend class                  TypeSceneItem;
-    friend class                  TypeSceneLine;
-
+    friend class                            TypeSceneItem;
+    friend class                            TypeSceneLine;
+    friend class                            TypeDocument;
 };
 
 

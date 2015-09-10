@@ -1,49 +1,48 @@
 #ifndef RECORD_H
 #define RECORD_H
 
-#include "FW/macro.h"
-#include "FW/variant.h"
-#include "FW/htmlbuilder.h"
-#include <QString>
-#include <QWidget>
+#include "FW/tools.h"
 
 class TypeUiEditor;
-class TypeRecordStruct;
+class TypeStruct;
 class TypeStateReader;
 class TypeStateWriter;
 class TypeController;
+class TypeHtmlBlockStream;
 
 class TypeRecord : public TypeVariant
 {
 public:
 
-    explicit TypeRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
-    TypeRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeRecordStruct* root = 0 );
+    explicit TypeRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeStruct* root = 0 );
+    TypeRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeStruct* root = 0 );
     ~TypeRecord() override;
 
-    virtual bool                  GetState( TypeStateReader& state );
-    virtual bool                  SetState( TypeStateWriter& state, TypeRecordStruct* root = 0 );
-    virtual QWidget*              PropertyWidget( TypeController& controller );
-    virtual TypeUiEditor*         EditorWidget( QString id, TypeController& controller );
+    virtual bool                            GetState( TypeStateReader& state );
+    virtual bool                            SetState( TypeStateWriter& state, TypeStruct* root = 0 );
+    virtual QWidget*                        PropertyWidget( TypeController& controller );
+    virtual TypeUiEditor*                   EditorWidget( QString id, TypeController& controller );
 
-    virtual TypeRecordStruct*     Struct();
-    virtual void                  Script( TypeBlockStream& block_stream );
-    virtual void                  Html( TypeBlockStream& block_stream );
+    virtual TypeStruct*                     Struct();
+    virtual TypeStruct*                     ParentStruct() ;
+    virtual TypeRecord*                     ParentRecord() ;
 
-    virtual void                  SetValue( QString value );
-    virtual QString               Value();
+    virtual void                            Script( TypeHtmlBlockStream& block_stream );
+    virtual void                            Html( TypeHtmlBlockStream& block_stream );
 
-    QString                       FullName() const;
+    virtual void                            SetValue( QString value );
+    virtual QString                         Value();
 
+    QString                                 FullName() ;
 
-    M_CONST_VALUE                 ( Id,    QString )
-    M_VALUE                       ( Name,  QString )
-    M_CONST_VALUE                 ( Class, QString )
-    M_VALUE                       ( Flags, long )
+    M_VALUE_READONLY                        ( Id,    QString )
+    M_VALUE                                 ( Name,  QString )
+    M_VALUE_READONLY                        ( Class, QString )
+    M_VALUE                                 ( Flags, long )
 
 protected:
 
-    QString                       m_Value;
+    QString                                 m_Value;
 };
 
 class TypeRecordFactory
@@ -52,22 +51,21 @@ public:
 
     TypeRecordFactory();
 
-    virtual TypeRecord*             NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
-    virtual TypeRecord*             NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeRecordStruct* root = 0 );
+    virtual TypeRecord*                     NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 );
+    virtual TypeRecord*                     NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 );
 
-    static QString                GenerateId();
-    static QString                IdCount();
+    static QString                          GenerateId();
+    static QString                          IdCount();
 
-    M_CONST_VALUE                 ( RecordClass, QString )
+    M_VALUE_READONLY                        ( RecordClass, QString )
 
 private:
 
-    static long                   m_IdCount;
-    friend class                  TypeDocument;
+    static long                             m_IdCount;
+    friend class                            TypeDocument;
 };
 
 #endif // RECORD_H
 
-#include "FW/RC/record_struct.h"
-
-#include <FW/controller.h>
+#include "FW/RC/root_struct.h"
+#include "FW/controller.h"

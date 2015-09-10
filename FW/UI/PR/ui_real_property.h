@@ -1,8 +1,7 @@
 #ifndef UIREALPROPERTY_H
 #define UIREALPROPERTY_H
 
-#include "FW/macro.h"
-#include <QWidget>
+#include "FW/tools.h"
 #include "FW/UI/PR/ui_property.h"
 
 

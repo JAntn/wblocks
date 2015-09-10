@@ -1,10 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "FW/macro.h"
-#include "FW/variant.h"
-#include <QObject>
-#include <QStringList>
+#include "FW/tools.h"
 
 class TypeRecord;
 class TypeUiMainWindow;
@@ -26,78 +23,96 @@ public:
     TypeController();
     ~TypeController() override;
 
-    static bool         AcceptMessage( QString msg );
-    static void         Message( QString msg );
-    static QString      LoadTextFile( QString file_name );
-    static void         SaveTextFile( QString file_name, QString text );
+    static bool                             AcceptMessage( QString msg );
+    static void                             Message( QString msg );
+    static QString                          LoadTextFile( QString file_name );
+    static void                             SaveTextFile( QString file_name, QString text );
 
-    M_POINTER           ( Document,    TypeDocument )
-    M_POINTER           ( MainWindow,  TypeUiMainWindow )
-    M_POINTER           ( Config,      TypeConfig )
-    M_POINTER           ( Database,    TypeDatabase )
-    M_POINTER           ( HtmlBuilder, TypeHtmlBuilder )
-    M_POINTER           ( Clipboard,   TypeClipboard )
-    M_VALUE             ( BinPath,     QString )
-    M_POINTER           ( SyntaxHighlighterFactory,   TypeUiSyntaxHighlighterFactory )
+    M_REFERENCE                             ( Document,    TypeDocument )
+    M_REFERENCE                             ( MainWindow,  TypeUiMainWindow )
+    M_REFERENCE                             ( Config,      TypeConfig )
+    M_REFERENCE                             ( Database,    TypeDatabase )
+    M_REFERENCE                             ( HtmlBuilder, TypeHtmlBuilder )
+    M_REFERENCE                             ( Clipboard,   TypeClipboard )
+    M_VALUE                                 ( BinPath,     QString )
+    M_REFERENCE                             ( SyntaxHighlighterFactory,   TypeUiSyntaxHighlighterFactory )
 
-    void                ConnectSlots();
+    void                                    ConnectSlots();
 
-    QString             NewFileNameId( QString file_name );
-    QString             NewHtmlBlocksEditorId(QString file_name);
+    QString                                 NewFileNameId( QString file_name );
+    QString                                 NewHtmlTextViewId( QString file_name );
 
-    void                SetPropertyWidgetRecord( TypeRecord& record );
-    void                OpenRecordEditorWidget( TypeRecord& record );
-    void                OpenFileUiEditor( QString file_name );
+    void                                    SetPropertyWidgetRecord( TypeRecord& record );
+    //void                                    ClearPropertyWidgetRecord();
 
+    void                                    OpenRecordEditorWidget( TypeRecord& record );
+    void                                    OpenFileUiEditor( QString file_name );
 
 public slots:
 
-    void                OnDirectoryChanged();
+    // change events
 
-    void                OnRecordExplorerChanged();
-    void                OnFileExplorerChanged();
-    void                OnRecordsChanged();
-    void                OnSceneChanged();
-    void                OnHtmlBlocksChanged();
-    void                OnEditorContainerChanged();
+    void                                    OnLeftTabCurrentChanged( int index );
+    void                                    OnRightTabCurrentChanged( int index );
 
-    void                OnActionRunHtmlBlocks();
-    void                OnActionUpdateHtmlBlocks();
-    void                OnActionSaveHtmlBlocks();
+    void                                    OnDirectoryChanged();
+    void                                    OnRecordExplorerChanged();
+    void                                    OnFileExplorerChanged();
 
-    void                OnActionNewProjectFile();
-    void                OnActionLoadProjectFile();
-    void                OnActionSaveProjectFile();
-    void                OnActionLoadProjectSQL();
-    void                OnActionSaveProjectSQL();
+    void                                    OnRecordsChanged();
+    void                                    OnSceneChanged();
+    void                                    OnHtmlTextChanged();
+    void                                    OnEditorContainerChanged();
 
-    void                OnActionExit();
+    // html
 
-    void                OnActionAddRecord();
-    void                OnActionChangePropertyWidget();
-    void                OnActionRemoveRecord();
-    void                OnActionAddSceneItem();
-    void                OnActionCopyRecord();
-    void                OnActionPasteRecord();
-    void                OnActionCutRecord();
-    void                OnActionOpenRecordInEditor();
+    void                                    OnActionUpdateHtmlWeb();
+    void                                    OnActionUpdateHtmlText();
+    void                                    OnActionSaveHtmlFile();
 
-    void                OnActionNewFile();
-    void                OnActionCloseFile();
-    void                OnActionCloseAllFiles();
-    void                OnActionSaveFile();
-    void                OnActionSaveAllFiles();
-    void                OnActionLoadFile();
+    // project
+
+    void                                    OnActionNewProjectFile();
+    void                                    OnActionLoadProjectFile();
+    void                                    OnActionSaveProjectFile();
+    void                                    OnActionLoadProjectSQL();
+    void                                    OnActionSaveProjectSQL();
+
+    void                                    OnActionExit();
+
+    // record
+
+    void                                    OnActionAddRecord();
+    void                                    OnActionChangePropertyWidget();
+    void                                    OnActionRemoveRecord();
+    void                                    OnActionAddSceneItem();
+    void                                    OnActionCopyRecord();
+    void                                    OnActionPasteRecord();
+    void                                    OnActionCutRecord();
+    void                                    OnActionOpenRecordInEditor();
+
+    // file
+
+    void                                    OnActionNewFile();
+    void                                    OnActionCloseFile();
+    void                                    OnActionCloseAllFiles();
+    void                                    OnActionSaveFile();
+    void                                    OnActionSaveAllFiles();
+    void                                    OnActionLoadFile();
+
+
 
 signals:
 
-    void                DirectoryChanged();
-    void                RecordExplorerChanged();
-    void                FileExplorerChanged();
-    void                RecordsChanged();
-    void                SceneChanged();
-    void                HtmlBlocksChanged();
-    void                EditorContainerChanged();
+    void                                    DirectoryChanged();
+    void                                    RecordExplorerChanged();
+    void                                    FileExplorerChanged();
+    void                                    RecordsChanged();
+    void                                    SceneChanged();
+    void                                    HtmlTextChanged();
+    void                                    EditorContainerChanged();
+    void                                    SetActiveRecord(TypeRecord* record);
+
 
 };
 

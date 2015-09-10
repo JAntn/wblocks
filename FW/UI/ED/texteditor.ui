@@ -30,6 +30,12 @@
          <height>20</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <family>Courier New</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="frame">
         <bool>false</bool>
        </property>

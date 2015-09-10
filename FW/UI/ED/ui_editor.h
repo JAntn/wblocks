@@ -9,25 +9,28 @@ class TypeUiEditor : public QWidget, public TypeVariant
 
 public:
 
-    typedef std::function<void( TypeUiEditor& )> TypeSaveCallback;
+    typedef std::function<bool( TypeUiEditor& )> TypeSaveCallback;
 
     explicit TypeUiEditor( QString id, QString name, QString tab_name,
                            QWidget* parent = 0,
                            TypeSaveCallback save_callback = &TypeUiEditor::empty_save_callback );
     ~TypeUiEditor();
 
-    M_CONST_VALUE                ( Id,                QString )
-    M_VALUE                      ( Name,              QString )
-    M_VALUE                      ( TabName,           QString )
-    M_VALUE                      ( HasChanged,        bool )
-    M_VALUE                      ( SaveCallback,      TypeSaveCallback )
+    M_VALUE_READONLY                        ( Id,                QString )
+    M_VALUE                                 ( Name,              QString )
+    M_VALUE                                 ( TabName,           QString )
+    M_VALUE                                 ( HasChanged,        bool )
+    M_VALUE                                 ( SaveCallback,      TypeSaveCallback )
 
-    static void empty_save_callback( TypeUiEditor&){}
+    static bool                             empty_save_callback( TypeUiEditor& );
 
 public slots:
 
-    void                         OnActionSave();
+    void                                    OnActionSave();
 
+signals:
+
+    void                                    HasSaved();
 };
 
 #endif // UIEDITOR_H

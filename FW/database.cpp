@@ -23,10 +23,10 @@ TypeDatabase::~TypeDatabase()
     //void
 }
 
-void TypeDatabase::OpenDatabase( QString file_name )
+bool TypeDatabase::OpenDatabase( QString file_name )
 {
     QSqlDatabase::database().setDatabaseName( file_name );
-    QSqlDatabase::database().open();
+    return QSqlDatabase::database().open();
 }
 
 void TypeDatabase::CloseDatabase()

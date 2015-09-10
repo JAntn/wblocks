@@ -11,14 +11,22 @@ TypeUiTextEditor::TypeUiTextEditor( QString id, QString name, QString tab_name,
     m_SyntaxHighlighter( syntax_higlighter ),
     ui( new Ui::TypeUiTextEditor )
 {
+    m_ShowTitleAsterisc = true;
+
     ui->setupUi( this );
-    ui->NameLineEdit->setText( m_Name );
 
     connect(
         ui->TextEdit,
         QTextEdit::textChanged,
         this,
         TypeUiTextEditor::OnTextChanged
+    );
+
+    connect(
+        this,
+        TypeUiEditor::HasSaved,
+        this,
+        TypeUiTextEditor::OnTextSaved
     );
 
     QFont font;
@@ -29,6 +37,9 @@ TypeUiTextEditor::TypeUiTextEditor( QString id, QString name, QString tab_name,
 
     if( m_SyntaxHighlighter != 0 )
         m_SyntaxHighlighter->setDocument( ui->TextEdit->document() );
+
+    SetHasChanged( false );
+    ui->NameLineEdit->setText( Name() );
 }
 
 TypeUiTextEditor::~TypeUiTextEditor()
@@ -36,18 +47,16 @@ TypeUiTextEditor::~TypeUiTextEditor()
     delete ui;
 }
 
-void TypeUiTextEditor::SetText( QString text , bool signal_block )
+void TypeUiTextEditor::SetText( QString text )
 {
-    // WARNIG - BLOCKING SIGNALS
-
-    if( signal_block )
-    {
-        QSignalBlocker blocker( ui->TextEdit );
-        ui->TextEdit->setPlainText( text );
-        return;
-    }
-
+    QSignalBlocker block( this );
     ui->TextEdit->setPlainText( text );
+}
+
+void TypeUiTextEditor::SetFormattedText( QString text )
+{
+    QSignalBlocker block( this );
+    ui->TextEdit->setHtml( text );
 }
 
 void TypeUiTextEditor::SetSyntaxHighlighter( TypeUiSyntaxHighlighter* syntax_higlighter )
@@ -58,14 +67,12 @@ void TypeUiTextEditor::SetSyntaxHighlighter( TypeUiSyntaxHighlighter* syntax_hig
         m_SyntaxHighlighter->setDocument( ui->TextEdit->document() );
 }
 
-QTextEdit& TypeUiTextEditor::TextEditWidget()
+void TypeUiTextEditor::UpdateTitle()
 {
-    return *ui->TextEdit;
-}
-
-QLineEdit&TypeUiTextEditor::NameLineEditWidget()
-{
-    return *ui->NameLineEdit;
+    if( HasChanged() )
+        ui->NameLineEdit->setText( Name() + "*" );
+    else
+        ui->NameLineEdit->setText( Name() );
 }
 
 QString TypeUiTextEditor::Text()
@@ -75,9 +82,15 @@ QString TypeUiTextEditor::Text()
 
 void TypeUiTextEditor::OnTextChanged()
 {
-    if( !HasChanged() )
-    {
-        SetHasChanged( true );
-        ui->NameLineEdit->setText( Name() + "*" );
-    }
+    SetHasChanged( true );
+
+    if( ShowTitleAsterisc() )
+        UpdateTitle();
 }
+
+void TypeUiTextEditor::OnTextSaved()
+{
+    SetHasChanged( false );
+    UpdateTitle();
+}
+

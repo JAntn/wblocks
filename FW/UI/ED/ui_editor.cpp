@@ -13,6 +13,9 @@ TypeUiEditor::TypeUiEditor( QString id, QString name, QString tab_name, QWidget*
 
     if( m_TabName.isEmpty() )
         m_TabName = m_Name;
+
+    if( m_TabName.size() < 10 )
+        m_TabName.append( QString( 10 - m_TabName.size(), ' ' ) );
 }
 
 TypeUiEditor::~TypeUiEditor()
@@ -20,8 +23,14 @@ TypeUiEditor::~TypeUiEditor()
     // void
 }
 
+bool TypeUiEditor::empty_save_callback( TypeUiEditor& )
+{
+    return true;
+}
+
 void TypeUiEditor::OnActionSave()
 {
-    m_SaveCallback( *this );
+    if( m_SaveCallback( *this ) )
+        emit HasSaved();
 }
 

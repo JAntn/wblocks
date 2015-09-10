@@ -43,6 +43,6 @@ void TypeUiRecordNameProperty::OnReturnPressed()
         return;
     }
 
-    OnApplyChanges();
+    OnActionSave();
 }
 
