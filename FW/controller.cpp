@@ -1,3 +1,22 @@
+//
+// Include all records:
+
+#include "FW/RC/struct_record.h"
+#include "FW/RC/integer_record.h"
+#include "FW/RC/reference_record.h"
+#include "FW/RC/real_record.h"
+#include "FW/RC/JS/js_script_file_record.h"
+#include "FW/RC/JS/js_script_record.h"
+#include "FW/RC/PHP/php_file_record.h"
+#include "FW/RC/CSS/css_file_record.h"
+#include "FW/RC/string_record.h"
+#include "FW/RC/bool_record.h"
+#include "FW/RC/file_record.h"
+#include "FW/RC/HTML/html_record.h"
+#include "FW/RC/HTML/html_file_record.h"
+#include "FW/RC/text_file_record.h"
+
+
 #include "FW/controller.h"
 #include "FW/RC/record.h"
 #include "FW/RC/struct.h"
@@ -20,9 +39,14 @@
 #include "FW/context.h"
 #include <QWebFrame>
 #include "ui_mainwindow.h"
+#include "FW/UI/ui_file_explorer.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// STATIC
+
+QList<TypeRecordFactory*>        TypeController::m_FactoryList;
+TypeUiSyntaxHighlighterFactory   TypeController::m_SyntaxHighlighterFactory;
+
 
 QString TypeController::LoadTextFile( QString file_name )
 {
@@ -37,6 +61,8 @@ QString TypeController::LoadTextFile( QString file_name )
     QString text = file.readAll();
     file.close();
     return text;
+
+    qDebug() << "File " + file_name + " loaded";
 }
 
 void TypeController::SaveTextFile( QString file_name, QString text )
@@ -52,6 +78,8 @@ void TypeController::SaveTextFile( QString file_name, QString text )
     QTextStream out( &file );
     out << text;
     file.close();
+
+    qDebug() << "File " + file_name + " saved";
 }
 
 bool TypeController::AcceptMessage( QString msg )
@@ -85,16 +113,61 @@ TypeController::TypeController(): TypeVariant()
     m_Database          = new TypeDatabase( this );
     m_Clipboard         = new TypeClipboard( this );
 
-    m_SyntaxHighlighterFactory = new TypeUiSyntaxHighlighterFactory( this );
-    SyntaxHighlighterFactory().AppendFormat( "C++", ":/SyntaxHighlight/rcc/cpp.txt" );
-    SyntaxHighlighterFactory().AppendFormat( "HTML", ":/SyntaxHighlight/rcc/html.txt" );
-    SyntaxHighlighterFactory().AppendFormat( "JS", ":/SyntaxHighlight/rcc/js.txt" );
-    SyntaxHighlighterFactory().AppendFormat( "PHP", ":/SyntaxHighlight/rcc/php.txt" );
+    if( SyntaxHighlighterFactory().Empty() )
+    {
+        SyntaxHighlighterFactory().AppendFormat( "C++", ":/SyntaxHighlight/rcc/cpp.txt" );
+        SyntaxHighlighterFactory().AppendFormat( "HTML", ":/SyntaxHighlight/rcc/html.txt" );
+        SyntaxHighlighterFactory().AppendFormat( "JAVASCRIPT", ":/SyntaxHighlight/rcc/js.txt" );
+        SyntaxHighlighterFactory().AppendFormat( "PHP", ":/SyntaxHighlight/rcc/php.txt" );
+        SyntaxHighlighterFactory().AppendFormat( "CSS", ":/SyntaxHighlight/rcc/css.txt" );
+    }
+
+    if( FactoryList().empty() )
+    {
+        m_FactoryList.append( &TypeIntegerRecordFactory::Instance() );
+        m_FactoryList.append( &TypeStringRecordFactory::Instance() );
+        m_FactoryList.append( &TypeRealRecordFactory::Instance() );
+        m_FactoryList.append( &TypeBoolRecordFactory::Instance() );
+        m_FactoryList.append( &TypeStructRecordFactory::Instance() );
+        m_FactoryList.append( &TypeReferenceRecordFactory::Instance() );
+        m_FactoryList.append( &TypeFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypeTextFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypeHtmlRecordFactory::Instance() );
+        m_FactoryList.append( &TypeHtmlFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypeCssFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypePhpFileRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsScriptRecordFactory::Instance() );
+        m_FactoryList.append( &TypeJsScriptFileRecordFactory::Instance() );
+
+        // Add more classes here or later
+    }
+
 }
 
 TypeController::~TypeController()
 {
     // void
+}
+
+const QList<TypeRecordFactory*>& TypeController::FactoryList()
+{
+    return m_FactoryList;
+}
+
+TypeRecordFactory* TypeController::FactoryFromName( QString class_name )
+{
+    for( TypeRecordFactory* record_factory : FactoryList() )
+    {
+        if( record_factory->RecordClass() == class_name )
+            return record_factory;
+    }
+
+    return 0;
+}
+
+TypeUiSyntaxHighlighterFactory& TypeController::SyntaxHighlighterFactory()
+{
+    return m_SyntaxHighlighterFactory;
 }
 
 void TypeController::ConnectSlots()
@@ -171,7 +244,7 @@ QString TypeController::NewFileNameId( QString file_name )
     }
 
     if( file_ext == "js" )
-        return "FILE:JS:" + file_name;
+        return "FILE:JAVASCRIPT:" + file_name;
 
     if( file_ext == "html" )
         return "FILE:HTML:" + file_name;
@@ -179,7 +252,13 @@ QString TypeController::NewFileNameId( QString file_name )
     if( file_ext == "php" )
         return"FILE:PHP:" + file_name;
 
-    return "FILE:TEXT:" + file_name;
+    if( file_ext == "css" )
+        return"FILE:CSS:" + file_name;
+
+    if( file_ext == "txt" )
+        return"FILE:PLAINTEXT:" + file_name;
+
+    return "FILE:PLAINTEXT:" + file_name;
 }
 
 QString TypeController::NewHtmlTextViewId( QString file_name )
@@ -207,10 +286,51 @@ void TypeController::OpenFileUiEditor( QString file_name )
         MainWindow().EditorContainer().Close( id );
     }
 
-    TypeUiEditor::TypeSaveCallback save_callback = [file_name]( TypeUiEditor & editor_base )
+    TypeUiEditor::TypeSaveCallback save_callback = [file_name, this]( TypeUiEditor & editor_base )
     {
         TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
         SaveTextFile( file_name, editor->Text() );
+        MainWindow().UpdateFileExplorer();
+        return true;
+    };
+
+    TypeUiEditor::TypeSaveCallback save_as_callback = [file_name, this]( TypeUiEditor & editor_base )
+    {
+        TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
+
+        QString file_name_out =
+            QFileDialog::getSaveFileName(
+                &MainWindow(),
+                tr( "Select File Name" ),
+                editor->Name(),
+                tr( "All files (*.*)" )
+            );
+
+        if( file_name_out.isEmpty() )
+        {
+            qDebug() << "File selection cancelled";
+            return false;
+        }
+
+        QString new_id = NewFileNameId( file_name_out );
+
+        if( new_id != editor->Id() )
+        {
+
+            if( MainWindow().EditorContainer().HasId( new_id ) )
+            {
+                if( !TypeController::AcceptMessage( tr( "File already open. Replace file?" ) ) )
+                    return false;
+
+                MainWindow().EditorContainer().Close( new_id );
+            }
+
+            editor->SetId( new_id );
+        }
+
+        editor->SetName( file_name_out );
+        SaveTextFile( file_name_out, editor->Text() );
+        MainWindow().UpdateFileExplorer();
         return true;
     };
 
@@ -219,6 +339,7 @@ void TypeController::OpenFileUiEditor( QString file_name )
     TypeUiTextEditor* text_editor = new TypeUiTextEditor(
         id, file_name, file_name.split( "/" ).back(), 0/*parent widget*/,
         save_callback/*editor save callback*/,
+        save_as_callback,
         syntax_highlighter/*syntax highlighter*/ );
 
     text_editor->SetText( LoadTextFile( file_name ) );
@@ -230,6 +351,83 @@ void TypeController::OpenFileUiEditor( QString file_name )
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
 }
 
+void TypeController::NewFileUiEditor( QString file_name )
+{
+    QString id = NewFileNameId( file_name );
+
+    if( MainWindow().EditorContainer().HasId( id ) )
+    {
+        if( !TypeController::AcceptMessage( tr( "File already open. Replace file?" ) ) )
+            return;
+
+        MainWindow().EditorContainer().Close( id );
+    }
+
+    TypeUiEditor::TypeSaveCallback save_callback = [file_name, this]( TypeUiEditor & editor_base )
+    {
+        TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
+        SaveTextFile( file_name, editor->Text() );
+        MainWindow().UpdateFileExplorer();
+        return true;
+    };
+
+    TypeUiEditor::TypeSaveCallback save_as_callback = [file_name, this]( TypeUiEditor & editor_base )
+    {
+        TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
+
+        QString file_name_out =
+            QFileDialog::getSaveFileName(
+                &MainWindow(),
+                tr( "Select File Name" ),
+                editor->Name(),
+                tr( "Text files (*.txt);;Html files (*.html);;Css files (*.css);;Java Script Files (*.js);;Php files (*.php)" )
+            );
+
+        if( file_name_out.isEmpty() )
+        {
+            qDebug() << "File selection cancelled";
+            return false;
+        }
+
+        QString new_id = NewFileNameId( file_name_out );
+
+        if( new_id != editor->Id() )
+        {
+
+            if( MainWindow().EditorContainer().HasId( new_id ) )
+            {
+                if( !TypeController::AcceptMessage( tr( "File already open. Replace file?" ) ) )
+                    return false;
+
+                MainWindow().EditorContainer().Close( new_id );
+            }
+
+            editor->SetId( new_id );
+        }
+
+        editor->SetName( file_name_out );
+        SaveTextFile( file_name_out, editor->Text() );
+        MainWindow().UpdateFileExplorer();
+        return true;
+    };
+
+    TypeUiSyntaxHighlighter* syntax_highlighter =
+        SyntaxHighlighterFactory().NewInstance( id.split( ":" )[1] );
+
+    TypeUiTextEditor* text_editor = new TypeUiTextEditor(
+        id, file_name, file_name.split( "/" ).back(), 0/*parent widget*/,
+        save_callback/*editor save callback*/,
+        save_as_callback,
+        syntax_highlighter/*syntax highlighter*/ );
+
+    text_editor->SetText( "" );
+    text_editor->SetHasChanged( false );
+    text_editor->UpdateTitle();
+
+    MainWindow().EditorContainer().Append( text_editor );
+    MainWindow().EditorContainer().SetCurrent( id );
+    MainWindow().SetCurrentTab( MAINWINDOW_TAB_EDITOR );
+}
 
 void TypeController::OnDirectoryChanged()
 {
@@ -269,25 +467,80 @@ void TypeController::OnSceneChanged()
     MainWindow().UpdateSceneView();
 }
 
-void TypeController::OnActionNewProjectFile()
+void TypeController::OnActionProjectNew()
 {
+    if( TypeController::AcceptMessage( "Save project changes?" ) )
+    {
+        MainWindow().EditorContainer().SaveAll();
+
+        QString file_name = Document().FileName();
+
+        if( file_name.isEmpty() )
+        {
+            file_name =
+                QFileDialog::getSaveFileName(
+                    &MainWindow(),
+                    tr( "Save Project File" ),
+                    tr( "untitled" ),
+                    tr( "Project Files (*.prj *.sql)" )
+                );
+        }
+
+        if( file_name.isEmpty() )
+        {
+            qDebug() << "File name is empty";
+            return;
+        }
+
+        MainWindow().EditorContainer().SaveAll();
+        MainWindow().UpdateFileExplorer();
+        MainWindow().EditorContainer().CloseAll();
+
+        int error;
+
+        if( file_name.split( "." ).back() == "sql" )
+            error = Document().SaveSQL( file_name );
+        else
+            error = Document().SaveFile( file_name );
+
+        if( !error )
+        {
+            qDebug() << "Save project successfull";
+
+            Config().SetProjectFileName( Document().FileName() );
+            Config().SetProjectPath( Document().Path() );
+        }
+        else
+            qDebug() << "Save project error. Code " << error;
+    }
+
     Document().Clear();
+
     MainWindow().SetTitle( "" );
 
     MainWindow().HtmlTextView().SetName( "" );
     MainWindow().HtmlTextView().SetHasChanged( false );
     MainWindow().HtmlTextView().UpdateTitle();
+    MainWindow().HtmlTextView().UpdateView();
+
+    MainWindow().SetPropertyWidget( 0 );
+
+    Config().SetProjectFileName( "" );
+    Config().SetProjectPath( "" );
+
+    QDir().setCurrent( Config().ProjectPath() );
+    emit DirectoryChanged();
 }
 
 
-void TypeController::OnActionLoadProjectFile()
+void TypeController::OnActionProjectOpen()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
             &MainWindow(),
             tr( "Load File" ),
             Document().FileName(),
-            tr( "Project Files (*.prj)" )
+            tr( "Project Files (*.prj *.sql)" )
         );
 
     if( file_name.isEmpty() )
@@ -296,7 +549,12 @@ void TypeController::OnActionLoadProjectFile()
         return;
     }
 
-    int error = Document().LoadFile( file_name );
+    int error;
+
+    if( file_name.split( "." ).back() == "prj" )
+        error = Document().LoadFile( file_name );
+    else
+        error = Document().LoadSQL( file_name );
 
     if( !error )
     {
@@ -316,14 +574,14 @@ void TypeController::OnActionLoadProjectFile()
     qDebug() << "Load project error. Code " << error;
 }
 
-void TypeController::OnActionSaveProjectFile()
+void TypeController::OnActionProjectSaveAs()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
             &MainWindow(),
             tr( "Save File" ),
             Document().FileName(),
-            tr( "Project Files (*.prj)" )
+            tr( "Project Files (*.prj *.sql)" )
         );
 
     if( file_name.isEmpty() )
@@ -332,7 +590,13 @@ void TypeController::OnActionSaveProjectFile()
         return;
     }
 
-    int error = Document().SaveFile( file_name );
+    int error;
+
+    if( file_name.split( "." ).back() == "prj" )
+        error = Document().SaveFile( file_name );
+    else
+        error = Document().SaveSQL( file_name );
+
     MainWindow().UpdateFileExplorer();
 
     if( !error )
@@ -353,64 +617,20 @@ void TypeController::OnActionSaveProjectFile()
     qDebug() << "Save project error. Code " << error;
 }
 
-void TypeController::OnActionLoadProjectSQL()
+void TypeController::OnActionProjectSave()
 {
-    QString file_name =
-        QFileDialog::getOpenFileName(
-            &MainWindow(),
-            tr( "Load SQL Database File" ),
-            "",
-            tr( "SQL Files (*.sql)" )
-        );
+    int error;
 
-    if( file_name.isEmpty() )
-    {
-        qDebug() << "File selection canceled";
-        return;
-    }
+    if( Document().FileName().split( "." ).back() == "prj" )
+        error = Document().SaveFile( Document().FileName() );
+    else
+        error = Document().SaveSQL( Document().FileName() );
 
-    int error = Document().LoadSQL( file_name );
-
-    if( !error )
-    {
-        qDebug() << "Load project SQL successfull";
-
-        MainWindow().HtmlTextView().SetName( Document().FileName() );
-        MainWindow().HtmlTextView().OnActionSave();
-
-        Config().SetProjectFileName( Document().FileName() );
-        Config().SetProjectPath( Document().Path() );
-        QDir().setCurrent( Config().ProjectPath() );
-        emit DirectoryChanged();
-
-        return;
-    }
-
-    qDebug() << "Load project SQL error. Code " << error;
-}
-
-void TypeController::OnActionSaveProjectSQL()
-{
-    QString file_name =
-        QFileDialog::getSaveFileName(
-            &MainWindow(),
-            tr( "Save SQL Database File" ),
-            tr( "untitled.sql" ),
-            tr( "SQL Files (*.sql)" )
-        );
-
-    if( file_name.isEmpty() )
-    {
-        qDebug() << "File selection canceled";
-        return;
-    }
-
-    int error = Document().SaveSQL( file_name );
     MainWindow().UpdateFileExplorer();
 
     if( !error )
     {
-        qDebug() << "Load project SQL successfull";
+        qDebug() << "Save project successfull";
 
         MainWindow().HtmlTextView().SetName( Document().FileName() );
         MainWindow().HtmlTextView().OnActionSave();
@@ -423,16 +643,19 @@ void TypeController::OnActionSaveProjectSQL()
         return;
     }
 
-    qDebug() << "Load project SQL error. Code " << error;
+    qDebug() << "Save project error. Code " << error;
 }
 
-void TypeController::OnActionSaveHtmlFile()
+void TypeController::OnActionHtmlSaveAs()
 {
+    QStringList token_list = Document().FileName().split( "." );
+    token_list.pop_back();
+
     QString file_name =
         QFileDialog::getSaveFileName(
             &MainWindow(),
             tr( "Save Html File" ),
-            tr( "untitled.html" ),
+            token_list.join( "" ) + ".html",
             tr( "Html Files (*.html)" )
         );
 
@@ -444,11 +667,19 @@ void TypeController::OnActionSaveHtmlFile()
 
     Document().UpdateHtml();
 
-    TypeController::SaveTextFile(
-        file_name,
-        HtmlBuilder().Text()
-    );
+    TypeController::SaveTextFile( file_name, HtmlBuilder().Text() );
+    MainWindow().UpdateFileExplorer();
+}
 
+void TypeController::OnActionHtmlSave()
+{
+    QStringList token_list = Document().FileName().split( "." );
+    token_list.pop_back();
+    QString file_name = token_list.join( "" ) + ".html";
+
+    Document().UpdateHtml();
+
+    TypeController::SaveTextFile( file_name, HtmlBuilder().Text() );
     MainWindow().UpdateFileExplorer();
 }
 
@@ -481,7 +712,7 @@ void TypeController::OnActionChangePropertyWidget()
     }
 }
 
-void TypeController::OnActionRemoveRecord()
+void TypeController::OnActionRecordRemove()
 {
     long action_flags = Document().Context().Struct().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
@@ -510,7 +741,7 @@ void TypeController::OnActionRemoveRecord()
             }
         }
 
-        emit SetActiveRecord(0);
+        emit SetActiveRecord( 0 );
 
         for( TypeRecord* record : selection_list )
             delete record;
@@ -521,7 +752,7 @@ void TypeController::OnActionRemoveRecord()
         qDebug() << "FLAG_ACTION_REMOVE is disabled on parent struct.";
 }
 
-void TypeController::OnActionAddRecord()
+void TypeController::OnActionRecordAdd()
 {
     long action_flags = Document().Context().Struct().Flags() ;
 
@@ -552,7 +783,7 @@ void TypeController::OnActionAddRecord()
     dialog->show();
 }
 
-void TypeController::OnActionAddSceneItem()
+void TypeController::OnActionRecordAddSceneItem()
 {
     long action_flags = Document().Context().Struct().Flags();
 
@@ -584,7 +815,7 @@ void TypeController::OnActionAddSceneItem()
     }
 }
 
-void TypeController::OnActionCopyRecord()
+void TypeController::OnActionRecordCopy()
 {
     long action_flags = Document().Context().Struct().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
@@ -613,7 +844,7 @@ void TypeController::OnActionCopyRecord()
     }
 }
 
-void TypeController::OnActionPasteRecord()
+void TypeController::OnActionRecordPaste()
 {
     long action_flags = Document().Context().Struct().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection(); //This function lies ('la lia?=
@@ -644,7 +875,7 @@ void TypeController::OnActionPasteRecord()
     }
 }
 
-void TypeController::OnActionCutRecord()
+void TypeController::OnActionRecordCut()
 {
     long action_flags = Document().Context().Struct().Flags();
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
@@ -683,7 +914,7 @@ void TypeController::OnActionCutRecord()
     }
 }
 
-void TypeController::OnActionOpenRecordInEditor()
+void TypeController::OnActionRecordOpenInEditor()
 {
     long action_flags = Document().Context().Struct().Flags() ;
     bool has_selection = MainWindow().RecordExplorer().HasSelection();
@@ -706,48 +937,35 @@ void TypeController::OnActionOpenRecordInEditor()
 }
 
 
-void TypeController::OnActionNewFile()
+void TypeController::OnActionFileNew()
 {
     QString file_name =
         QFileDialog::getSaveFileName(
             &MainWindow(),
             tr( "New File" ),
-            tr( "untitled.js" ),
-            tr( "JS Files (*.js); PHP files (*.php); CSS files (*.css)" )
+            tr( "untitled" ),
+            tr( "Text files (*.txt);;Html files (*.html);;Php files (*.php);;Css files (*.css);;Java Script Files (*.js)" )
         );
 
     if( file_name.isEmpty() )
         return;
 
-// *  QFileDialog has showed a message like the following example:
-// *
-//
-//    if( QFileInfo( file_name ).exists() )
-//    {
-//        if( !TypeController::AcceptMessage( tr( "File already exists. Overwrite?" ) ) )
-//            return;
-//    }
-
-
-    TypeController::SaveTextFile( file_name, "//FILE: " + file_name.split( "/" ).back() );
-    emit FileExplorerChanged();
-
-    OpenFileUiEditor( file_name );
+    NewFileUiEditor( file_name );
 }
 
-void TypeController::OnActionCloseFile()
+void TypeController::OnActionFileClose()
 {
     if( TypeController::AcceptMessage( tr( "Save changes?" ) ) )
     {
         MainWindow().EditorContainer().SaveCurrent();
-        emit FileExplorerChanged();
+        MainWindow().FileExplorer().Update();
     }
 
     MainWindow().EditorContainer().CloseCurrent();
     emit EditorContainerChanged();
 }
 
-void TypeController::OnActionCloseAllFiles()
+void TypeController::OnActionFileCloseAll()
 {
     if( TypeController::AcceptMessage( tr( "Save changes?" ) ) )
     {
@@ -759,24 +977,49 @@ void TypeController::OnActionCloseAllFiles()
     emit EditorContainerChanged();
 }
 
-void TypeController::OnActionSaveFile()
+void TypeController::OnActionFileSaveAs()
+{
+    MainWindow().EditorContainer().SaveAsCurrent();
+}
+
+void TypeController::OnActionFileSave()
 {
     MainWindow().EditorContainer().SaveCurrent();
 }
 
-void TypeController::OnActionSaveAllFiles()
+void TypeController::OnActionFileSaveAll()
 {
     MainWindow().EditorContainer().SaveAll();
 }
 
-void TypeController::OnActionLoadFile()
+void TypeController::OnActionFileNew_FileExplorer()
+{
+    MainWindow().FileExplorer().FileNew();
+}
+
+void TypeController::OnActionFileOpen_FileExplorer()
+{
+    MainWindow().FileExplorer().FileOpen();
+}
+
+void TypeController::OnActionFileRemove_FileExplorer()
+{
+    MainWindow().FileExplorer().FileRemove();
+}
+
+void TypeController::OnActionFileMkDir_FileExplorer()
+{
+    MainWindow().FileExplorer().FileMkDir();
+}
+
+void TypeController::OnActionFileOpen()
 {
     QString file_name =
         QFileDialog::getOpenFileName(
             &MainWindow(),
             tr( "New File" ),
             tr( "untitled.js" ),
-            tr( "JS Files (*.js)" )
+            tr( "Text files (*.txt);;Html files (*.txt);;PHP files (*.php);;CSS files (*.css);;Java Script Files (*.js)" )
         );
 
     if( file_name.isEmpty() )
@@ -791,6 +1034,8 @@ void TypeController::OnActionLoadFile()
     OpenFileUiEditor( file_name );
 }
 
+
+
 void TypeController::OnLeftTabCurrentChanged( int )
 {
     MainWindow().UpdateActions();
@@ -803,10 +1048,58 @@ void TypeController::OnRightTabCurrentChanged( int )
 
 void TypeController::OnActionExit()
 {
-    MainWindow().close();
+
+    if( TypeController::AcceptMessage( "Save project changes?" ) )
+    {
+        MainWindow().EditorContainer().SaveAll();
+
+        QString file_name = Document().FileName();
+
+        if( file_name.isEmpty() )
+        {
+            file_name =
+                QFileDialog::getSaveFileName(
+                    &MainWindow(),
+                    tr( "Save Project File" ),
+                    tr( "untitled" ),
+                    tr( "Project Files (*.prj *.sql)" )
+                );
+        }
+
+        if( file_name.isEmpty() )
+        {
+            qDebug() << "File is empty";
+            return;
+        }
+
+        MainWindow().EditorContainer().SaveAll();
+
+        int error;
+
+        if( file_name.split( "." ).back() == "sql" )
+            error = Document().SaveSQL( file_name );
+        else
+            error = Document().SaveFile( file_name );
+
+        if( !error )
+        {
+            qDebug() << "Save project successfull";
+
+            Config().SetProjectFileName( Document().FileName() );
+            Config().SetProjectPath( Document().Path() );
+            Config().Save();
+            return;
+        }
+
+        qDebug() << "Save project error. Code " << error;
+        Config().SetProjectFileName( "" );
+        Config().SetProjectPath( "" );
+        Config().Save();
+    }
+
 }
 
-void TypeController::OnActionUpdateHtmlWeb()
+void TypeController::OnActionHtmlUpdateWeb()
 {
     Document().UpdateHtml();
 
@@ -814,7 +1107,7 @@ void TypeController::OnActionUpdateHtmlWeb()
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_OUTPUT );
 }
 
-void TypeController::OnActionUpdateHtmlText()
+void TypeController::OnActionHtmlUpdateText()
 {
     Document().UpdateHtml();
     MainWindow().SetCurrentTab( MAINWINDOW_TAB_HTML );

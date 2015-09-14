@@ -40,7 +40,8 @@ void TypeClipboard::Cut( const QList<TypeRecord*>& records )
 
 void TypeClipboard::Paste( TypeStruct& record_struct, int position )
 {
-    // make a deep copy of clipboard contents
+    //
+    // Make a deep copy of clipboard contents:
 
     QList<QStringList> table;
     TypeStateReaderTable reader( table );

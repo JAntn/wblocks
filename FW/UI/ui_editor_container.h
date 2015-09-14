@@ -16,6 +16,8 @@ public:
     explicit TypeUiEditorContainer( TypeController& controller, QWidget* parent = 0 );
 
     void                          Append( TypeUiEditor* editor );
+    TypeUiEditor*                 EditorFromId(QString id );
+    int                           IndexFromId(QString id);
 
     void                          Close( int index );
     void                          Close( QString id );
@@ -24,7 +26,9 @@ public:
 
     void                          Save( int index );
     void                          Save( QString id );
+
     void                          SaveCurrent();
+    void                          SaveAsCurrent();
     void                          SaveAll();
 
 
@@ -34,7 +38,7 @@ public:
     void                          SetCurrent( int index );
     void                          SetCurrent( QString id );
 
-    M_REFERENCE_READONLY            ( TabWidget,  QTabWidget )
+    M_REFERENCE_READONLY          ( TabWidget,  QTabWidget )
     M_REFERENCE                   ( Controller, TypeController )
 
 public slots:

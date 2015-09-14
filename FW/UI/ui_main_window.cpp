@@ -75,9 +75,6 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
 
 TypeUiMainWindow::~TypeUiMainWindow()
 {
-    Controller().Config().SetProjectFileName( Controller().Document().FileName() );
-    Controller().Config().SetProjectPath( Controller().Document().Path() );
-    Controller().Config().Save();
     delete ui;
 }
 
@@ -98,46 +95,58 @@ void TypeUiMainWindow::InitConnections()
         TypeController::OnActionExit );
 
     connect(
-        ui->ActionFileLoad,
+        ui->ActionProjectOpen,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionLoadProjectFile );
+        TypeController::OnActionProjectOpen );
 
     connect(
-        ui->ActionFileSave,
+        ui->ActionProjectSaveAs,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionSaveProjectFile );
+        TypeController::OnActionProjectSaveAs );
 
     connect(
-        ui->ActionSQLLoad,
+        ui->ActionProjectSave,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionLoadProjectSQL );
+        TypeController::OnActionProjectSave );
+    /*
+        connect(
+            ui->ActionProjectOpenSQL,
+            QAction::triggered,
+            &Controller(),
+            TypeController::OnActionProjectOpenSQL );
+
+        connect(
+            ui->ActionProjectSaveAsSQL,
+            QAction::triggered,
+            &Controller(),
+            TypeController::OnActionProjectSaveAsSQL );*/
 
     connect(
-        ui->ActionSQLSave,
+        ui->ActionHtmlSaveAs,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionSaveProjectSQL );
+        TypeController::OnActionHtmlSaveAs );
 
     connect(
-        ui->ActionSaveHtmlFile,
+        ui->ActionHtmlSave,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionSaveHtmlFile );
+        TypeController::OnActionHtmlSave );
 
     connect(
-        ui->ActionUpdateHtmlFile,
+        ui->ActionHtmlUpdate,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionUpdateHtmlText );
+        TypeController::OnActionHtmlUpdateText );
 
     connect(
-        ui->ActionRunHtmlFile,
+        ui->ActionHtmlRun,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionUpdateHtmlWeb );
+        TypeController::OnActionHtmlUpdateWeb );
 
     connect(
         ui->LeftTabWidget,
@@ -146,125 +155,105 @@ void TypeUiMainWindow::InitConnections()
         TypeController::OnLeftTabCurrentChanged );
 
     connect(
-        ui->ActionAdd,
+        ui->ActionRecordAdd,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionAddRecord );
+        TypeController::OnActionRecordAdd );
 
     connect(
-        ui->ActionAdd_to_scene,
+        ui->ActionRecordAdd_to_scene,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionAddSceneItem );
+        TypeController::OnActionRecordAddSceneItem );
 
     connect(
-        ui->ActionProperties,
+        ui->ActionRecordProperties,
         QAction::triggered,
         &Controller(),
         TypeController::OnActionChangePropertyWidget );
 
     connect(
-        ui->ActionOpen_In_Editor,
+        ui->ActionRecordOpen_In_Editor,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionOpenRecordInEditor );
+        TypeController::OnActionRecordOpenInEditor );
 
     connect(
-        ui->ActionRemove,
+        ui->ActionRecordRemove,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionRemoveRecord );
+        TypeController::OnActionRecordRemove );
 
     connect(
-        ui->ActionCopy,
+        ui->ActionRecordCopy,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionCopyRecord );
+        TypeController::OnActionRecordCopy );
 
     connect(
-        ui->ActionCut,
+        ui->ActionRecordCut,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionCutRecord );
+        TypeController::OnActionRecordCut );
 
     connect(
-        ui->ActionPaste,
+        ui->ActionRecordPaste,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionPasteRecord );
+        TypeController::OnActionRecordPaste );
 
     connect(
-        ui->ActionNew,
+        ui->ActionProjectNew,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionNewProjectFile );
+        TypeController::OnActionProjectNew );
 
     connect(
-        ui->ActionNewEditorFile,
+        ui->ActionFileNew,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionNewFile );
+        TypeController::OnActionFileNew );
 
     connect(
-        ui->ActionCloseEditorFile,
+        ui->ActionFileClose,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionCloseFile );
+        TypeController::OnActionFileClose );
 
     connect(
-        ui->ActionCloseAllEditorFiles,
+        ui->ActionFileCloseAll,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionCloseAllFiles );
+        TypeController::OnActionFileCloseAll );
 
     connect(
-        ui->ActionSaveEditorFile,
+        ui->ActionFileSaveAs,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionSaveFile );
+        TypeController::OnActionFileSaveAs );
 
     connect(
-        ui->ActionSaveAllEditorFiles,
+        ui->ActionFileSave,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionSaveAllFiles );
+        TypeController::OnActionFileSave );
 
     connect(
-        ui->ActionLoadEditorFile,
+        ui->ActionFileSaveAll,
         QAction::triggered,
         &Controller(),
-        TypeController::OnActionLoadFile );
+        TypeController::OnActionFileSaveAll );
+
+    connect(
+        ui->ActionFileOpen,
+        QAction::triggered,
+        &Controller(),
+        TypeController::OnActionFileOpen );
 }
 
 void TypeUiMainWindow::closeEvent( QCloseEvent* )
 {
-    if( TypeController::AcceptMessage( "Save project changes?" ) )
-    {
-        QString file_name = Controller().Document().FileName();
-
-        if( file_name.isEmpty() )
-        {
-            file_name =
-                QFileDialog::getSaveFileName(
-                    this,
-                    tr( "Save File" ),
-                    "untitled.prj",
-                    tr( "Project Files (*.prj, *.sql)" )
-                );
-        }
-
-        if( file_name.isEmpty() )
-            qDebug() << "File Selection failed";
-        else
-        {
-            EditorContainer().SaveAll();
-
-            if( file_name.split( "." ).back() == "prj" )
-                Controller().Document().SaveFile( file_name );
-            else if( file_name.split( "." ).back() == "sql" )
-                Controller().Document().SaveSQL( file_name );
-        }
-    }
+    Controller().OnActionExit();
 }
 
 void TypeUiMainWindow::OpenEditorWidget( TypeUiEditor* widget )
@@ -278,7 +267,7 @@ void TypeUiMainWindow::SetTitle( QString title )
     if( !title.isEmpty() )
         title.prepend( " - " );
 
-    setWindowTitle( "JSBlocks" + title );
+    setWindowTitle( "wblocks" + title );
 }
 
 void TypeUiMainWindow::SetCurrentTab( int index )
@@ -344,19 +333,34 @@ void TypeUiMainWindow::UpdateSceneView()
 void TypeUiMainWindow::UpdateActions()
 {
     //
-    // Update records related actions depending of record flags
+    // Disable record actions if explorer or html text is not visible
 
+    if( !ui->RecordExplorerTab->isVisible() && !ui->HtmlTextTab->isVisible() )
     {
-        QList<QAction*> actions =
+        ui->ActionRecordAdd->setEnabled( false );
+        ui->ActionRecordRemove->setEnabled( false );
+        ui->ActionRecordCopy->setEnabled( false );
+        ui->ActionRecordCut->setEnabled( false );
+        ui->ActionRecordPaste->setEnabled( false );
+        ui->ActionRecordAdd_to_scene->setEnabled( false );
+        ui->ActionRecordOpen_In_Editor->setEnabled( false );
+        ui->ActionRecordProperties->setEnabled( false );
+    }
+    else
+    {
+        //
+        // Enable record actions conditionated to record flags:
+
+        QList<QAction*> action_list =
         {
-            ui->ActionCut,
-            ui->ActionCopy,
-            ui->ActionPaste,
-            ui->ActionAdd,
-            ui->ActionAdd_to_scene,
-            ui->ActionProperties,
-            ui->ActionRemove,
-            ui->ActionOpen_In_Editor
+            ui->ActionRecordCut,
+            ui->ActionRecordCopy,
+            ui->ActionRecordPaste,
+            ui->ActionRecordAdd,
+            ui->ActionRecordAdd_to_scene,
+            ui->ActionRecordProperties,
+            ui->ActionRecordRemove,
+            ui->ActionRecordOpen_In_Editor
         };
 
         QList<long> action_flags =
@@ -373,7 +377,7 @@ void TypeUiMainWindow::UpdateActions()
 
         auto iter = action_flags.begin();
 
-        for( auto action : actions )
+        for( auto action : action_list )
         {
             if( Controller().Document().Context().Struct().Flags() & ( *iter ) )
                 action->setEnabled( true );
@@ -384,71 +388,41 @@ void TypeUiMainWindow::UpdateActions()
         }
 
         //
-        // Update records related actions related to selection behavior
+        // Disable records actions conditionated to record explorer selection:
 
         if( !RecordExplorer().HasSelection() )
         {
-            ui->ActionCopy->setEnabled( false );
-            ui->ActionCut->setEnabled( false );
-            ui->ActionAdd_to_scene->setEnabled( false );
-            ui->ActionRemove->setEnabled( false );
-            ui->ActionOpen_In_Editor->setEnabled( false );
-            ui->ActionProperties->setEnabled( false );
+            ui->ActionRecordCopy->setEnabled( false );
+            ui->ActionRecordCut->setEnabled( false );
+            ui->ActionRecordAdd_to_scene->setEnabled( false );
+            ui->ActionRecordRemove->setEnabled( false );
+            ui->ActionRecordOpen_In_Editor->setEnabled( false );
+            ui->ActionRecordProperties->setEnabled( false );
         }
 
         if( Controller().Clipboard().Empty() )
-            ui->ActionPaste->setEnabled( false );
+            ui->ActionRecordPaste->setEnabled( false );
     }
 
     //
-    // Update actions in case there is not any file
-    // in text editor container
+    // Enable file actions conditionated to container is not empty:
 
+    if( EditorContainer().Size() == 0 )
     {
-        if( EditorContainer().Size() == 0 )
-        {
-            ui->ActionSaveAllEditorFiles->setEnabled( false );
-            ui->ActionSaveEditorFile->setEnabled( false );
-            ui->ActionCloseAllEditorFiles->setEnabled( false );
-            ui->ActionCloseEditorFile->setEnabled( false );
-        }
-        else
-        {
-            ui->ActionSaveAllEditorFiles->setEnabled( true );
-            ui->ActionSaveEditorFile->setEnabled( true );
-            ui->ActionCloseAllEditorFiles->setEnabled( true );
-            ui->ActionCloseEditorFile->setEnabled( true );
-        }
+        ui->ActionFileSaveAll->setEnabled( false );
+        ui->ActionFileSaveAs->setEnabled( false );
+        ui->ActionFileCloseAll->setEnabled( false );
+        ui->ActionFileClose->setEnabled( false );
+    }
+    else
+    {
+        ui->ActionFileSaveAll->setEnabled( true );
+        ui->ActionFileSaveAs->setEnabled( true );
+        ui->ActionFileCloseAll->setEnabled( true );
+        ui->ActionFileClose->setEnabled( true );
     }
 
-    //
-    // Update actions in case record explorer is not visible
 
-    {
-        if( ui->RecordExplorerTab->isVisible() )
-        {
-
-            ui->ActionAdd->setVisible( true );
-            ui->ActionRemove->setVisible( true );
-            ui->ActionCopy->setVisible( true );
-            ui->ActionCut->setVisible( true );
-            ui->ActionPaste->setVisible( true );
-            ui->ActionAdd_to_scene->setVisible( true );
-            ui->ActionOpen_In_Editor->setVisible( true );
-            ui->ActionProperties->setVisible( true );
-        }
-        else
-        {
-            ui->ActionAdd->setVisible( false );
-            ui->ActionRemove->setVisible( false );
-            ui->ActionCopy->setVisible( false );
-            ui->ActionCut->setVisible( false );
-            ui->ActionPaste->setVisible( false );
-            ui->ActionAdd_to_scene->setVisible( false );
-            ui->ActionOpen_In_Editor->setVisible( false );
-            ui->ActionProperties->setVisible( false );
-        }
-    }
 }
 
 

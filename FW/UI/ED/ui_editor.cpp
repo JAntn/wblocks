@@ -1,14 +1,15 @@
 #include "FW/UI/ED/ui_editor.h"
 #include <QWidget>
 
-TypeUiEditor::TypeUiEditor( QString id, QString name, QString tab_name, QWidget* parent , TypeSaveCallback save_callback ) :
+TypeUiEditor::TypeUiEditor( QString id, QString name, QString tab_name, QWidget* parent , TypeSaveCallback save_callback , TypeSaveCallback save_as_callback ) :
     QWidget( parent ),
     TypeVariant( 0 ),
     m_Id( id ),
     m_Name( name ),
     m_TabName( tab_name ),
     m_HasChanged( false ),
-    m_SaveCallback( save_callback )
+    m_SaveCallback( save_callback ),
+    m_SaveAsCallback( save_as_callback )
 {
 
     if( m_TabName.isEmpty() )
@@ -34,3 +35,8 @@ void TypeUiEditor::OnActionSave()
         emit HasSaved();
 }
 
+void TypeUiEditor::OnActionSaveAs()
+{
+    if( m_SaveAsCallback( *this ) )
+        emit HasSaved();
+}

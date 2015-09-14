@@ -10,7 +10,7 @@
 
 TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& context, int index, QWidget* parent ) :
     QDialog( parent ),
-    TypeVariant(0),
+    TypeVariant( 0 ),
     m_Context( &context ),
     m_Controller( &controller ),
     ui( new Ui::TypeUiAddRecord )
@@ -20,7 +20,7 @@ TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& conte
     QStringListModel* model = new QStringListModel( this );
     QStringList class_list;
 
-    for( TypeRecordFactory* record_factory : TypeStruct::FactoryList() )
+    for( TypeRecordFactory* record_factory : TypeController::FactoryList() )
         class_list << record_factory->RecordClass();
 
     model->setStringList( class_list );
@@ -29,7 +29,7 @@ TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& conte
     ui->SpinBox->setMaximum( ( index < 0 ) ? Context().Struct().Size() : index );
     ui->SpinBox->setMinimum( 0 );
     ui->SpinBox->setValue( index  );
-    ui->LineEdit->setText( "" );
+    ui->LineEdit->setText( "record" + QString::number( 1 + TypeRecordFactory::IdCount().toLong() ) );
 
     connect(
         ui->ButtonBox,
@@ -51,6 +51,9 @@ TypeUiAddRecord::~TypeUiAddRecord()
 
 bool TypeUiAddRecord::CheckFormData() const
 {
+    //
+    // Check selected index to be inside allowed bounds:
+
     int index = ui->SpinBox->value();
 
     if ( ( index > Context().Struct().Size() ) || ( index < 0 ) )
@@ -58,6 +61,9 @@ bool TypeUiAddRecord::CheckFormData() const
         TypeController::Message( tr( "Position out of bounds" ) );
         return false;
     }
+
+    //
+    // Check new record name correctness:
 
     if( !QRegExp( "[A-Za-z][\\w.]*" ).exactMatch( ui->LineEdit->text() ) )
     {
@@ -72,7 +78,10 @@ void TypeUiAddRecord::OnButtonBoxAccepted()
 {
     if( CheckFormData() )
     {
-        auto iter = TypeStruct::FactoryList().begin();
+        //
+        // Look for a record factory from input data:
+
+        auto iter = TypeController::FactoryList().begin();
         int count = 0;
 
         while( count < ui->ListView->currentIndex().row() )
@@ -82,11 +91,15 @@ void TypeUiAddRecord::OnButtonBoxAccepted()
         }
 
         QString class_name = ( *iter )->RecordClass();
+
+        //
+        // Build new record using the record factory:
+
         QString name = ui->LineEdit->text();
         int index = ui->SpinBox->value();
 
         TypeRecord* record = Context().Struct().NewRecord(
-                               name, "", class_name, index, &Context().Root() );
+                                 name, "", class_name, index, &Context().Root() );
 
         if( ui->CheckBox->isChecked() )
             Context().Scene().NewItem( *record );

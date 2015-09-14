@@ -10,7 +10,7 @@ TypeUiIntegerProperty::TypeUiIntegerProperty( QString tag_name, long value, Type
 {
     ui->setupUi( this );
     ui->Label->setText( tag_name );
-    ui->LineEdit->setText( QString::number(value) );
+    ui->LineEdit->setText( QString::number( value ) );
 
     connect(
         ui->LineEdit,
@@ -26,9 +26,9 @@ TypeUiIntegerProperty::~TypeUiIntegerProperty()
     delete ui;
 }
 
-void TypeUiIntegerProperty::SetValue(long value )
+void TypeUiIntegerProperty::SetValue( long value )
 {
-    ui->LineEdit->setText( QString::number(value) );
+    ui->LineEdit->setText( QString::number( value ) );
 }
 
 long TypeUiIntegerProperty::Value()
@@ -38,7 +38,7 @@ long TypeUiIntegerProperty::Value()
 
 void TypeUiIntegerProperty::OnReturnPressed()
 {
-    if( !QRegExp( "\\s*[-+]?\\d+(E[+]?\\d+)?\\s*" ).exactMatch(ui->LineEdit->text()))
+    if( !QRegExp( "\\s*[-+]?\\d+(E[+]?\\d+)?\\s*" ).exactMatch( ui->LineEdit->text() ) )
     {
         TypeController::Message( tr( "Bad integer number string" ) );
         return;

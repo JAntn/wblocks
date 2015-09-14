@@ -30,8 +30,7 @@ public:
     void                UpdateHtml();
     void                Clear();
 
-    //M_VALUE             ( Html,            QString )
-    //M_REFERENCE         ( HtmlBlockStream, TypeHtmlBlockStream )
+
     M_VALUE             ( FileName,        QString )
     M_VALUE             ( Path,            QString )
     M_REFERENCE         ( Root,            TypeRootStruct )

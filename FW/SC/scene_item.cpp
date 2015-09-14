@@ -107,17 +107,17 @@ void TypeSceneItem::paint( QPainter* painter, const QStyleOptionGraphicsItem*, Q
 
     painter->fillRect( 1, 1, 320 + 18 - 2, line_height * ( line_num + 1 ) + 36 - 2, GFX_GREY_BRUSH1 );
 
-    QPen pen = QPen( QColor( 200, 200, 200 ), 1, Qt::SolidLine );
+    QPen pen = QPen( QColor( 100, 100, 255 ), 1, Qt::SolidLine );
     painter->setPen( pen );
     painter->drawRect( 0, 0, 320 + 18, line_height * ( line_num + 1 ) + 36 );
 
-    pen = QPen( QColor( 0, 0, 230 ), 1, Qt::SolidLine );
+    pen = QPen( QColor( 0, 0, 200 ), 1, Qt::SolidLine );
     painter->setPen( pen );
 
     painter->drawText( 9, 9, 320, line_height, Qt::AlignLeft, header_text );
     painter->drawText( 9, 27 + line_height, 320, 27 + line_height + ( line_height * line_num ), Qt::AlignLeft, text );
 
-    pen = QPen( QColor( 200, 200, 200 ), 1, Qt::SolidLine );
+    pen = QPen( QColor( 100, 100, 255 ), 1, Qt::SolidLine );
     painter->setPen( pen );
     painter->drawLine( 1, 18 + line_height, 320 + 18 - 1 , 18 + line_height );
 

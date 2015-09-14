@@ -58,7 +58,8 @@ QString TypeHtmlBuilder::FormattedText()
 {
 
     QString html_block = "<span style=\"background-color:White\">";
-    QString html_not_editable = "<span style=\"background-color:WhiteSmoke\">";
+    QString html_outer = "<span style=\"background-color:WhiteSmoke\">";
+    QString html_not_editable = "<span style=\"background-color:Gainsboro\">";
     QString html_selected = "<span style=\"background-color:PaleGreen\">";
     QString html_end = "</span>";
     QStringList html;

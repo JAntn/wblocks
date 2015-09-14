@@ -17,8 +17,10 @@ public:
 
     void                                    Append( QString text, QString record_id = "" );
     TypeHtmlBlock*                          BlockFromCursorPosition( int cursor_position );
+    TypeHtmlBlock*                          BlockFromRecordId( QString id );
 
     M_VALUE                                 ( Count, int )
+
 };
 
 #endif // BLOCKSTREAM_H

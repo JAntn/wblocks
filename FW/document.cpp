@@ -20,8 +20,6 @@
 TypeDocument::TypeDocument( TypeController& controller, QString file_name, QString path, TypeVariant* parent ):
     TypeVariant( parent ), m_Controller( &controller )
 {
-    TypeStruct::InitFactoryList();
-
     m_FileName          = file_name;
     m_Path              = path;
     m_Root              = new TypeRootStruct( this );

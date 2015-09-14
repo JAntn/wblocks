@@ -17,15 +17,10 @@ TEMPLATE = app
 
 HEADERS += main.h \
     FW/RC/HTML/html_record.h \
-    FW/RC/JS/js_bool_record.h \
-    FW/RC/JS/js_integer_record.h \
-    FW/RC/JS/js_real_record.h \
     FW/RC/JS/js_reference_record.h \
     FW/RC/JS/js_script_file_record.h \
     FW/RC/JS/js_script_record.h \
-    FW/RC/JS/js_string_record.h \
     FW/RC/PHP/php_file_record.h \
-    FW/RC/bool_record.h \
     FW/RC/file_record.h \
     FW/RC/integer_record.h \
     FW/RC/real_record.h \
@@ -84,21 +79,22 @@ HEADERS += main.h \
     FW/BK/html_block.h \
     FW/BK/html_block_stream.h \
     FW/UI/PR/ui_label_property.h \
-    FW/UI/ui_record_contextmenu.h
+    FW/UI/ui_record_contextmenu.h \
+    FW/RC/text_file_record.h \
+    FW/RC/HTML/html_file_record.h \
+    FW/RC/CSS/css_file_record.h \
+    FW/UI/PR/ui_combo_property.h \
+    FW/RC/html_action.h \
+    FW/RC/bool_record.h \
+    FW/UI/ui_file_contextmenu.h
 
 
 
 SOURCES += main.cpp \
     FW/RC/HTML/html_record.cpp \
-    FW/RC/JS/js_bool_record.cpp \
-    FW/RC/JS/js_integer_record.cpp \
-    FW/RC/JS/js_real_record.cpp \
-    FW/RC/JS/js_reference_record.cpp \
     FW/RC/JS/js_script_file_record.cpp \
     FW/RC/JS/js_script_record.cpp \
-    FW/RC/JS/js_string_record.cpp \
     FW/RC/PHP/php_file_record.cpp \
-    FW/RC/bool_record.cpp \
     FW/RC/file_record.cpp \
     FW/RC/integer_record.cpp \
     FW/RC/real_record.cpp \
@@ -152,7 +148,13 @@ SOURCES += main.cpp \
     FW/BK/html_block.cpp \
     FW/BK/html_block_stream.cpp \
     FW/UI/PR/ui_label_property.cpp \
-    FW/UI/ui_record_contextmenu.cpp
+    FW/UI/ui_record_contextmenu.cpp \
+    FW/RC/text_file_record.cpp \
+    FW/RC/HTML/html_file_record.cpp \
+    FW/RC/CSS/css_file_record.cpp \
+    FW/UI/PR/ui_combo_property.cpp \
+    FW/RC/bool_record.cpp \
+    FW/UI/ui_file_contextmenu.cpp
 
 
 FORMS += \
@@ -168,7 +170,8 @@ FORMS += \
     FW/UI/PR/realproperty.ui \
     FW/UI/PR/recordnameproperty.ui \
     FW/UI/PR/linetextproperty.ui \
-    FW/UI/PR/labelproperty.ui
+    FW/UI/PR/labelproperty.ui \
+    FW/UI/PR/comboproperty.ui
 
 DISTFILES += \
     format_code.astylerc \

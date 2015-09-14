@@ -82,6 +82,11 @@ QString TypeFileRecord::FileFullName()
     return Value();
 }
 
+void TypeFileRecord::SetFileFullName( QString full_name )
+{
+    SetValue( full_name );
+}
+
 TypeRecord* TypeFileRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeStruct* root )
 {
     return new TypeFileRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );

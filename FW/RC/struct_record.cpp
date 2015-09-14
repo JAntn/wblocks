@@ -1,3 +1,6 @@
+//
+// This file is polymorfic aware --
+
 #include "FW/RC/struct_record.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
@@ -46,28 +49,28 @@ TypeStruct* TypeStructRecord::Struct()
 
 void TypeStructRecord::Html( TypeHtmlBlockStream& block_stream )
 {
-    for( TypeVariantPtr<TypeRecord> record : *Struct() )
+    for( TypeVariantPtr<TypeRecord> record : *this->Struct() )
         record->Html( block_stream ) ;
 }
 
 void TypeStructRecord::Script( TypeHtmlBlockStream& block_stream )
 {
-    block_stream.Append( "\n" + FullName() + " = {} ;", Id() );
+    block_stream.Append( "\n" + this->FullName() + " = {} ;", this->Id() );
 
-    for( TypeVariantPtr<TypeRecord> record : *Struct() )
+    for( TypeVariantPtr<TypeRecord> record : *this->Struct() )
         record->Script( block_stream ) ;
 }
 
 bool TypeStructRecord::GetState( TypeStateReader& state )
 {
     QStringList row;
-    row.append( m_Id );
-    row.append( m_Name );
-    row.append( Value() ); // VALUE NEEDS TO BE UPDATED , do not use m_Value
-    row.append( m_Class );
+    row.append( this->Id() );
+    row.append( this->Name() );
+    row.append( this->Value() );
+    row.append( this->Class() );
     state.Read( row );
 
-    for( TypeVariantPtr<TypeRecord> record : *Struct() )
+    for( TypeVariantPtr<TypeRecord> record : *this->Struct() )
         record->GetState( state );
 
     return true;
@@ -75,7 +78,7 @@ bool TypeStructRecord::GetState( TypeStateReader& state )
 
 bool TypeStructRecord::SetState( TypeStateWriter& state, TypeStruct* root )
 {
-    Struct()->Clear();
+    m_Struct->Clear();
 
     QStringList row;
     state.Write( row );
@@ -92,7 +95,7 @@ bool TypeStructRecord::SetState( TypeStateWriter& state, TypeStruct* root )
     long size = m_Value.toLong();
 
     for( long count = 0; count < size; ++count )
-        Struct()->NewRecord( state, -1, root );
+        m_Struct->NewRecord( state, -1, root );
 
     return true;
 }
@@ -100,14 +103,14 @@ bool TypeStructRecord::SetState( TypeStateWriter& state, TypeStruct* root )
 QWidget* TypeStructRecord::PropertyWidget( TypeController& controller )
 {
     QWidget* class_widget;
-    class_widget = new TypeUiLabelProperty( "Class", Class() );
+    class_widget = new TypeUiLabelProperty( "Class", this->Class() );
 
     QWidget* name_widget;
 
-    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty( "Name", this->Name(), [&controller, this]( TypeUiProperty & property_base )
     {
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
-        SetName( property.Value() );
+        this->SetName( property.Value() );
         emit controller.RecordsChanged();
         return true;
     } );

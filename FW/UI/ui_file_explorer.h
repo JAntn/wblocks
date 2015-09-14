@@ -26,8 +26,19 @@ public:
     M_REFERENCE                             ( Model,      QStringListModel )
     M_REFERENCE                             ( Controller, TypeController )
 
+
+
     void                                    Update();
-    void                                    Open( QString file_name );
+
+    void                                    FileNew();
+
+    void                                    FileOpen();
+    void                                    FileOpen( QString file_name );
+
+    void                                    FileRemove();
+    void                                    FileRemove( QString file_name );
+
+    void                                    FileMkDir();
 
 public slots:
 
@@ -35,6 +46,7 @@ public slots:
     void                                    OnUpButtonClicked();
     void                                    OnDoubleClicked( const QModelIndex& index );
     void                                    OnLineEditReturnPressed();
+    void                                    OnCustomContextMenuRequested(const QPoint& point);
 
 private:
 

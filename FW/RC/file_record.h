@@ -15,11 +15,12 @@ public:
     TypeFileRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeStruct* root = 0 );
     ~TypeFileRecord() override;
 
-    QWidget*            PropertyWidget( TypeController& controller ) override;
+    QWidget*                                PropertyWidget( TypeController& controller ) override;
 
-    QString             FilePath();
-    QString             FileName();
-    QString             FileFullName();
+    virtual QString                         FilePath();
+    virtual QString                         FileName();
+    virtual QString                         FileFullName();
+    virtual void                            SetFileFullName(QString full_name);
 
 private:
 
@@ -30,12 +31,12 @@ class TypeFileRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS     ( TypeFileRecordFactory )
+    SINGLETON_CLASS                         ( TypeFileRecordFactory )
 
     TypeFileRecordFactory();
 
-    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
-    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*                             NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*                             NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
 };
 
 #endif // FILERECORD_H

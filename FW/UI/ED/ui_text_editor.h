@@ -22,6 +22,7 @@ public:
     explicit TypeUiTextEditor( QString id, QString name, QString tab_name,
                                QWidget* parent = 0,
                                TypeSaveCallback save_callback = TypeUiEditor::empty_save_callback,
+                               TypeSaveCallback save_as_callback = TypeUiEditor::empty_save_callback,
                                TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
     ~TypeUiTextEditor();
 

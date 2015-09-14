@@ -1,3 +1,6 @@
+//
+// - This file is polimorfic aware.
+
 #include "FW/RC/record.h"
 #include "FW/UI/PR/ui_recordname_property.h"
 #include "FW/UI/PR/ui_linetext_property.h"
@@ -60,14 +63,13 @@ QString TypeRecord::Value()
     return m_Value;
 }
 
-
 bool TypeRecord::GetState( TypeStateReader& state )
 {
     QStringList row;
-    row.append( m_Id );
-    row.append( m_Name );
-    row.append( m_Value );
-    row.append( m_Class );
+    row.append( this->Id() );
+    row.append( this->Name() );
+    row.append( this->Value() );
+    row.append( this->Class() );
     state.Read( row );
 
     return true;
@@ -94,28 +96,31 @@ QWidget* TypeRecord::PropertyWidget( TypeController& controller )
 {
 
     QWidget* class_widget;
-    class_widget = new TypeUiLabelProperty( "Class", Class() );
+    class_widget = new TypeUiLabelProperty( "Class", this->Class() );
 
     QWidget* name_widget;
-
-    name_widget = new TypeUiRecordNameProperty( "Name", Name(), [&controller, this]( TypeUiProperty & property_base )
+    name_widget = new TypeUiRecordNameProperty(
+        "Name",
+        this->Name(),
+        [&controller, this]( TypeUiProperty & property_base )
     {
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
-        SetName( property.Value() );
+        this->SetName( property.Value() );
         emit controller.RecordsChanged();
         return true;
     } );
 
     QWidget* value_widget;
-
-    value_widget = new TypeUiLineTextProperty( "Value", Value(), [&controller, this]( TypeUiProperty & property_base )
+    value_widget = new TypeUiLineTextProperty(
+        "Value",
+        this->Value(),
+        [&controller, this]( TypeUiProperty & property_base )
     {
         auto& property = static_cast<TypeUiLineTextProperty&>( property_base );
-        SetValue( property.Value() );
+        this->SetValue( property.Value() );
         emit controller.RecordsChanged();
         return true;
     } );
-
 
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget( class_widget );
@@ -133,17 +138,17 @@ TypeUiEditor* TypeRecord::EditorWidget( QString id, TypeController& controller )
     TypeUiTextEditor* text_editor;
 
     text_editor = new TypeUiTextEditor(
-        id, Name(), Name().split( "." ).back(), 0/*parent widget*/,
+        id, this->Name(), this->Name().split( "." ).back(), 0/*parent widget*/,
         [&controller, this]( TypeUiEditor & editor_base )/*save callback*/
     {
         TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
-        SetValue( editor->Text() );
+        this->SetValue( editor->Text() );
         emit controller.RecordsChanged();
         return true;
     } );
 
-    text_editor->SetText( Value() );
-    text_editor->SetHasChanged(false);
+    text_editor->SetText( this->Value() );
+    text_editor->SetHasChanged( false );
 
     return text_editor;
 }

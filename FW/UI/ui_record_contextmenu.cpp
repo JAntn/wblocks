@@ -20,19 +20,19 @@ TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, lo
     if( ( action_flags & FLAG_ACTION_COPY ) && has_selection   )
     {
         QAction* action_copy = menu.addAction( tr( "Copy" ) );
-        connect( action_copy, QAction::triggered, &Controller(), TypeController::OnActionCopyRecord );
+        connect( action_copy, QAction::triggered, &Controller(), TypeController::OnActionRecordCopy );
     }
 
     if( ( action_flags & FLAG_ACTION_CUT ) && has_selection  )
     {
         QAction* action_copy = menu.addAction( tr( "Cut" ) );
-        connect( action_copy, QAction::triggered, &Controller(), TypeController::OnActionCutRecord );
+        connect( action_copy, QAction::triggered, &Controller(), TypeController::OnActionRecordCut );
     }
 
     if( ( action_flags & FLAG_ACTION_PASTE )  && ( !controller.Clipboard().Empty() ) )
     {
         QAction* action_paste = menu.addAction( tr( "Paste" ) );
-        connect( action_paste, QAction::triggered, &Controller(), TypeController::OnActionPasteRecord );
+        connect( action_paste, QAction::triggered, &Controller(), TypeController::OnActionRecordPaste );
     }
 
     if( !menu.isEmpty() )
@@ -41,13 +41,13 @@ TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, lo
     if( ( action_flags & FLAG_ACTION_OPEN ) && has_selection  )
     {
         QAction* action_openrecord = menu.addAction( tr( "Open" ) );
-        connect( action_openrecord, QAction::triggered, &Controller(), TypeController::OnActionOpenRecordInEditor );
+        connect( action_openrecord, QAction::triggered, &Controller(), TypeController::OnActionRecordOpenInEditor );
     }
 
     if( ( action_flags & FLAG_ACTION_ADD_SCENE ) && has_selection  )
     {
         QAction* action_3 = menu.addAction( tr( "Add to scene" ) );
-        connect( action_3, QAction::triggered, &Controller(), TypeController::OnActionAddSceneItem );
+        connect( action_3, QAction::triggered, &Controller(), TypeController::OnActionRecordAddSceneItem );
     }
 
     if( !menu.isEmpty() )
@@ -56,13 +56,13 @@ TypeUiRecordContextMenu::TypeUiRecordContextMenu( TypeController& controller, lo
     if( action_flags & FLAG_ACTION_ADD )
     {
         QAction* action_2 = menu.addAction( tr( "Add" ) );
-        connect( action_2, QAction::triggered, &Controller(), TypeController::OnActionAddRecord );
+        connect( action_2, QAction::triggered, &Controller(), TypeController::OnActionRecordAdd );
     }
 
     if( ( action_flags & FLAG_ACTION_REMOVE ) && has_selection  )
     {
         QAction* action_4 = menu.addAction( tr( "Remove" ) );
-        connect( action_4, QAction::triggered, &Controller(), TypeController::OnActionRemoveRecord );
+        connect( action_4, QAction::triggered, &Controller(), TypeController::OnActionRecordRemove );
     }
 
     if( !menu.isEmpty() )

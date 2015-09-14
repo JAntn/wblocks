@@ -14,6 +14,7 @@ public:
     M_VALUE                                 ( Text,     QString )
     M_VALUE                                 ( RecordId, QString )
     M_VALUE                                 ( Selected, bool )
+
 };
 
 #endif // BLOCK_H

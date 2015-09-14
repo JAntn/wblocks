@@ -1,16 +1,11 @@
 #ifndef PHPFILERECORD_H
 #define PHPFILERECORD_H
 
-#include "FW/RC/file_record.h"
+#include "FW/RC/text_file_record.h"
 
 class TypeStruct;
-class TypeUiEditor;
-class TypeController;
 
-class TypeStateWriter;
-class TypeStateReader;
-
-class TypePhpFileRecord: public TypeFileRecord
+class TypePhpFileRecord: public TypeTextFileRecord
 {
 
 public:
@@ -19,24 +14,29 @@ public:
     TypePhpFileRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeStruct* root = 0 );
     ~TypePhpFileRecord() override;
 
-    TypeUiEditor*       EditorWidget( QString id, TypeController& controller ) override;
+    void                                    Html( TypeHtmlBlockStream& block_stream );
+    QWidget*                                PropertyWidget( TypeController& controller );
+
+    QString                                 FileFormatTitle() override;
+    QString                                 FileFormat() override;
+    QString                                 FileExtension() override;
 
 
 private:
 
-    friend class        TypePhpFileRecordFactory;
+    friend class                            TypePhpFileRecordFactory;
 };
 
 class TypePhpFileRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS   ( TypePhpFileRecordFactory )
+    SINGLETON_CLASS                         ( TypePhpFileRecordFactory )
 
     TypePhpFileRecordFactory();
 
-    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
-    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*                             NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*                             NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
 };
 
 #endif // PHPFILERECORD_H

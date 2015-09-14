@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>406</width>
-    <height>42</height>
+    <width>394</width>
+    <height>30</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,13 +31,19 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="HorizontalLayout2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QLabel" name="Label">
        <property name="minimumSize">
         <size>
          <width>80</width>
-         <height>22</height>
+         <height>16</height>
         </size>
+       </property>
+       <property name="locale">
+        <locale language="English" country="UnitedStates"/>
        </property>
        <property name="text">
         <string>Value</string>
@@ -52,11 +58,8 @@
          <height>22</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Courier New</family>
-         <pointsize>9</pointsize>
-        </font>
+       <property name="locale">
+        <locale language="English" country="UnitedStates"/>
        </property>
       </widget>
      </item>

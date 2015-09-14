@@ -38,9 +38,7 @@ QVariant TypeUiRecordTableModel::data( const QModelIndex& index, int role ) cons
     if ( !index.isValid() )
         return QVariant();
 
-    if ( index.row() >=
-            Struct().Size() )
-
+    if ( index.row() >= Struct().Size() )
         return QVariant();
 
     if ( role == Qt::DisplayRole )

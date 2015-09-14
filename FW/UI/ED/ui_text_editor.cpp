@@ -3,11 +3,12 @@
 #include "ui_texteditor.h"
 
 
-TypeUiTextEditor::TypeUiTextEditor( QString id, QString name, QString tab_name,
+TypeUiTextEditor::TypeUiTextEditor(QString id, QString name, QString tab_name,
                                     QWidget* parent ,
                                     TypeUiEditor::TypeSaveCallback save_callback,
+                                    TypeUiEditor::TypeSaveCallback save_as_callback,
                                     TypeUiSyntaxHighlighter* syntax_higlighter ) :
-    TypeUiEditor( id, name, tab_name, parent, save_callback ),
+    TypeUiEditor( id, name, tab_name, parent, save_callback, save_as_callback ),
     m_SyntaxHighlighter( syntax_higlighter ),
     ui( new Ui::TypeUiTextEditor )
 {

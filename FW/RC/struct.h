@@ -29,15 +29,7 @@ public:
 
     int                                          GetIndex( TypeRecord* record ) const;
 
-    static TypeRecordFactory*                    FactoryFromName( QString class_name );
-    static const QList<TypeRecordFactory*>&      FactoryList() ;
-    static void                                  InitFactoryList();
-
     M_VALUE                                      ( Flags, long )
-
-private:
-
-    static QList<TypeRecordFactory*>             m_FactoryList;
 };
 
 

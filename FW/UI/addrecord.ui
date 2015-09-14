@@ -6,39 +6,57 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
-    <height>320</height>
+    <width>344</width>
+    <height>545</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Add</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
     <layout class="QHBoxLayout" name="TopLayout">
-     <item>
-      <widget class="QListView" name="ListView">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>300</height>
-        </size>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-      </widget>
-     </item>
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <layout class="QVBoxLayout" name="RightLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QListView" name="ListView">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>400</height>
+          </size>
+         </property>
+         <property name="locale">
+          <locale language="English" country="UnitedStates"/>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+        </widget>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="NameLabel">
            <property name="minimumSize">
@@ -50,11 +68,14 @@
            <property name="maximumSize">
             <size>
              <width>80</width>
-             <height>20</height>
+             <height>22</height>
             </size>
            </property>
+           <property name="locale">
+            <locale language="English" country="UnitedStates"/>
+           </property>
            <property name="text">
-            <string>Name:</string>
+            <string>Name</string>
            </property>
           </widget>
          </item>
@@ -72,6 +93,9 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="PositionLabel">
            <property name="minimumSize">
@@ -83,11 +107,14 @@
            <property name="maximumSize">
             <size>
              <width>80</width>
-             <height>20</height>
+             <height>22</height>
             </size>
            </property>
+           <property name="locale">
+            <locale language="English" country="UnitedStates"/>
+           </property>
            <property name="text">
-            <string>Position:</string>
+            <string>Position</string>
            </property>
           </widget>
          </item>
@@ -105,6 +132,9 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
@@ -113,7 +143,7 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>80</width>
-             <height>20</height>
+             <height>16</height>
             </size>
            </property>
           </spacer>
@@ -123,8 +153,11 @@
            <property name="minimumSize">
             <size>
              <width>200</width>
-             <height>20</height>
+             <height>16</height>
             </size>
+           </property>
+           <property name="locale">
+            <locale language="English" country="UnitedStates"/>
            </property>
            <property name="text">
             <string>Add to current scene</string>
@@ -134,39 +167,45 @@
            </property>
           </widget>
          </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QDialogButtonBox" name="ButtonBox">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
+          <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="standardButtons">
-            <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>22</height>
+            </size>
            </property>
-          </widget>
+          </spacer>
          </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="ButtonBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="locale">
+          <locale language="English" country="UnitedStates"/>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
         </layout>
        </item>
       </layout>

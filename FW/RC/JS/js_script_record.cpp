@@ -73,18 +73,19 @@ QWidget* TypeJsScriptRecord::PropertyWidget( TypeController& controller )
 TypeUiEditor* TypeJsScriptRecord::EditorWidget( QString id, TypeController& controller )
 {
     TypeUiTextEditor* text_editor;
+    TypeUiSyntaxHighlighter* syntax_higlighter = controller.SyntaxHighlighterFactory().NewInstance( "JAVASCRIPT" );
 
-    TypeUiSyntaxHighlighter* syntax_higlighter = controller.SyntaxHighlighterFactory().NewInstance( "JS" );
-
-    text_editor = new TypeUiTextEditor(
-        id, Name(), Name().split( "." ).back(),  0/*parent widget*/,
-        [&controller, this]( TypeUiEditor & editor_base )/*save callback*/
+    TypeUiEditor::TypeSaveCallback save_callback = [&controller, this]( TypeUiEditor & editor_base )
     {
         TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
         SetValue( editor->Text() );
         emit controller.RecordsChanged();
         return true;
-    }, syntax_higlighter );
+    };
+
+    text_editor = new TypeUiTextEditor(
+        id, Name(), Name().split( "." ).back(), 0,
+        save_callback, save_callback, syntax_higlighter );
 
     text_editor->SetText( Value() );
     text_editor->SetHasChanged( false );

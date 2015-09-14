@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>394</width>
+    <width>388</width>
     <height>30</height>
    </rect>
   </property>
@@ -28,12 +28,15 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="Layout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QLabel" name="Label">
        <property name="minimumSize">
         <size>
          <width>80</width>
-         <height>22</height>
+         <height>16</height>
         </size>
        </property>
        <property name="text">
@@ -43,17 +46,20 @@
      </item>
      <item>
       <widget class="QLineEdit" name="LineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>300</width>
          <height>22</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <family>Courier New</family>
-         <pointsize>9</pointsize>
-        </font>
+       <property name="locale">
+        <locale language="English" country="UnitedStates"/>
        </property>
       </widget>
      </item>

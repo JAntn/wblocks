@@ -7,14 +7,15 @@
 #include <QStringListModel>
 #include <FW/UI/ED/ui_text_editor.h>
 #include "FW/controller.h"
+#include "FW/UI/ui_file_contextmenu.h"
 
 TypeUiFileExplorer::TypeUiFileExplorer( TypeController& controller, QWidget* parent ) :
     QWidget( parent ),
-    TypeVariant(0),
+    TypeVariant( 0 ),
     m_Controller( &controller ),
     ui( new Ui::TypeUiFileExplorer )
 {
-    m_Path = ""; // RELATIVE TO DOCUMENT PATH
+    m_Path = "";
     m_Model = new QStringListModel( this );
     ui->setupUi( this );
     ui->ListView->setModel( m_Model );
@@ -48,11 +49,34 @@ TypeUiFileExplorer::TypeUiFileExplorer( TypeController& controller, QWidget* par
         this,
         TypeUiFileExplorer::OnLineEditReturnPressed
     );
+
+    connect(
+        ui->ListView,
+        QListView::customContextMenuRequested,
+        this,
+        TypeUiFileExplorer::OnCustomContextMenuRequested
+    );
 }
 
 TypeUiFileExplorer::~TypeUiFileExplorer()
 {
     delete ui;
+}
+
+void TypeUiFileExplorer::FileOpen()
+{
+    QModelIndexList index_list = ui->ListView->selectionModel()->selectedIndexes();
+
+    if( index_list.empty() )
+        return;
+
+    QModelIndex index = *index_list.begin();
+    QString file_name = m_ModelData[index.row()];
+
+    if( !Path().isEmpty() )
+        file_name.prepend( Path() + "/" );
+
+    FileOpen( file_name );
 }
 
 QString TypeUiFileExplorer::FullPath()
@@ -74,7 +98,50 @@ void TypeUiFileExplorer::Update()
     emit Controller().FileExplorerChanged();
 }
 
-void TypeUiFileExplorer::Open( QString file_name )
+void TypeUiFileExplorer::FileNew()
+{
+    QString path = Path();
+
+    if( !path.isEmpty() )
+        path = path + "/";
+
+    QString file_name =
+        QFileDialog::getSaveFileName(
+            &Controller().MainWindow(),
+            tr( "New File" ),
+            path + tr( "untitled" ),
+            tr( "Text files (*.txt);;Html files (*.html);;Php files (*.php);;Css files (*.css);;Java Script Files (*.js)" )
+        );
+
+    if( file_name.isEmpty() )
+        return;
+
+    Controller().NewFileUiEditor( file_name );
+}
+
+void TypeUiFileExplorer::FileMkDir()
+{
+    QString path = Path();
+
+    if( !path.isEmpty() )
+        path = path + "/";
+
+    QString file_name =
+        QFileDialog::getSaveFileName(
+            &Controller().MainWindow(),
+            tr( "New File" ),
+            path + tr( "untitled" ),
+            tr( "" )
+        );
+
+    if( file_name.isEmpty() )
+        return;
+
+    QDir( path ).mkdir( file_name );
+    Update();
+}
+
+void TypeUiFileExplorer::FileOpen( QString file_name )
 {
     if( file_name.isEmpty() )
     {
@@ -92,7 +159,6 @@ void TypeUiFileExplorer::Open( QString file_name )
 
     if( !QFileInfo( file_name ).exists() )
     {
-        // IT SHALL NOT ENTER HERE NEVER
         TypeController::Message( tr( "File doesn't exists" ) );
         Update();
         return;
@@ -105,6 +171,49 @@ void TypeUiFileExplorer::Open( QString file_name )
     Controller().OpenFileUiEditor( file_name );
 }
 
+void TypeUiFileExplorer::FileRemove()
+{
+    QModelIndexList index_list = ui->ListView->selectionModel()->selectedIndexes();
+
+    if( index_list.empty() )
+        return;
+
+    QModelIndex index = *index_list.begin();
+    QString file_name = m_ModelData[index.row()];
+
+    if( !Path().isEmpty() )
+        file_name.prepend( Path() + "/" );
+
+    FileRemove( file_name );
+}
+
+void TypeUiFileExplorer::FileRemove( QString file_name )
+{
+    if( file_name.isEmpty() )
+        return;
+
+    if( !QFileInfo( file_name ).exists() )
+    {
+        TypeController::Message( tr( "File doesn't exists" ) );
+        Update();
+        return;
+    }
+
+    if( QFileInfo( file_name ).isDir() )
+    {
+        if( !QDir( file_name ).removeRecursively() )
+            qDebug() << "Failed removing dir" << file_name;
+
+        Update();
+        return;
+    }
+
+    if( !QFile( file_name ).remove() )
+        qDebug() << "Failed removing file" << file_name;
+
+    Update();
+}
+
 void TypeUiFileExplorer::OnDoubleClicked( const QModelIndex& index )
 {
     QString file_name = m_ModelData[index.row()];
@@ -112,12 +221,25 @@ void TypeUiFileExplorer::OnDoubleClicked( const QModelIndex& index )
     if( !Path().isEmpty() )
         file_name.prepend( Path() + "/" );
 
-    Open( file_name );
+    FileOpen( file_name );
 }
 
 void TypeUiFileExplorer::OnLineEditReturnPressed()
 {
-    Open( ui->LineEdit->text() );
+    FileOpen( ui->LineEdit->text() );
+}
+
+void TypeUiFileExplorer::OnCustomContextMenuRequested( const QPoint& point )
+{
+    QPoint global_point = ui->ListView->viewport()->mapToGlobal( point );
+    QModelIndex index = ui->ListView->indexAt( point );
+
+    bool has_selection = false;
+
+    if( index.row() >= 0 )
+        has_selection = true;
+
+    TypeUiFileContextMenu context_menu( Controller(), has_selection, global_point, this );
 }
 
 void TypeUiFileExplorer::OnRootButtonClicked()

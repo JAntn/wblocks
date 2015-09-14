@@ -1,0 +1,14 @@
+@Types,#B22222,0,0
+[;{].*:
+@Quotation,#B22222,0,0
+\"[^\"]*\"
+
+@[multcomment]El,#228B22,1,0
+^
+{
+@[multcomment]El,#228B22,1,0
+}
+{
+@[multcomment]MultiLineComment,#5F9EA0,0,0
+/\*
+\*/

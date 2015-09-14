@@ -44,6 +44,7 @@ public slots:
     void                                    OnUpButtonClicked();
     void                                    OnSelectionChanged( const QItemSelection&, const QItemSelection& );
     void                                    OnLineEditReturnPressed();
+
 private:
 
     Ui::TypeUiRecordExplorer*               ui;

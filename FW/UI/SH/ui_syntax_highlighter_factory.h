@@ -14,10 +14,11 @@ public:
 
     TypeUiSyntaxHighlighter*           NewInstance( QString format );
     void                               AppendFormat( QString format, QString file_name );
+    bool                               Empty();
 
 private:
 
-    QMap<QString, QString>             FormatMap;
+    QMap<QString, QString>             m_FormatMap;
 };
 
 #endif // UISYNTAXHIGHLIGHTERFACTORY_H

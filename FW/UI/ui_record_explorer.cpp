@@ -80,6 +80,9 @@ TypeUiRecordExplorer::~TypeUiRecordExplorer()
 
 void TypeUiRecordExplorer::Update()
 {
+    //
+    // Update record search widget contents:
+
     if( &Context().Struct() != &Context().Root() )
         ui->LineEdit->setText( Context().Struct().ParentRecord()->FullName() );
     else
@@ -100,7 +103,6 @@ QList<TypeRecord*> TypeUiRecordExplorer::Selection()
     for( auto index : index_list )
     {
         TypeRecord* record = Context().Struct().FromIndex( index.row() );
-
         record_list.append( record );
     }
 
@@ -134,7 +136,9 @@ void TypeUiRecordExplorer::OpenRecord( TypeRecord* record )
     Context().SetStruct( *record->ParentStruct() );
     Update();
 
-    // Select the row
+    //
+    // Select the row in view:
+
     int row = record->ParentStruct()->GetIndex( record );
     ui->TableView->selectRow( row );
 }
@@ -152,7 +156,9 @@ void TypeUiRecordExplorer::ActivateRecord( TypeRecord* record )
     Context().SetStruct( *ActiveRecord()->ParentStruct() );
     Update();
 
-    // Select the row
+    //
+    // Select the row in view:
+
     int row = ActiveRecord()->ParentStruct()->GetIndex( ActiveRecord() );
     ui->TableView->selectRow( row );
 }
@@ -164,10 +170,7 @@ void TypeUiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
     TypeRecord* record = 0;
 
     if( index.row() >= 0 )
-    {
-        //ui->TableView->selectionModel()->setCurrentIndex( index, QItemSelectionModel::Select );
         record = Context().Struct().FromIndex( index.row() );
-    }
 
     ActivateRecord( record );
     long action_flags = Context().Struct().Flags();
@@ -213,7 +216,6 @@ void TypeUiRecordExplorer::OnSelectionChanged( const QItemSelection&, const QIte
     if( HasSelection() )
     {
         TypeVariantPtr<TypeRecord> record = *Selection().begin();
-
         emit Controller().SetActiveRecord( record );
 
         return;
@@ -230,8 +232,8 @@ void TypeUiRecordExplorer::OnLineEditReturnPressed()
     {
         Context().SetStruct( Controller().Document().Root() );
         Update();
-
         emit Controller().SetActiveRecord( 0 );
+
         return;
     }
 

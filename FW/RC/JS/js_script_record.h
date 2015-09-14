@@ -15,25 +15,25 @@ public:
     TypeJsScriptRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeStruct* root = 0 );
     ~TypeJsScriptRecord() override;
 
-    void                  Script( TypeHtmlBlockStream& block_stream )  override;
-    QWidget*              PropertyWidget( TypeController& controller ) override;
-    TypeUiEditor*         EditorWidget( QString id, TypeController& document ) override;
+    void                                    Script( TypeHtmlBlockStream& block_stream )  override;
+    QWidget*                                PropertyWidget( TypeController& controller ) override;
+    TypeUiEditor*                           EditorWidget( QString id, TypeController& document ) override;
 
 private:
 
-    friend class        TypeJsScriptRecordFactory;
+    friend class                            TypeJsScriptRecordFactory;
 };
 
 class TypeJsScriptRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS     ( TypeJsScriptRecordFactory )
+    SINGLETON_CLASS                         ( TypeJsScriptRecordFactory )
 
     TypeJsScriptRecordFactory();
 
-    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
-    TypeRecord*           NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*                             NewInstance( QString name, QString value, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*                             NewInstance( TypeStateWriter& state, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
 };
 
 #endif // SCRIPTRECORD_H

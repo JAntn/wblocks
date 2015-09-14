@@ -1,7 +1,15 @@
-@Tag,#0000ff,0,0
+@Tag,#D2691E,1,0
 <[^>]*>
-@Quotation,#080800,0,0
-\".*\"
-@[multcomment]MultiLineComment,#808080,0,0
+@FirstTag,#000000,1,0
+^[^<]*<
+@Atribute,#228B22,0,0
+\w+ *(?=(= *"[^"]*"[^><]*>))
+@Quotation,#B22222,0,0
+\"[^\"]*\"(?=([^><]*>))
+@[multcomment]Text,#000000,0,0
+>
+<
+@[multcomment]Comment,#5F9EA0,0,0
 <!--
 -->
+

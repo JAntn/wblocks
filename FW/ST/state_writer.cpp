@@ -19,7 +19,7 @@ void TypeStateWriter::Stop()
 }
 
 
-void TypeStateWriter::TypeStateWriter::Write(QStringList &data, bool next)
+void TypeStateWriter::TypeStateWriter::Write( QStringList& data, bool next )
 {
     if( AtEnd() )
         return;

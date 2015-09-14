@@ -8,7 +8,7 @@ TypeUiSyntaxHighlighterFactory::TypeUiSyntaxHighlighterFactory( TypeVariant* par
 
 TypeUiSyntaxHighlighter* TypeUiSyntaxHighlighterFactory::NewInstance( QString format )
 {
-    QString file_name = FormatMap.value( format, "" );
+    QString file_name = m_FormatMap.value( format, "" );
 
     if( !file_name.isEmpty() )
         return new TypeUiSyntaxHighlighter( file_name );
@@ -18,6 +18,11 @@ TypeUiSyntaxHighlighter* TypeUiSyntaxHighlighterFactory::NewInstance( QString fo
 
 void TypeUiSyntaxHighlighterFactory::AppendFormat( QString format, QString file_name )
 {
-    FormatMap.insert( format, file_name );
+    m_FormatMap.insert( format, file_name );
+}
+
+bool TypeUiSyntaxHighlighterFactory::Empty()
+{
+    return m_FormatMap.empty();
 }
 

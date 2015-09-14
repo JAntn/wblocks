@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>394</width>
+    <width>93</width>
     <height>30</height>
    </rect>
   </property>
@@ -28,12 +28,15 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="Layout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QLabel" name="Label">
        <property name="minimumSize">
         <size>
          <width>80</width>
-         <height>22</height>
+         <height>16</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -42,6 +45,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="locale">
+        <locale language="English" country="UnitedStates"/>
+       </property>
        <property name="text">
         <string>Value</string>
        </property>
@@ -49,6 +55,9 @@
      </item>
      <item>
       <widget class="QLabel" name="Label2">
+       <property name="locale">
+        <locale language="English" country="UnitedStates"/>
+       </property>
        <property name="text">
         <string/>
        </property>
