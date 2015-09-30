@@ -19,19 +19,23 @@ class TypeUiTextEditor : public TypeUiEditor
 
 public:
 
-    explicit TypeUiTextEditor( QString id, QString name, QString tab_name,
-                               QWidget* parent = 0,
-                               TypeSaveCallback save_callback = TypeUiEditor::empty_save_callback,
-                               TypeSaveCallback save_as_callback = TypeUiEditor::empty_save_callback,
-                               TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
+    TypeUiTextEditor(
+        QString id,
+        QString name,
+        QString tab_name,
+        QWidget* parent = 0,
+        TypeSaveCallback save_callback = &TypeUiEditor::empty_save_callback,
+        TypeSaveCallback save_as_callback = &TypeUiEditor::empty_save_callback,
+        TypeUpdateCallback update_callback = &TypeUiEditor::empty_update_callback,
+        TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
+
     ~TypeUiTextEditor();
 
     QString                                 Text();
     void                                    SetText( QString text );
     void                                    SetFormattedText( QString text );
-
+    void                                    SetTitle( QString title );
     void                                    SetSyntaxHighlighter( TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
-    void                                    UpdateTitle();
 
     M_VALUE                                 ( ShowTitleAsterisc, bool )
 
@@ -44,6 +48,7 @@ protected:
 
     TypeUiSyntaxHighlighter*                m_SyntaxHighlighter;
     Ui::TypeUiTextEditor*                   ui;
+
 };
 
 #endif // UITEXTEDITOR_H

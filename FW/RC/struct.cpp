@@ -11,7 +11,7 @@ TypeStruct::TypeStruct(  TypeVariant* parent ):
     TypeVariantStruct( parent ),
     m_Flags( FLAG_ACTION_ALL )
 {
-    //void
+    // void
 }
 
 TypeStruct::~TypeStruct()
@@ -34,7 +34,7 @@ TypeStruct* TypeStruct::ParentStruct()
     return 0;
 }
 
-TypeRecord* TypeStruct::NewRecord( TypeStateWriter& state, iterator position, TypeStruct* root )
+TypeRecord* TypeStruct::NewRecord( TypeStateWriter& state, iterator position )
 {
     TypeRecord*           record = 0;
     QString               class_name = state.Data().at( 3 );
@@ -42,14 +42,14 @@ TypeRecord* TypeStruct::NewRecord( TypeStateWriter& state, iterator position, Ty
 
     if( record_factory != 0 )
     {
-        record = record_factory->NewInstance( state, 0, root );
+        record = record_factory->NewInstance( state, 0 );
         Insert( position, *record );
     }
 
     return record;
 }
 
-TypeRecord* TypeStruct::NewRecord( TypeStateWriter& state, int position, TypeStruct* root )
+TypeRecord* TypeStruct::NewRecord( TypeStateWriter& state, int position )
 {
     TypeRecord*           record = 0;
     QString               class_name = state.Data()[3];
@@ -57,7 +57,7 @@ TypeRecord* TypeStruct::NewRecord( TypeStateWriter& state, int position, TypeStr
 
     if( record_factory != 0 )
     {
-        record = record_factory->NewInstance( state, 0, root );
+        record = record_factory->NewInstance( state, 0 );
 
         if( position >= 0 )
             Insert( position, *record );
@@ -68,15 +68,14 @@ TypeRecord* TypeStruct::NewRecord( TypeStateWriter& state, int position, TypeStr
     return record;
 }
 
-TypeRecord* TypeStruct::NewRecord( QString name, QString value, QString class_name, int position,
-                                   TypeStruct* root )
+TypeRecord* TypeStruct::NewRecord( QString name, QString value, QString class_name, int position )
 {
     TypeRecord* record = 0;
     TypeRecordFactory* record_factory = TypeController::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
-        record = record_factory->NewInstance( name, value, 0, root );
+        record = record_factory->NewInstance( name, value, 0 );
 
         if( position >= 0 )
             Insert( position, *record );
@@ -87,15 +86,14 @@ TypeRecord* TypeStruct::NewRecord( QString name, QString value, QString class_na
     return record;
 }
 
-TypeRecord* TypeStruct::NewRecord( QString name, QString value, QString class_name, iterator position,
-                                   TypeStruct* root )
+TypeRecord* TypeStruct::NewRecord( QString name, QString value, QString class_name, iterator position )
 {
     TypeRecord* record = 0;
     TypeRecordFactory* record_factory = TypeController::FactoryFromName( class_name );
 
     if( record_factory != 0 )
     {
-        record = record_factory->NewInstance( name, value, 0, root );
+        record = record_factory->NewInstance( name, value, 0 );
         Insert( position, *record );
     }
 
@@ -164,7 +162,7 @@ TypeRecord* TypeStruct::FromName( QString record_name, bool deep ) const
         return 0;
     }
 
-    QStringList token_sequence = record_name.split( "." );
+    QStringList token_sequence = record_name.split( "_" );
     const QString token_end = token_sequence.back();
     token_sequence.pop_back();
     TypeRecord* record = 0;

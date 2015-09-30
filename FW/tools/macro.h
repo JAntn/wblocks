@@ -46,19 +46,6 @@
                                            public:\
                                            __VAR_TYPE* __VAR_NAME() const {return m_##__VAR_NAME;}\
 
-#define FLAG_ACTION_ALL          0xFFFF
-#define FLAG_ACTION_ADD          0x0001
-#define FLAG_ACTION_REMOVE       0x0002
-#define FLAG_ACTION_ACTIVATE     0x0004
-#define FLAG_ACTION_ADD_SCENE    0x0008
-#define FLAG_ACTION_REMOVE_SCENE 0x0010
-#define FLAG_ACTION_COPY         0x0020
-#define FLAG_ACTION_PASTE        0x0040
-#define FLAG_ACTION_CUT          0x0080
-#define FLAG_ACTION_OPEN         0x0100
-
-
-
 
 #endif // MACRO
 

@@ -19,13 +19,13 @@ public:
     TypeUiFileProperty( QString tag_name, QString value, TypeSaveCallback on_changed, QWidget* parent  = 0 );
     ~TypeUiFileProperty() override;
 
-    QString                       Value();
-    void                          SetValue( QString value );
+    QString                                 Value();
+    void                                    SetValue( QString value );
 
 private slots:
 
-    void                          OnReturnPressed();
-    void                          OnSelectButtonClicked();
+    void                                    OnReturnPressed();
+    void                                    OnSelectButtonClicked();
 
 private:
 

@@ -3,9 +3,9 @@
 #include "FW/context.h"
 #include "FW/SC/scene.h"
 #include "FW/UI/ui_add_record.h"
-#include "FW/RC/reference_record.h"
 #include "ui_addrecord.h"
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QStringListModel>
 
 TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& context, int index, QWidget* parent ) :
@@ -42,6 +42,12 @@ TypeUiAddRecord::TypeUiAddRecord( TypeController& controller, TypeContext& conte
         QDialogButtonBox::rejected,
         this,
         TypeUiAddRecord::OnButtonBoxRejected );
+
+    connect(
+        ui->ListView->selectionModel(),
+        QItemSelectionModel::selectionChanged,
+        this,
+        TypeUiAddRecord::OnSelectionChanged );
 }
 
 TypeUiAddRecord::~TypeUiAddRecord()
@@ -65,13 +71,32 @@ bool TypeUiAddRecord::CheckFormData() const
     //
     // Check new record name correctness:
 
-    if( !QRegExp( "[A-Za-z][\\w.]*" ).exactMatch( ui->LineEdit->text() ) )
+    if( !QRegExp( "[A-Za-z][A-Za-z0-9]*" ).exactMatch( ui->LineEdit->text() ) )
     {
         TypeController::Message( tr( "Bad record name" ) );
         return false;
     }
 
     return true;
+}
+
+void TypeUiAddRecord::OnSelectionChanged( const QItemSelection&, const QItemSelection& )
+{
+    //
+    // Look for a record factory from input data:
+
+    auto iter = TypeController::FactoryList().begin();
+    int count = 0;
+
+    while( count < ui->ListView->currentIndex().row() )
+    {
+        ++iter;
+        ++count;
+    }
+
+    QString class_name = ( *iter )->RecordClass();
+
+    ui->LineEdit->setText( class_name + QString::number( 1 + TypeRecordFactory::IdCount().toLong() ) );
 }
 
 void TypeUiAddRecord::OnButtonBoxAccepted()
@@ -98,8 +123,7 @@ void TypeUiAddRecord::OnButtonBoxAccepted()
         QString name = ui->LineEdit->text();
         int index = ui->SpinBox->value();
 
-        TypeRecord* record = Context().Struct().NewRecord(
-                                 name, "", class_name, index, &Context().Root() );
+        TypeRecord* record = Context().Struct().NewRecord( name, "", class_name, index );
 
         if( ui->CheckBox->isChecked() )
             Context().Scene().NewItem( *record );

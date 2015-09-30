@@ -37,7 +37,7 @@ QString TypeUiRecordNameProperty::Value()
 
 void TypeUiRecordNameProperty::OnReturnPressed()
 {
-    if( !QRegExp( "[A-Za-z][\\w.]*" ).exactMatch( ui->LineEdit->text() ) )
+    if( !QRegExp( "[A-Za-z][A-Za-z0-9]*" ).exactMatch( ui->LineEdit->text() ) )
     {
         TypeController::Message( tr( "Bad record name" ) );
         return;

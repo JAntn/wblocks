@@ -8,15 +8,16 @@ QString HORIZONTAL_HEADER_TEXT[] =
 {
     "Name",
     "Value",
-    "Class"
+    "Class",
+    "Id"
 };
 
 int TypeUiRecordTableModel::columnCount( const QModelIndex& ) const
 {
-    return 3;
+    return 4;
 }
 
-TypeUiRecordTableModel::TypeUiRecordTableModel(TypeStruct& struct_val, QObject* parent ):
+TypeUiRecordTableModel::TypeUiRecordTableModel( TypeStruct& struct_val, QObject* parent ):
     QAbstractTableModel( parent ),
     m_Struct( &struct_val )
 {
@@ -54,9 +55,13 @@ QVariant TypeUiRecordTableModel::data( const QModelIndex& index, int role ) cons
         else if( index.column() == 1 )
         {
             if( record->Struct() != 0 )
-                return "{" + record->Value() + "}";
+                return "{" + QString::number( record->Struct()->Size() ) + "}";
 
             return record->Value();
+        }
+        else if( index.column() == 3 )
+        {
+            return record->Id();
         }
     }
 

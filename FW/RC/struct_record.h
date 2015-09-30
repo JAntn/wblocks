@@ -13,39 +13,39 @@ class TypeStructRecord : public TypeRecord
 {
 public:
 
-    explicit TypeStructRecord( TypeStateWriter& state, TypeVariant* Parent = 0, TypeStruct* root = 0 );
-    TypeStructRecord( QString id, QString name, QString value, TypeVariant* Parent = 0, TypeStruct* root = 0 );
+    explicit TypeStructRecord( TypeStateWriter& state, TypeVariant* Parent = 0 );
+    TypeStructRecord( QString id, QString name, QString value, TypeVariant* Parent = 0 );
     ~TypeStructRecord() override;
 
-    TypeStruct*         Struct() override;
-    void                Script( TypeHtmlBlockStream& block_stream ) override;
-    void                Html( TypeHtmlBlockStream& block_stream ) override;
+    TypeStruct*                             Struct() const override;
+    void                                    Html( TypeHtmlBlockStream& block_stream, long role, TypeStruct& root) override;
 
-    bool                GetState( TypeStateReader& state ) override;
-    bool                SetState( TypeStateWriter& state , TypeStruct* root = 0 ) override;
-    QWidget*            PropertyWidget( TypeController& controller ) override;
+    bool                                    GetState( TypeStateReader& state ) override;
+    bool                                    SetState( TypeStateWriter& state ) override;
+    QWidget*                                PropertyWidget( TypeController& controller ) override;
 
-    QString             Value() override;
-    void                SetValue( QString ) override;
+    void                                    SetValue( const QString& value ) override;
+    const QString&                          Value() const override;
+    QString&                                Value() override;
 
 private:
 
-    TypeStruct*         m_Struct;
+    TypeStruct*                             m_Struct;
 
-    friend class        TypeUiStructEditor;
-    friend class        TypeStructRecordFactory;
+    friend class                            TypeUiStructEditor;
+    friend class                            TypeStructRecordFactory;
 };
 
 class TypeStructRecordFactory : public TypeRecordFactory
 {
 public:
 
-    SINGLETON_CLASS   ( TypeStructRecordFactory )
+    SINGLETON_CLASS                         ( TypeStructRecordFactory )
 
     TypeStructRecordFactory();
 
-    TypeRecord*           NewInstance( QString name, QString value, TypeVariant* parent = 0 , TypeStruct* root = 0 ) override;
-    TypeRecord*           NewInstance( TypeStateWriter& table, TypeVariant* parent = 0, TypeStruct* root = 0 ) override;
+    TypeRecord*                             NewInstance( QString name, QString value, TypeVariant* parent = 0 ) override;
+    TypeRecord*                             NewInstance( TypeStateWriter& table, TypeVariant* parent = 0 ) override;
 
 };
 

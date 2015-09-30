@@ -133,11 +133,19 @@ void TypeUiRecordExplorer::OpenRecord( TypeRecord* record )
         return;
     }
 
+    //
+    // Open record value in editor:
+
+    Controller().OpenRecordEditorWidget( *record );
+
+    //
+    // Set current struct in record explorer:
+
     Context().SetStruct( *record->ParentStruct() );
     Update();
 
     //
-    // Select the row in view:
+    // Select the row in record explorer:
 
     int row = record->ParentStruct()->GetIndex( record );
     ui->TableView->selectRow( row );

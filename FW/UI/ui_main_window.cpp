@@ -3,7 +3,6 @@
 #include "FW/UI/ui_add_record.h"
 #include "FW/SC/scene.h"
 #include "FW/UI/SH/ui_syntax_highlighter.h"
-#include "FW/UI/SH/ui_syntax_highlighter_factory.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_editor_container.h"
 #include "FW/UI/ui_file_explorer.h"
@@ -13,7 +12,7 @@
 #include "FW/controller.h"
 #include "FW/config.h"
 #include "FW/clipboard.h"
-#include "FW/htmlbuilder.h"
+#include "FW/BK/html_builder.h"
 #include "ui_record_contextmenu.h"
 #include "ui_mainwindow.h"
 #include <QGraphicsScene>
@@ -29,17 +28,18 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
     m_Controller( &controller ),
     ui( new Ui::TypeUiMainWindow )
 {
+    qDebug() << "Creating Main Window..";
+
     controller.SetMainWindow( *this );
 
     m_RecordExplorer = 0;
     m_FileExplorer = 0;
-    m_Document = 0;
     m_PropertiesWidget = 0;
     m_HtmlTextView = 0;
 
-    // SETUP USER INTERFACE
-
     ui->setupUi( this );
+
+    qDebug() << "Creating Window Contents..";
 
     m_RecordExplorer = new TypeUiRecordExplorer( controller.Document().Context(), Controller(), this );
     m_FileExplorer = new TypeUiFileExplorer( controller, this );
@@ -48,29 +48,27 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
     ui->RecordExplorerLayout->addWidget( m_RecordExplorer );
     ui->EditorLayout->addWidget( m_EditorContainer );
     ui->FileExplorerLayout->addWidget( m_FileExplorer );
-    ui->GraphicsView->setScene( &Controller().Document().Scene().Graphics() );
+    ui->GraphicsView->setScene( &Controller().Document().Scene().Graphics() ); //Scene should be more abstract-----
 
-    m_HtmlTextView = new TypeUiHtmlTextView(
-        controller,
-        controller.NewHtmlTextViewId( controller.Document().FileName() ),
-        controller.Document().FileName(),
-        controller.Document().FileName().split( "/" ).back(),
-        this,
-        &TypeUiEditor::empty_save_callback,
-        controller.SyntaxHighlighterFactory().NewInstance( "HTML" ) );
+    qDebug() << "Creating Html Text Viewer..";
 
+    m_HtmlTextView = static_cast<TypeUiHtmlTextView*>( Controller().Document().EditorWidget() );
     ui->HtmlTextLayout->addWidget( m_HtmlTextView );
+
+    qDebug() << "Creating Html Text Viewer..";
 
     QRect screen_size = QApplication::desktop()->availableGeometry( this );
     resize( QSize( screen_size.width() * 0.8, screen_size.height() * 0.8 ) );
     SetTitle( controller.Config().ProjectFileName() );
 
+    qDebug() << "Beggining Connections..";
+
     InitConnections();
-
     emit Controller().RecordsChanged();
-
     UpdateActions();
     SetCurrentTab( MAINWINDOW_TAB_SCENE );
+
+    qDebug() << "Main Window created";
 }
 
 TypeUiMainWindow::~TypeUiMainWindow()
@@ -111,18 +109,6 @@ void TypeUiMainWindow::InitConnections()
         QAction::triggered,
         &Controller(),
         TypeController::OnActionProjectSave );
-    /*
-        connect(
-            ui->ActionProjectOpenSQL,
-            QAction::triggered,
-            &Controller(),
-            TypeController::OnActionProjectOpenSQL );
-
-        connect(
-            ui->ActionProjectSaveAsSQL,
-            QAction::triggered,
-            &Controller(),
-            TypeController::OnActionProjectSaveAsSQL );*/
 
     connect(
         ui->ActionHtmlSaveAs,
@@ -304,7 +290,7 @@ void TypeUiMainWindow::UpdateHtmlWebView()
 {
     Controller().Document().UpdateHtml();
 
-    ui->WebView->setHtml( Controller().HtmlBuilder().Text() );
+    ui->WebView->setHtml( Controller().Document().HtmlBuilder().Text() );
     ui->WebView->show();
 }
 
@@ -322,7 +308,8 @@ void TypeUiMainWindow::UpdateFileExplorer()
 
 void TypeUiMainWindow::UpdateHtmlTextView()
 {
-    HtmlTextView().UpdateView();
+    HtmlTextView().SetFormattedText( Controller().Document().HtmlBuilder().FormattedText() );
+    HtmlTextView().OnActionUpdate();
 }
 
 void TypeUiMainWindow::UpdateSceneView()
@@ -332,97 +319,165 @@ void TypeUiMainWindow::UpdateSceneView()
 
 void TypeUiMainWindow::UpdateActions()
 {
+
+    QList<QAction*> record_action_list =
+    {
+        ui->ActionRecordCut,
+        ui->ActionRecordCopy,
+        ui->ActionRecordPaste,
+        ui->ActionRecordAdd,
+        ui->ActionRecordAdd_to_scene,
+        ui->ActionRecordProperties,
+        ui->ActionRecordRemove,
+        ui->ActionRecordOpen_In_Editor
+    };
+
+    QList<long> record_action_flags =
+    {
+        FLAG_ACTION_CUT,
+        FLAG_ACTION_COPY,
+        FLAG_ACTION_PASTE,
+        FLAG_ACTION_ADD,
+        FLAG_ACTION_ADD_SCENE,
+        FLAG_ACTION_ACTIVATE,
+        FLAG_ACTION_REMOVE,
+        FLAG_ACTION_OPEN
+    };
+
+    QList<QPushButton*> record_button_list =
+    {
+        ui->ButtonRecordCut,
+        ui->ButtonRecordCopy,
+        ui->ButtonRecordPaste,
+        ui->ButtonRecordAdd,
+        ui->ButtonRecordAddScene,
+        ui->ButtonRecordRemove,
+    };
+
+    QList<long> record_button_action_flags =
+    {
+        FLAG_ACTION_CUT,
+        FLAG_ACTION_COPY,
+        FLAG_ACTION_PASTE,
+        FLAG_ACTION_ADD,
+        FLAG_ACTION_ADD_SCENE,
+        FLAG_ACTION_REMOVE,
+    };
+
     //
     // Disable record actions if explorer or html text is not visible
 
     if( !ui->RecordExplorerTab->isVisible() && !ui->HtmlTextTab->isVisible() )
     {
-        ui->ActionRecordAdd->setEnabled( false );
-        ui->ActionRecordRemove->setEnabled( false );
-        ui->ActionRecordCopy->setEnabled( false );
-        ui->ActionRecordCut->setEnabled( false );
-        ui->ActionRecordPaste->setEnabled( false );
-        ui->ActionRecordAdd_to_scene->setEnabled( false );
-        ui->ActionRecordOpen_In_Editor->setEnabled( false );
-        ui->ActionRecordProperties->setEnabled( false );
+        for( QAction* action : record_action_list )
+            action->setEnabled( false );
     }
     else
     {
         //
         // Enable record actions conditionated to record flags:
 
-        QList<QAction*> action_list =
+        {
+            auto iter = record_action_flags.begin();
+
+            for( QAction* action : record_action_list )
+            {
+                if( Controller().Document().Context().Struct().Flags() & ( *iter ) )
+                    action->setEnabled( true );
+                else
+                    action->setEnabled( false );
+
+                ++iter;
+            }
+        }
+
+        //
+        // Enable record button conditionated to record flags:
+
+        {
+            auto iter = record_button_action_flags.begin();
+
+            for( auto button : record_button_list )
+            {
+                if( Controller().Document().Context().Struct().Flags() & ( *iter ) )
+                    button->setEnabled( true );
+                else
+                    button->setEnabled( false );
+
+                ++iter;
+            }
+        }
+    }
+
+    //
+    // Disable records actions conditionated to record explorer selection:
+
+    {
+        QList<QPushButton*> record_button_list =
+        {
+            ui->ButtonRecordCut,
+            ui->ButtonRecordCopy,
+            ui->ButtonRecordAddScene,
+            ui->ButtonRecordRemove,
+        };
+
+        QList<QAction*> record_action_list =
         {
             ui->ActionRecordCut,
             ui->ActionRecordCopy,
-            ui->ActionRecordPaste,
-            ui->ActionRecordAdd,
             ui->ActionRecordAdd_to_scene,
             ui->ActionRecordProperties,
             ui->ActionRecordRemove,
             ui->ActionRecordOpen_In_Editor
         };
 
-        QList<long> action_flags =
-        {
-            FLAG_ACTION_CUT,
-            FLAG_ACTION_COPY,
-            FLAG_ACTION_PASTE,
-            FLAG_ACTION_ADD,
-            FLAG_ACTION_ADD_SCENE,
-            FLAG_ACTION_ACTIVATE,
-            FLAG_ACTION_REMOVE,
-            FLAG_ACTION_OPEN
-        };
-
-        auto iter = action_flags.begin();
-
-        for( auto action : action_list )
-        {
-            if( Controller().Document().Context().Struct().Flags() & ( *iter ) )
-                action->setEnabled( true );
-            else
-                action->setEnabled( false );
-
-            ++iter;
-        }
-
-        //
-        // Disable records actions conditionated to record explorer selection:
-
         if( !RecordExplorer().HasSelection() )
         {
-            ui->ActionRecordCopy->setEnabled( false );
-            ui->ActionRecordCut->setEnabled( false );
-            ui->ActionRecordAdd_to_scene->setEnabled( false );
-            ui->ActionRecordRemove->setEnabled( false );
-            ui->ActionRecordOpen_In_Editor->setEnabled( false );
-            ui->ActionRecordProperties->setEnabled( false );
-        }
+            for( QAction* action : record_action_list )
+                action->setEnabled( false );
 
-        if( Controller().Clipboard().Empty() )
-            ui->ActionRecordPaste->setEnabled( false );
+            for( QPushButton* button : record_button_list )
+                button->setEnabled( false );
+        }
+    }
+
+    if( Controller().Clipboard().Empty() )
+    {
+        ui->ActionRecordPaste->setEnabled( false );
+        ui->ButtonRecordPaste->setEnabled( false );
     }
 
     //
     // Enable file actions conditionated to container is not empty:
 
-    if( EditorContainer().Size() == 0 )
     {
-        ui->ActionFileSaveAll->setEnabled( false );
-        ui->ActionFileSaveAs->setEnabled( false );
-        ui->ActionFileCloseAll->setEnabled( false );
-        ui->ActionFileClose->setEnabled( false );
-    }
-    else
-    {
-        ui->ActionFileSaveAll->setEnabled( true );
-        ui->ActionFileSaveAs->setEnabled( true );
-        ui->ActionFileCloseAll->setEnabled( true );
-        ui->ActionFileClose->setEnabled( true );
-    }
+        QList<QAction*> file_action_list =
+        {
+            ui->ActionFileSaveAll,
+            ui->ActionFileSave,
+            ui->ActionFileSaveAs,
+            ui->ActionFileCloseAll,
+            ui->ActionFileClose
+        };
 
+        if( EditorContainer().Size() == 0 )
+        {
+            for( QAction* action : file_action_list )
+                action->setEnabled( false );
+
+            ui->ButtonFileSave->setEnabled( false );
+
+        }
+        else
+        {
+            for( QAction* action : file_action_list )
+                action->setEnabled( true );
+
+            ui->ButtonFileSave->setEnabled( true );
+        }
+    }
 
 }
+
 
 

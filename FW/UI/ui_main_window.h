@@ -30,7 +30,6 @@ public:
     explicit TypeUiMainWindow( TypeController& controller, QWidget* parent = 0 );
     ~TypeUiMainWindow() override;
 
-
     void                          UpdateRecordExplorer();
     void                          UpdateFileExplorer();
     void                          UpdateHtmlTextView();
@@ -44,7 +43,6 @@ public:
     void                          SetCurrentTab( int index );
 
     M_REFERENCE                   ( Controller,          TypeController )
-    M_REFERENCE                   ( Document,            TypeDocument )
     M_REFERENCE                   ( RecordExplorer,      TypeUiRecordExplorer )
     M_REFERENCE                   ( FileExplorer,        TypeUiFileExplorer )
     M_REFERENCE                   ( EditorContainer,     TypeUiEditorContainer )
@@ -65,5 +63,7 @@ private:
 #define MAINWINDOW_TAB_EDITOR  1
 #define MAINWINDOW_TAB_HTML  2
 #define MAINWINDOW_TAB_OUTPUT  3
+
+
 
 #endif // UIMAINWINDOW_H

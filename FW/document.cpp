@@ -4,15 +4,19 @@
 #include "FW/database.h"
 #include "FW/document.h"
 #include "FW/context.h"
-#include "FW/htmlbuilder.h"
+#include "FW/BK/html_builder.h"
 #include "FW/clipboard.h"
 #include "FW/ST/state_reader.h"
 #include "FW/ST/state_writer.h"
 #include "FW/UI/ui_file_explorer.h"
-#include "FW/RC/JS/js_script_file_record.h"
 #include "FW/config.h"
 #include "FW/tools.h"
 #include "FW/RC/root_struct.h"
+
+#include "FW/UI/SH/ui_syntax_highlighter_factory.h"
+#include "FW/UI/ED/ui_html_text_view.h"
+#include "FW/UI/ui_editor_container.h"
+#include "ui_texteditor.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// NON STATIC
@@ -20,11 +24,16 @@
 TypeDocument::TypeDocument( TypeController& controller, QString file_name, QString path, TypeVariant* parent ):
     TypeVariant( parent ), m_Controller( &controller )
 {
+    qDebug() << "Creating document..";
+
     m_FileName          = file_name;
     m_Path              = path;
     m_Root              = new TypeRootStruct( this );
     m_Scene             = new TypeScene( controller, this );
-    m_Context           = new TypeContext( Root(), Scene(), &Root(), this );
+    m_Context           = new TypeContext( Root(), Scene(), Root(), this );
+    m_HtmlBuilder       = new TypeHtmlBuilder( this );
+
+    qDebug() << "Document created";
 }
 
 TypeDocument::~TypeDocument()
@@ -32,9 +41,57 @@ TypeDocument::~TypeDocument()
     delete m_Root;
 }
 
+QWidget* TypeDocument::EditorWidget()
+{
+
+    qDebug() << "Editor widget request to Document";
+
+    TypeUiEditor::TypeUpdateCallback update_callback = [this]( TypeUiEditor & editor_base )
+    {
+        TypeVariantPtr<TypeUiHtmlTextView> editor = &editor_base;
+
+        //
+        // Update editor title:
+
+        QString changed_mark = "";
+
+        if( editor->HasChanged() )
+            changed_mark = "*";
+
+        editor->SetTitle( editor->Name() + changed_mark );
+
+        //
+        // Update editor container data:
+
+        if( editor->EditorContainer() != 0 )
+        {
+            editor->EditorContainer()->SetTabName( editor->Id(), editor->TabName() + changed_mark );
+            editor->EditorContainer()->SetTabToolTip( editor->Id(), editor->Name() + changed_mark );
+        }
+
+        return true;
+    };
+
+    //
+    // Create widget:
+
+    QWidget* widget = new TypeUiHtmlTextView(
+        Controller(),
+        Controller().NewHtmlTextViewId( FileName() ),
+        FileName(),
+        FileName().split( "/" ).back(),
+        0/*parent widget*/,
+        &TypeUiEditor::empty_save_callback,
+        &TypeUiEditor::empty_save_callback,
+        update_callback,
+        Controller().SyntaxHighlighterFactory().NewInstance( "HTML" ) );
+
+    return widget;
+}
+
 void TypeDocument::UpdateHtml()
 {
-    Controller().HtmlBuilder().Build( Root() );
+    HtmlBuilder().Build( Root() );
 
     emit Controller().HtmlTextChanged();
 }
@@ -93,12 +150,11 @@ int TypeDocument::SaveFile( QString file_name )
             qDebug() << "Failed at reading scene state" << file_name;
             return 3;
         }
-
     }
 
     scene_state.Stop();
 
-    SetFileName( QFileInfo( file_name ).fileName() );
+    SetFileName( file_name );
     SetPath( QFileInfo( file_name ).canonicalPath() );
 
     return 0;
@@ -130,7 +186,7 @@ int TypeDocument::LoadFile( QString file_name )
 
     while( !record_state.AtEnd() )
     {
-        if( Root().NewRecord( record_state, -1, &Root() ) == 0 )
+        if( Root().NewRecord( record_state, -1 ) == 0 )
         {
             qDebug() << "Failed at writing record state" << file_name;
             return 2;
@@ -152,8 +208,10 @@ int TypeDocument::LoadFile( QString file_name )
 
     emit Controller().RecordsChanged();
 
-    SetFileName( QFileInfo( file_name ).fileName() );
+    SetFileName( file_name );
     SetPath( QFileInfo( file_name ).canonicalPath() );
+
+    qDebug() << "Document loaded";
 
     return 0;
 }
@@ -173,7 +231,7 @@ int TypeDocument::SaveSQL( QString file_name )
     // SETUP TABLE
 
     QStringList row;
-    row << FIELD( "ROW" ) << FIELD( "valueUE" );
+    row << FIELD( "ROW" ) << FIELD( "VALUE" );
     Controller().Database().CreateTable( FIELD( "SETUP_TABLE" ), row );
 
     // FILL SETUP TABLE
@@ -191,8 +249,9 @@ int TypeDocument::SaveSQL( QString file_name )
     record_fields.append( FIELD( "ROW" ) );
     record_fields.append( FIELD( "ID" ) );
     record_fields.append( FIELD( "NAME" ) );
-    record_fields.append( FIELD( "valueUE" ) );
-    record_fields.append( FIELD( "CLASS_NAME" ) );
+    record_fields.append( FIELD( "VALUE" ) );
+    record_fields.append( FIELD( "CLASS" ) );
+    record_fields.append( FIELD( "FLAGS" ) );
     Controller().Database().CreateTable( FIELD( "RECORD_TABLE" ), record_fields );
 
     // FILL TABLE
@@ -239,7 +298,7 @@ int TypeDocument::SaveSQL( QString file_name )
     Controller().Database().AppendRecord( FIELD( "SETUP_TABLE" ), row );
     Controller().Database().CloseDatabase();
 
-    SetFileName( QFileInfo( file_name ).fileName() );
+    SetFileName( file_name );
     SetPath( QFileInfo( file_name ).canonicalPath() );
 
     return 0;
@@ -271,7 +330,7 @@ int TypeDocument::LoadSQL( QString file_name )
 
     while( !record_state.AtEnd() )
     {
-        if( Root().NewRecord( record_state, -1, &Root() ) == 0 )
+        if( Root().NewRecord( record_state, -1 ) == 0 )
         {
             qDebug() << "Failed at writing record state" << file_name;
             return 2;
@@ -294,8 +353,10 @@ int TypeDocument::LoadSQL( QString file_name )
     Controller().Database().CloseDatabase();
     emit Controller().RecordsChanged();
 
-    SetFileName( QFileInfo( file_name ).fileName() );
+    SetFileName( file_name );
     SetPath( QFileInfo( file_name ).canonicalPath() );
+
+    qDebug() << "Document loaded";
 
     return 0;
 }

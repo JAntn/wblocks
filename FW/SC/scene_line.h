@@ -14,9 +14,9 @@ public:
 
     void paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 ) override;
 
-    M_REFERENCE              ( From, TypeSceneItem )
-    M_REFERENCE              ( Target, TypeSceneItem )
-    M_VALUE                  ( Color, Qt::GlobalColor )
+    M_REFERENCE                             ( From, TypeSceneItem )
+    M_REFERENCE                             ( Target, TypeSceneItem )
+    M_VALUE                                 ( Color, Qt::GlobalColor )
 };
 
 #endif // SCENELINE_H

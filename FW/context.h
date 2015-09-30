@@ -10,7 +10,7 @@ class TypeContext : public TypeVariant
 {
 public:
 
-    TypeContext( TypeStruct& records, TypeScene& scene, TypeStruct* root = 0, TypeVariant* Parent = 0 );
+    TypeContext(TypeStruct& strc, TypeScene& scene, TypeStruct& root, TypeVariant* Parent = 0 );
     ~TypeContext() override;
 
     M_REFERENCE         ( Struct,  TypeStruct )

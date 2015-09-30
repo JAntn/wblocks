@@ -32,4 +32,6 @@ private:
 
 };
 
+#include "FW/UI/SH/ui_syntax_highlighter_factory.h"
+
 #endif // UISYNTAXHIGHLIGHTER_H

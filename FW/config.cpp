@@ -6,7 +6,11 @@ TypeConfig::TypeConfig( QString config_path, TypeVariant* parent ):
     TypeVariant( parent )
 {
     m_ConfigPath = config_path;
-    m_ConfigFileName = "config.cfg";
+
+    if( !config_path.isEmpty() )
+        m_ConfigFileName = config_path + "/config.cfg";
+    else
+        m_ConfigFileName = "config.cfg";
 }
 
 QString EMPTY_CONFIGURATION_TEXT()
@@ -21,18 +25,15 @@ QString EMPTY_CONFIGURATION_TEXT()
 
 void TypeConfig::Load()
 {
-    QString config_file_name = ConfigFileName();
+    qDebug() << "Loading configuration..";
 
-    if( !ConfigPath().isEmpty() )
-        config_file_name.prepend( ConfigPath() + "/" );
+    if( !QFileInfo( ConfigFileName() ).exists() )
+        TypeController::SaveTextFile( ConfigFileName() , EMPTY_CONFIGURATION_TEXT() );
 
-    if( !QFileInfo( config_file_name ).exists() )
-        TypeController::SaveTextFile( config_file_name , EMPTY_CONFIGURATION_TEXT() );
+    QStringList token_list =
+        TypeController::LoadTextFile( ConfigFileName() ).split( "\n" );
 
-    QStringList config_file_tokens;
-    config_file_tokens = TypeController::LoadTextFile( config_file_name ).split( "\n" );
-
-    for( QString token_row : config_file_tokens )
+    for( QString token_row : token_list )
     {
         QStringList token = token_row.split( "=" );
 
@@ -42,42 +43,24 @@ void TypeConfig::Load()
         else if( token[0] == "project_file" )
             m_ProjectFileName = token[1];
     }
+
+    qDebug() << "Configuration loaded";
 }
 
 void TypeConfig::Save()
 {
-    QStringList config_file_tokens;
-    QString config_file_name =  ConfigFileName();
+    QStringList tokens_list;
 
-    if( !ConfigPath().isEmpty() )
-        config_file_name.prepend( ConfigPath() + "/" );
-
-    config_file_tokens << "project_file=" << m_ProjectFileName << "\n";
-    config_file_tokens << "project_path=" << m_ProjectPath << "\n";
+    tokens_list << "project_file=" << ProjectFileName() << "\n";
+    tokens_list << "project_path=" << ProjectPath() << "\n";
 
     TypeController::SaveTextFile(
-        config_file_name,
-        config_file_tokens.join( "" )
+        ConfigFileName(),
+        tokens_list.join( "" )
     );
 }
 
-QString TypeConfig::ConfigFileFullName()
-{
-    QString config_file_name =  ConfigFileName();
 
-    if( !ConfigPath().isEmpty() )
-        config_file_name.prepend( ConfigPath() + "/" );
 
-    return config_file_name;
-}
 
-QString TypeConfig::ProjectFileFullName()
-{
-    QString project_file_name =  ProjectFileName();
-
-    if( !ProjectPath().isEmpty() )
-        project_file_name.prepend( ProjectPath() + "/" );
-
-    return project_file_name;
-}
 

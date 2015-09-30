@@ -15,15 +15,19 @@ class TypeUiHtmlTextView : public TypeUiTextEditor
 
 public:
 
-    explicit TypeUiHtmlTextView( TypeController& controller, QString id, QString name, QString tab_name,
-                                 QWidget* parent = 0,
-                                 TypeSaveCallback save_callback = &TypeUiEditor::empty_save_callback ,
-                                 TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
+    TypeUiHtmlTextView(
+        TypeController& controller,
+        QString id,
+        QString name,
+        QString tab_name,
+        QWidget* parent = 0,
+        TypeSaveCallback save_callback = &TypeUiEditor::empty_save_callback,
+        TypeSaveCallback save_as_callback = &TypeUiEditor::empty_save_callback,
+        TypeUpdateCallback update_callback = &TypeUiEditor::empty_update_callback,
+        TypeUiSyntaxHighlighter* syntax_higlighter = 0 );
 
     void                                    ActivateBlock( TypeHtmlBlock* block );
     void                                    ActivateRecord( TypeRecord* active_record );
-    void                                    UpdateView();
-
 
     M_REFERENCE                             ( Controller,         TypeController )
     M_POINTER                               ( ActiveRecord,       TypeRecord )
@@ -32,8 +36,10 @@ public:
 public slots:
 
     void                                    OnCursorPositionChanged();
-    void                                    OnHtmlTextChanged();
-    void                                    OnCustomContextMenuRequested(const QPoint& point);
+    void                                    OnCustomContextMenuRequested( const QPoint& point );
+
 };
+
+#define UIHTMLTEXTVIEW_UPDATE_VIEW 1
 
 #endif // UIHTMLTEXTVIEW_H

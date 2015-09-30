@@ -16,17 +16,7 @@ TARGET = WBLOCKS
 TEMPLATE = app
 
 HEADERS += main.h \
-    FW/RC/HTML/html_record.h \
-    FW/RC/JS/js_reference_record.h \
-    FW/RC/JS/js_script_file_record.h \
-    FW/RC/JS/js_script_record.h \
-    FW/RC/PHP/php_file_record.h \
-    FW/RC/file_record.h \
-    FW/RC/integer_record.h \
-    FW/RC/real_record.h \
     FW/RC/record.h \
-    FW/RC/reference_record.h \
-    FW/RC/string_record.h \
     FW/RC/struct_record.h \
     FW/SC/scene.h \
     FW/SC/scene_item.h \
@@ -64,7 +54,7 @@ HEADERS += main.h \
     FW/controller.h \
     FW/database.h \
     FW/document.h \
-    FW/htmlbuilder.h \
+    FW/BK/html_builder.h \
     FW/tools/macro.h \
     FW/tools.h \
     FW/variant.h \
@@ -80,27 +70,15 @@ HEADERS += main.h \
     FW/BK/html_block_stream.h \
     FW/UI/PR/ui_label_property.h \
     FW/UI/ui_record_contextmenu.h \
-    FW/RC/text_file_record.h \
-    FW/RC/HTML/html_file_record.h \
-    FW/RC/CSS/css_file_record.h \
     FW/UI/PR/ui_combo_property.h \
-    FW/RC/html_action.h \
-    FW/RC/bool_record.h \
-    FW/UI/ui_file_contextmenu.h
+    FW/UI/ui_file_contextmenu.h \
+    FW/RC/record_flags.h \
+    FW/UI/PR/ui_valueopen_property.h
 
 
 
 SOURCES += main.cpp \
-    FW/RC/HTML/html_record.cpp \
-    FW/RC/JS/js_script_file_record.cpp \
-    FW/RC/JS/js_script_record.cpp \
-    FW/RC/PHP/php_file_record.cpp \
-    FW/RC/file_record.cpp \
-    FW/RC/integer_record.cpp \
-    FW/RC/real_record.cpp \
     FW/RC/record.cpp \
-    FW/RC/reference_record.cpp \
-    FW/RC/string_record.cpp \
     FW/RC/struct_record.cpp \
     FW/SC/scene.cpp \
     FW/SC/scene_item.cpp \
@@ -138,7 +116,6 @@ SOURCES += main.cpp \
     FW/controller.cpp \
     FW/database.cpp \
     FW/document.cpp \
-    FW/htmlbuilder.cpp \
     FW/tools.cpp \
     FW/variant.cpp \
     FW/variant_struct.cpp \
@@ -149,12 +126,10 @@ SOURCES += main.cpp \
     FW/BK/html_block_stream.cpp \
     FW/UI/PR/ui_label_property.cpp \
     FW/UI/ui_record_contextmenu.cpp \
-    FW/RC/text_file_record.cpp \
-    FW/RC/HTML/html_file_record.cpp \
-    FW/RC/CSS/css_file_record.cpp \
     FW/UI/PR/ui_combo_property.cpp \
-    FW/RC/bool_record.cpp \
-    FW/UI/ui_file_contextmenu.cpp
+    FW/UI/ui_file_contextmenu.cpp \
+    FW/BK/html_builder.cpp \
+    FW/UI/PR/ui_valueopen_property.cpp
 
 
 FORMS += \
@@ -171,7 +146,8 @@ FORMS += \
     FW/UI/PR/recordnameproperty.ui \
     FW/UI/PR/linetextproperty.ui \
     FW/UI/PR/labelproperty.ui \
-    FW/UI/PR/comboproperty.ui
+    FW/UI/PR/comboproperty.ui \
+    FW/UI/PR/valueopenproperty.ui
 
 DISTFILES += \
     format_code.astylerc \

@@ -12,9 +12,6 @@ public:
     void                Load();
     void                Save();
 
-    QString             ConfigFileFullName();
-    QString             ProjectFileFullName();
-
     M_VALUE             ( ConfigPath,      QString )
     M_VALUE             ( ConfigFileName,  QString )
     M_VALUE             ( ProjectPath,     QString )

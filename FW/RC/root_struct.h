@@ -10,10 +10,8 @@ public:
     explicit TypeRootStruct( TypeVariant* parent = 0 );
     ~TypeRootStruct() override;
 
-    TypeRecord*                              ParentRecord() override;
-    TypeStruct*                              ParentStruct() override;
-
-    //M_VALUE                                  ( IdCount, long )
+    TypeRecord*                        ParentRecord() override;
+    TypeStruct*                        ParentStruct() override;
 };
 
 

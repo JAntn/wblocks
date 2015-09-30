@@ -2,20 +2,6 @@
 // Include all records:
 
 #include "FW/RC/struct_record.h"
-#include "FW/RC/integer_record.h"
-#include "FW/RC/reference_record.h"
-#include "FW/RC/real_record.h"
-#include "FW/RC/JS/js_script_file_record.h"
-#include "FW/RC/JS/js_script_record.h"
-#include "FW/RC/PHP/php_file_record.h"
-#include "FW/RC/CSS/css_file_record.h"
-#include "FW/RC/string_record.h"
-#include "FW/RC/bool_record.h"
-#include "FW/RC/file_record.h"
-#include "FW/RC/HTML/html_record.h"
-#include "FW/RC/HTML/html_file_record.h"
-#include "FW/RC/text_file_record.h"
-
 
 #include "FW/controller.h"
 #include "FW/RC/record.h"
@@ -23,13 +9,12 @@
 #include "FW/SC/scene.h"
 #include "FW/UI/ED/ui_text_editor.h"
 #include "FW/UI/SH/ui_syntax_highlighter.h"
-#include "FW/UI/SH/ui_syntax_highlighter_factory.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ED/ui_html_text_view.h"
 #include "FW/UI/ui_record_explorer.h"
 #include "FW/UI/ui_add_record.h"
 #include "FW/UI/ui_editor_container.h"
-#include "FW/htmlbuilder.h"
+#include "FW/BK/html_builder.h"
 #include "FW/database.h"
 #include "FW/clipboard.h"
 #include "FW/config.h"
@@ -108,8 +93,9 @@ void TypeController::Message( QString msg )
 
 TypeController::TypeController(): TypeVariant()
 {
+    qDebug() << "Starting Controller..";
+
     m_BinPath           = QDir().canonicalPath();
-    m_HtmlBuilder       = new TypeHtmlBuilder( this );
     m_Database          = new TypeDatabase( this );
     m_Clipboard         = new TypeClipboard( this );
 
@@ -124,29 +110,18 @@ TypeController::TypeController(): TypeVariant()
 
     if( FactoryList().empty() )
     {
-        m_FactoryList.append( &TypeIntegerRecordFactory::Instance() );
-        m_FactoryList.append( &TypeStringRecordFactory::Instance() );
-        m_FactoryList.append( &TypeRealRecordFactory::Instance() );
-        m_FactoryList.append( &TypeBoolRecordFactory::Instance() );
+        m_FactoryList.append( &TypeRecordFactory::Instance() );
         m_FactoryList.append( &TypeStructRecordFactory::Instance() );
-        m_FactoryList.append( &TypeReferenceRecordFactory::Instance() );
-        m_FactoryList.append( &TypeFileRecordFactory::Instance() );
-        m_FactoryList.append( &TypeTextFileRecordFactory::Instance() );
-        m_FactoryList.append( &TypeHtmlRecordFactory::Instance() );
-        m_FactoryList.append( &TypeHtmlFileRecordFactory::Instance() );
-        m_FactoryList.append( &TypeCssFileRecordFactory::Instance() );
-        m_FactoryList.append( &TypePhpFileRecordFactory::Instance() );
-        m_FactoryList.append( &TypeJsScriptRecordFactory::Instance() );
-        m_FactoryList.append( &TypeJsScriptFileRecordFactory::Instance() );
 
         // Add more classes here or later
     }
 
+    qDebug() << "Controller loaded succesfull";
 }
 
 TypeController::~TypeController()
 {
-    // void
+    qDebug() << "Controller deleted";
 }
 
 const QList<TypeRecordFactory*>& TypeController::FactoryList()
@@ -215,23 +190,7 @@ void TypeController::ConnectSlots()
         TypeController::OnEditorContainerChanged );
 }
 
-void TypeController::OpenRecordEditorWidget( TypeRecord& record )
-{
-    QString id = "RECORD:" + record.Id();
 
-    if( MainWindow().EditorContainer().HasId( id ) )
-    {
-        if( TypeController::AcceptMessage( QCoreApplication::translate( "TypeController", "Record already opened.\n\nLoad again?" ) ) )
-        {
-            MainWindow().EditorContainer().Close( id );
-            MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
-        }
-
-        return;
-    }
-
-    MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
-}
 
 QString TypeController::NewFileNameId( QString file_name )
 {
@@ -272,6 +231,21 @@ QString TypeController::NewHtmlTextViewId( QString file_name )
         return "STRUCT:SQL:" + file_name;
 
     return "STRUCT:UNKNOWN:" + file_name;
+}
+
+void TypeController::OpenRecordEditorWidget( TypeRecord& record )
+{
+    QString id = "RECORD:" + record.Id();
+
+    if( MainWindow().EditorContainer().HasId( id ) )
+    {
+        MainWindow().EditorContainer().Close( id );
+        MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
+
+        return;
+    }
+
+    MainWindow().OpenEditorWidget( record.EditorWidget( id, *this ) );
 }
 
 void TypeController::OpenFileUiEditor( QString file_name )
@@ -316,7 +290,6 @@ void TypeController::OpenFileUiEditor( QString file_name )
 
         if( new_id != editor->Id() )
         {
-
             if( MainWindow().EditorContainer().HasId( new_id ) )
             {
                 if( !TypeController::AcceptMessage( tr( "File already open. Replace file?" ) ) )
@@ -329,22 +302,54 @@ void TypeController::OpenFileUiEditor( QString file_name )
         }
 
         editor->SetName( file_name_out );
+        editor->SetTabName( file_name_out.split( "/" ).back() );
+        editor->OnActionUpdate();
+
         SaveTextFile( file_name_out, editor->Text() );
         MainWindow().UpdateFileExplorer();
+        return true;
+    };
+
+    TypeUiEditor::TypeUpdateCallback update_callback = []( TypeUiEditor & editor_base )
+    {
+        TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
+
+        //
+        // Update editor title:
+
+        QString changed_mark = "";
+
+        if( editor->HasChanged() )
+            changed_mark = "*";
+
+        editor->SetTitle( editor->Name() + changed_mark );
+
+        //
+        // Update editor container data:
+
+        if( editor->EditorContainer() != 0 )
+        {
+            editor->EditorContainer()->SetTabName( editor->Id(), editor->TabName() + changed_mark );
+            editor->EditorContainer()->SetTabToolTip( editor->Id(), editor->Name() + changed_mark );
+        }
+
         return true;
     };
 
     TypeUiSyntaxHighlighter* syntax_highlighter = SyntaxHighlighterFactory().NewInstance( id.split( ":" )[1] );
 
     TypeUiTextEditor* text_editor = new TypeUiTextEditor(
-        id, file_name, file_name.split( "/" ).back(), 0/*parent widget*/,
-        save_callback/*editor save callback*/,
+        id,
+        file_name,
+        file_name.split( "/" ).back(),
+        0 /*parent widget*/,
+        save_callback,
         save_as_callback,
-        syntax_highlighter/*syntax highlighter*/ );
+        update_callback,
+        syntax_highlighter );
 
     text_editor->SetText( LoadTextFile( file_name ) );
     text_editor->SetHasChanged( false );
-    text_editor->UpdateTitle();
 
     MainWindow().EditorContainer().Append( text_editor );
     MainWindow().EditorContainer().SetCurrent( id );
@@ -406,8 +411,37 @@ void TypeController::NewFileUiEditor( QString file_name )
         }
 
         editor->SetName( file_name_out );
+        editor->SetTabName( file_name_out.split( "/" ).back() );
+        editor->OnActionUpdate();
+
         SaveTextFile( file_name_out, editor->Text() );
         MainWindow().UpdateFileExplorer();
+        return true;
+    };
+
+    TypeUiEditor::TypeUpdateCallback update_callback = []( TypeUiEditor & editor_base )
+    {
+        TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
+
+        //
+        // Update editor title:
+
+        QString changed_mark = "";
+
+        if( editor->HasChanged() )
+            changed_mark = "*";
+
+        editor->SetTitle( editor->Name() + changed_mark );
+
+        //
+        // Update editor container data:
+
+        if( editor->EditorContainer() != 0 )
+        {
+            editor->EditorContainer()->SetTabName( editor->Id(), editor->TabName() + changed_mark );
+            editor->EditorContainer()->SetTabToolTip( editor->Id(), editor->Name() + changed_mark );
+        }
+
         return true;
     };
 
@@ -415,14 +449,17 @@ void TypeController::NewFileUiEditor( QString file_name )
         SyntaxHighlighterFactory().NewInstance( id.split( ":" )[1] );
 
     TypeUiTextEditor* text_editor = new TypeUiTextEditor(
-        id, file_name, file_name.split( "/" ).back(), 0/*parent widget*/,
-        save_callback/*editor save callback*/,
+        id,
+        file_name,
+        file_name.split( "/" ).back(),
+        0/*parent widget*/,
+        save_callback,
         save_as_callback,
-        syntax_highlighter/*syntax highlighter*/ );
+        update_callback,
+        syntax_highlighter );
 
     text_editor->SetText( "" );
     text_editor->SetHasChanged( false );
-    text_editor->UpdateTitle();
 
     MainWindow().EditorContainer().Append( text_editor );
     MainWindow().EditorContainer().SetCurrent( id );
@@ -519,9 +556,10 @@ void TypeController::OnActionProjectNew()
     MainWindow().SetTitle( "" );
 
     MainWindow().HtmlTextView().SetName( "" );
+    MainWindow().HtmlTextView().SetTabName( "" );
+    MainWindow().HtmlTextView().SetTitle( "" );
     MainWindow().HtmlTextView().SetHasChanged( false );
-    MainWindow().HtmlTextView().UpdateTitle();
-    MainWindow().HtmlTextView().UpdateView();
+    MainWindow().HtmlTextView().OnActionUpdate();
 
     MainWindow().SetPropertyWidget( 0 );
 
@@ -667,7 +705,7 @@ void TypeController::OnActionHtmlSaveAs()
 
     Document().UpdateHtml();
 
-    TypeController::SaveTextFile( file_name, HtmlBuilder().Text() );
+    TypeController::SaveTextFile( file_name, Document().HtmlBuilder().Text() );
     MainWindow().UpdateFileExplorer();
 }
 
@@ -679,7 +717,7 @@ void TypeController::OnActionHtmlSave()
 
     Document().UpdateHtml();
 
-    TypeController::SaveTextFile( file_name, HtmlBuilder().Text() );
+    TypeController::SaveTextFile( file_name, Document().HtmlBuilder().Text() );
     MainWindow().UpdateFileExplorer();
 }
 

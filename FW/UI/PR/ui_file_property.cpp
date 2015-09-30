@@ -37,9 +37,9 @@ QString TypeUiFileProperty::Value()
     return ui->LineEdit->text();
 }
 
-void TypeUiFileProperty::SetValue(QString value)
+void TypeUiFileProperty::SetValue( QString value )
 {
-    ui->LineEdit->setText(value);
+    ui->LineEdit->setText( value );
 }
 
 void TypeUiFileProperty::OnReturnPressed()

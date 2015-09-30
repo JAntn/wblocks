@@ -10,19 +10,19 @@
 #include <FW/UI/PR/ui_string_property.h>
 #include "FW/tools.h"
 
-TypeStructRecord::TypeStructRecord( QString id, QString name, QString value, TypeVariant* parent, TypeStruct* root ):
-    TypeRecord( id, name, value, parent, root )
+TypeStructRecord::TypeStructRecord( QString id, QString name, QString value, TypeVariant* parent ):
+    TypeRecord( id, name, value, parent )
 {
     m_Class = "Struct";
     m_Struct = new TypeStruct( this );
 }
 
-TypeStructRecord::TypeStructRecord( TypeStateWriter& state, TypeVariant* parent, TypeStruct* root ):
-    TypeRecord( "", "", "", parent, root )
+TypeStructRecord::TypeStructRecord( TypeStateWriter& state, TypeVariant* parent ):
+    TypeRecord( "", "", "", parent )
 {
     m_Class = "Struct";
     m_Struct = new TypeStruct( this );
-    SetState( state, root );
+    SetState( state );
 }
 
 TypeStructRecord::~TypeStructRecord()
@@ -30,44 +30,27 @@ TypeStructRecord::~TypeStructRecord()
     // void
 }
 
-QString TypeStructRecord::Value()
-{
-    m_Value = QString::number( Struct()->Size() );
-    return m_Value;
-}
-
-void TypeStructRecord::SetValue( QString )
-{
-    qDebug() << "Setting Struct value is not allowed";
-}
-
-
-TypeStruct* TypeStructRecord::Struct()
+TypeStruct* TypeStructRecord::Struct() const
 {
     return m_Struct;
 }
 
-void TypeStructRecord::Html( TypeHtmlBlockStream& block_stream )
+void TypeStructRecord::Html(TypeHtmlBlockStream& block_stream , long role, TypeStruct& root )
 {
     for( TypeVariantPtr<TypeRecord> record : *this->Struct() )
-        record->Html( block_stream ) ;
-}
-
-void TypeStructRecord::Script( TypeHtmlBlockStream& block_stream )
-{
-    block_stream.Append( "\n" + this->FullName() + " = {} ;", this->Id() );
-
-    for( TypeVariantPtr<TypeRecord> record : *this->Struct() )
-        record->Script( block_stream ) ;
+        record->Html( block_stream, role, root ) ;
 }
 
 bool TypeStructRecord::GetState( TypeStateReader& state )
 {
+    m_Value = QString::number( Struct()->Size() );
+
     QStringList row;
     row.append( this->Id() );
     row.append( this->Name() );
     row.append( this->Value() );
     row.append( this->Class() );
+    row.append( QString::number( this->Flags() ) );
     state.Read( row );
 
     for( TypeVariantPtr<TypeRecord> record : *this->Struct() )
@@ -76,7 +59,7 @@ bool TypeStructRecord::GetState( TypeStateReader& state )
     return true;
 }
 
-bool TypeStructRecord::SetState( TypeStateWriter& state, TypeStruct* root )
+bool TypeStructRecord::SetState( TypeStateWriter& state )
 {
     m_Struct->Clear();
 
@@ -88,14 +71,15 @@ bool TypeStructRecord::SetState( TypeStateWriter& state, TypeStruct* root )
     else
         m_Id    = row[0];
 
-    m_Name  = row[1];
-    m_Value = row[2]; // GETTING PREVIOUS VALUE
-    m_Class = row[3];
+    m_Name      = row[1];
+    m_Value     = row[2];
+    m_Class     = row[3];
+    m_Flags     = row[4].toLong();
 
     long size = m_Value.toLong();
 
     for( long count = 0; count < size; ++count )
-        m_Struct->NewRecord( state, -1, root );
+        m_Struct->NewRecord( state, -1 );
 
     return true;
 }
@@ -125,20 +109,42 @@ QWidget* TypeStructRecord::PropertyWidget( TypeController& controller )
     return widget;
 }
 
+void TypeStructRecord::SetValue( const QString& value )
+{
+    qDebug() << "warning: setting struct value";
+    m_Value = value;
+}
+
+const QString& TypeStructRecord::Value() const
+{
+    qDebug() << "warning: getting struct value";
+
+    static QString tmp = QString::number( Struct()->Size() );
+    return tmp;
+}
+
+QString& TypeStructRecord::Value()
+{
+    qDebug() << "warning: getting struct value";
+
+    static QString tmp = QString::number( Struct()->Size() );
+    return tmp;
+}
+
 TypeStructRecordFactory::TypeStructRecordFactory()
 {
     m_RecordClass = "Struct";
 }
 
-TypeRecord* TypeStructRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent, TypeStruct* root  )
+TypeRecord* TypeStructRecordFactory::NewInstance( QString name, QString value, TypeVariant* parent  )
 {
-    TypeStructRecord* record = new TypeStructRecord( TypeRecordFactory::GenerateId(), name, value, parent, root );
+    TypeStructRecord* record = new TypeStructRecord( TypeRecordFactory::GenerateId(), name, value, parent );
     return record;
 }
 
-TypeRecord* TypeStructRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent , TypeStruct* root )
+TypeRecord* TypeStructRecordFactory::NewInstance( TypeStateWriter& state, TypeVariant* parent  )
 {
-    TypeStructRecord* record = new TypeStructRecord( state, parent, root );
+    TypeStructRecord* record = new TypeStructRecord( state, parent );
     return record;
 }
 

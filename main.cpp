@@ -7,10 +7,12 @@
 #include "FW/RC/root_struct.h"
 #include "FW/RC/struct_record.h"
 #include "FW/SC/scene.h"
-#include "FW/htmlbuilder.h"
+#include "FW/BK/html_builder.h"
 
 int main( int argc, char* argv[] )
 {
+    qDebug() << "Starting Aplication..";
+
     QApplication a( argc, argv );
 
     // Controller is an interface between user interface
@@ -32,46 +34,42 @@ int main( int argc, char* argv[] )
 
     // We check config is ok
 
-    bool config_ok =
-        QFileInfo( controller.Config().ProjectPath() ).exists() &&
-        QFileInfo( controller.Config().ProjectFileFullName() ).exists();
+    bool config_ok = QFileInfo( controller.Config().ProjectFileName() ).exists();
 
     if( !config_ok )
     {
         // Create an empty document
 
+        qDebug() << "Document file not found. Setting an empty document..";
+
         controller.Config().SetProjectPath( "" );
         controller.Config().SetProjectFileName( "" );
-
-        TypeRecord* string_record =
-            controller.Document().Root().NewRecord(
-                "SampleString",
-                "Welcome to JS Blocks.\nThis is a sample string",
-                "String"
-            );
-
-        controller.Document().Scene().NewItem( *string_record );
     }
     else
     {
         // Load document and change path
 
+        qDebug() << "Config file ok";
+        qDebug() << "Starting to setup document.. " << controller.Config().ProjectFileName();
+
         QDir().setCurrent( controller.Config().ProjectPath() );
 
         if( controller.Config().ProjectFileName().split( "." ).back() == "prj" )
-            controller.Document().LoadFile( controller.Config().ProjectFileFullName() );
+            controller.Document().LoadFile( controller.Config().ProjectFileName() );
 
         else if( controller.Config().ProjectFileName().split( "." ).back() == "sql" )
-            controller.Document().LoadSQL( controller.Config().ProjectFileFullName() );
+            controller.Document().LoadSQL( controller.Config().ProjectFileName() );
     }
 
     // Build html content
-    controller.HtmlBuilder().Build( controller.Document().Root() );
+
+    controller.Document().HtmlBuilder().Build( controller.Document().Root() );
+
+    qDebug() << "Document state builded";
 
     // Main window
 
     TypeUiMainWindow window( controller );
     window.show();
-
     return a.exec();
 }

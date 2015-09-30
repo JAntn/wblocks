@@ -196,5 +196,32 @@
         <file>rcc/16x16/categories/preferences-desktop.png</file>
         <file>rcc/16x16/categories/preferences-desktop-peripherals.png</file>
         <file>rcc/16x16/categories/preferences-system.png</file>
+        <file>rcc/22x22/categories/applications-development.png</file>
+        <file>rcc/22x22/categories/applications-games.png</file>
+        <file>rcc/22x22/categories/applications-graphics.png</file>
+        <file>rcc/22x22/categories/applications-internet.png</file>
+        <file>rcc/22x22/categories/applications-multimedia.png</file>
+        <file>rcc/22x22/categories/applications-office.png</file>
+        <file>rcc/22x22/categories/applications-other.png</file>
+        <file>rcc/22x22/categories/applications-system.png</file>
+        <file>rcc/22x22/categories/preferences-desktop.png</file>
+        <file>rcc/22x22/categories/preferences-desktop-peripherals.png</file>
+        <file>rcc/22x22/mimetypes/application-certificate.png</file>
+        <file>rcc/22x22/mimetypes/application-x-executable.png</file>
+        <file>rcc/22x22/mimetypes/audio-x-generic.png</file>
+        <file>rcc/22x22/mimetypes/font-x-generic.png</file>
+        <file>rcc/22x22/mimetypes/package-x-generic.png</file>
+        <file>rcc/22x22/mimetypes/text-x-generic-template.png</file>
+        <file>rcc/22x22/mimetypes/text-x-script.png</file>
+        <file>rcc/22x22/mimetypes/video-x-generic.png</file>
+        <file>rcc/22x22/mimetypes/x-office-address-book.png</file>
+        <file>rcc/22x22/mimetypes/x-office-calendar.png</file>
+        <file>rcc/22x22/mimetypes/x-office-document-template.png</file>
+        <file>rcc/22x22/mimetypes/x-office-drawing.png</file>
+        <file>rcc/22x22/mimetypes/x-office-drawing-template.png</file>
+        <file>rcc/22x22/mimetypes/x-office-presentation-template.png</file>
+        <file>rcc/22x22/mimetypes/x-office-spreadsheet.png</file>
+        <file>rcc/22x22/mimetypes/x-office-spreadsheet-template.png</file>
+        <file>rcc/16x16/1443590234_icon-close-round.ico</file>
     </qresource>
 </RCC>

@@ -6,28 +6,48 @@
 #include "FW/BK/html_block_stream.h"
 #include "FW/controller.h"
 #include "FW/document.h"
-#include "FW/htmlbuilder.h"
+#include "FW/BK/html_builder.h"
 #include "FW/RC/root_struct.h"
 #include "FW/controller.h"
 #include "FW/tools.h"
 #include "FW/context.h"
 #include <QTextEdit>
 #include <QLineEdit>
+#include <QMouseEvent>
 #include "ui_texteditor.h"
 #include "FW/UI/ui_main_window.h"
 #include "FW/UI/ui_record_explorer.h"
 #include <FW/UI/ui_record_contextmenu.h>
 
 TypeUiHtmlTextView::TypeUiHtmlTextView(
-    TypeController& controller, QString id, QString name, QString tab_name,
-    QWidget* parent, TypeSaveCallback save_callback,
+    TypeController& controller,
+    QString id,
+    QString name,
+    QString tab_name,
+    QWidget* parent,
+    TypeSaveCallback save_callback,
+    TypeSaveCallback save_as_callback,
+    TypeUpdateCallback update_callback,
     TypeUiSyntaxHighlighter* syntax_higlighter ):
-    TypeUiTextEditor( id, name, tab_name, parent, save_callback, save_callback, syntax_higlighter ),
-    m_Controller( &controller ), m_ActiveRecord( 0 ), m_ActiveBlock( 0 )
-{
 
+    TypeUiTextEditor(
+        id,
+        name,
+        tab_name,
+        parent,
+        save_callback,
+        save_as_callback,
+        update_callback,
+        syntax_higlighter ),
+
+    m_Controller( &controller ),
+    m_ActiveRecord( 0 ),
+    m_ActiveBlock( 0 )
+{
     //
     // Active record is shared by many widgets through SetActiveRecord:
+
+    qDebug() << "Creating Html Text Widget..";
 
     connect(
         &controller,
@@ -43,7 +63,6 @@ TypeUiHtmlTextView::TypeUiHtmlTextView(
         TypeUiHtmlTextView::OnCursorPositionChanged
     );
 
-
     connect(
         ui->TextEdit,
         QWidget::customContextMenuRequested,
@@ -51,26 +70,20 @@ TypeUiHtmlTextView::TypeUiHtmlTextView(
         TypeUiHtmlTextView::OnCustomContextMenuRequested
     );
 
-
-    connect(
-        &controller,
-        TypeController::HtmlTextChanged,
-        this,
-        TypeUiHtmlTextView::OnHtmlTextChanged
-    );
-
     ui->TextEdit->setReadOnly( true );
     ui->TextEdit->setContextMenuPolicy( Qt::CustomContextMenu );
-    ui->NameLineEdit->setText( name );
+    SetFormattedText( Controller().Document().HtmlBuilder().FormattedText() );
     SetHasChanged( false );
-    UpdateTitle();
+    OnActionUpdate();
+
+    qDebug() << "Html Text Widget created";
 }
 
 void TypeUiHtmlTextView::OnCustomContextMenuRequested( const QPoint& point )
 {
     int cursor_position = ui->TextEdit->cursorForPosition( point ).position();
     QPoint global_point = ui->TextEdit->viewport()->mapToGlobal( point );
-    TypeHtmlBlockStream& block_stream = Controller().HtmlBuilder().BlockStream();
+    TypeHtmlBlockStream& block_stream = Controller().Document().HtmlBuilder().BlockStream();
     TypeHtmlBlock* block = block_stream.BlockFromCursorPosition( cursor_position );
     long action_flags;
 
@@ -97,7 +110,7 @@ void TypeUiHtmlTextView::OnCustomContextMenuRequested( const QPoint& point )
         //
         // The selected block doesn't contain any record:
 
-        action_flags = Controller().Document().Context().Struct().Flags();
+        action_flags = Controller().Document().Context().Struct().Flags();//WHY?--------------
         TypeUiRecordContextMenu context_menu( Controller(), action_flags, false, global_point, this );
         return;
     }
@@ -119,7 +132,7 @@ void TypeUiHtmlTextView::ActivateRecord( TypeRecord* active_record )
 
     if( active_record != 0 )
     {
-        TypeHtmlBlockStream& block_stream = Controller().HtmlBuilder().BlockStream();
+        TypeHtmlBlockStream& block_stream = Controller().Document().HtmlBuilder().BlockStream();
         TypeHtmlBlock* block = block_stream.BlockFromRecordId( active_record->Id() );
 
         if( block != 0 )
@@ -143,31 +156,19 @@ void TypeUiHtmlTextView::ActivateBlock( TypeHtmlBlock* block )
     if( ActiveBlock() != 0 )
         ActiveBlock()->SetSelected( true );
 
-    UpdateView();
-}
-
-void TypeUiHtmlTextView::OnHtmlTextChanged()
-{
-    SetHasChanged( true );
-    UpdateView();
-    UpdateTitle();
-}
-
-void TypeUiHtmlTextView::UpdateView( )
-{
-    SetFormattedText( Controller().HtmlBuilder().FormattedText() );
+    SetFormattedText( Controller().Document().HtmlBuilder().FormattedText() );
 }
 
 void TypeUiHtmlTextView::OnCursorPositionChanged()
 {
     int cursor_position = ui->TextEdit->textCursor().position();
-    TypeHtmlBlockStream& block_stream = Controller().HtmlBuilder().BlockStream();
+    TypeHtmlBlockStream& block_stream = Controller().Document().HtmlBuilder().BlockStream();
     TypeHtmlBlock* block =  block_stream.BlockFromCursorPosition( cursor_position );
 
     if( block != 0 )
     {
         TypeRootStruct& root = Controller().Document().Root();
-        TypeRecord* record = root.FromId( block->RecordId() );
+        TypeRecord* record = root.FromId( block->RecordId(), true );
 
         if( record != 0 )
         {
@@ -177,7 +178,6 @@ void TypeUiHtmlTextView::OnCursorPositionChanged()
             emit Controller().SetActiveRecord( record );
         }
     }
-
 }
 
 

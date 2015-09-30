@@ -32,6 +32,7 @@ public slots:
 
     void                OnButtonBoxAccepted();
     void                OnButtonBoxRejected();
+    void                OnSelectionChanged( const QItemSelection&, const QItemSelection& );
 
 private:
 

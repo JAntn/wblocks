@@ -40,7 +40,6 @@ public:
     M_REFERENCE                             ( MainWindow,  TypeUiMainWindow )
     M_REFERENCE                             ( Config,      TypeConfig )
     M_REFERENCE                             ( Database,    TypeDatabase )
-    M_REFERENCE                             ( HtmlBuilder, TypeHtmlBuilder )
     M_REFERENCE                             ( Clipboard,   TypeClipboard )
     M_VALUE                                 ( BinPath,     QString )
 
@@ -49,7 +48,6 @@ public:
     QString                                 NewFileNameId( QString file_name );
     QString                                 NewHtmlTextViewId( QString file_name );
 
-    void                                    SetPropertyWidgetRecord( TypeRecord& record );
 
     void                                    OpenRecordEditorWidget( TypeRecord& record );
     void                                    OpenFileUiEditor( QString file_name );
@@ -114,6 +112,7 @@ public slots:
     void                                    OnActionFileOpen_FileExplorer();
     void                                    OnActionFileRemove_FileExplorer();
     void                                    OnActionFileMkDir_FileExplorer();
+
 signals:
 
     void                                    DirectoryChanged();

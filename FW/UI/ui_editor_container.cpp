@@ -24,13 +24,19 @@ TypeUiEditorContainer::TypeUiEditorContainer( TypeController& controller, QWidge
         this,
         TypeUiEditorContainer::OnCloseTabRequested
     );
+
+    setStyleSheet(
+        "QTabBar::tab:selected{border-style: solid; border-width:3px;background:rgb(250, 250, 250);}"
+        "QTabBar::tab{ border-style: solid; border-width:3px; background:rgb(220, 220, 220); }"
+        "QTabWidget::pane{ border-style:solid; border-width:3px; background:rgb(250, 250, 250); }" );
 }
 
 void TypeUiEditorContainer::Append( TypeUiEditor* editor )
 {
     m_TabWidget->addTab( editor, editor->TabName() );
     m_TabWidget->setCurrentWidget( editor );
-
+    editor->SetEditorContainer( this );
+    editor->OnActionUpdate();
     emit Controller().EditorContainerChanged();
 }
 
@@ -63,6 +69,28 @@ int TypeUiEditorContainer::IndexFromId( QString id )
 void TypeUiEditorContainer::SetCurrent( QString id )
 {
     m_TabWidget->setCurrentIndex( IndexFromId( id ) );
+}
+
+void TypeUiEditorContainer::SetTabName( QString id, QString tab_name )
+{
+    m_TabWidget->setTabText( IndexFromId( id ), tab_name );
+
+}
+
+void TypeUiEditorContainer::SetTabName( int index, QString tab_name )
+{
+    m_TabWidget->setTabText( index, tab_name );
+
+}
+
+void TypeUiEditorContainer::SetTabToolTip( QString id, QString tab_tooltip )
+{
+    m_TabWidget->setTabToolTip( IndexFromId( id ), tab_tooltip );
+}
+
+void TypeUiEditorContainer::SetTabToolTip( int index, QString tab_tooltip )
+{
+    m_TabWidget->setTabToolTip( index, tab_tooltip );
 }
 
 void TypeUiEditorContainer::SetCurrent( int index )

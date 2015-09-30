@@ -3,7 +3,6 @@
 #include "FW/ST/state_writer.h"
 #include "FW/RC/record.h"
 #include "FW/SC/scene_line.h"
-#include <FW/RC/reference_record.h>
 
 ////////////////////////////////////////////////////////////////////////
 /// Static
@@ -88,38 +87,16 @@ void TypeScene::UpdateView()
 
     for( TypeSceneItem* from : Items() )
     {
-        if( from->Record().Class() == "Reference" )
+
+        if( from->Record().Struct() != 0 )
         {
-            TypeReferenceRecord* record_from = static_cast<TypeReferenceRecord*>( &from->Record() );
-
-            for( TypeSceneItem* target : Items() )
-            {
-                TypeRecord* record_target = &target->Record();
-
-                if( record_from->Referencee() == record_target )
-                    m_Lines.append( new TypeSceneLine( *from, *target, Qt::green ) );
-            }
-        }
-        else if( from->Record().Struct() != 0 )
-        {
-            QList<TypeReferenceRecord*> reference_list;
-
             for( TypeVariantPtr<TypeRecord> record : *from->Record().Struct() )
-            {
-                if( record->Class() == "Reference" )
-                {
-                    TypeVariantPtr<TypeReferenceRecord> reference( record );
-                    reference_list.append( reference );
-                }
-            }
-
-            for( TypeReferenceRecord* record : reference_list )
             {
                 for( TypeSceneItem* target : Items() )
                 {
                     TypeRecord* record_target = &target->Record();
 
-                    if( record->Referencee() == record_target )
+                    if( record == record_target )
                         m_Lines.append( new TypeSceneLine( *from, *target, Qt::blue ) );
                 }
             }
