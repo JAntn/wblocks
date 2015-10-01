@@ -6,17 +6,24 @@
 #include "FW/ST/state_writer.h"
 #include "FW/clipboard.h"
 #include "FW/document.h"
+#include "FW/controller.h"
 
-TypeClipboard::TypeClipboard( TypeVariant* parent ):
-    TypeVariant( parent )
+TypeClipboard::TypeClipboard( TypeController& controller, TypeVariant* parent ):
+    TypeVariant( parent ),
+    m_Controller( &controller )
 {
     // void
 }
 
 void TypeClipboard::Clear()
 {
+    for( TypeRecord* record : Data() )
+        Controller().RecordRemoved( record );
+
     m_Data.clear();
     m_Flags = 0;
+
+
 }
 
 void TypeClipboard::Copy( const QList<TypeRecord*>& records )

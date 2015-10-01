@@ -11,16 +11,16 @@
 #include "ui_main_window.h"
 #include "ui_recordexplorer.h"
 
-TypeUiRecordExplorer::TypeUiRecordExplorer( TypeContext& context, TypeController& controller, QWidget* parent ) :
+TypeUiRecordExplorer::TypeUiRecordExplorer( TypeController& controller, TypeDocument& document, QWidget* parent ) :
     QWidget( parent ),
     TypeVariant( 0 ),
-    m_Context( &context ),
     m_Controller( &controller ),
+    m_Document( &document ),
     m_ActiveRecord( 0 ),
     ui( new Ui::TypeUiRecordExplorer )
 {
     ui->setupUi( this );
-    m_RecordTableModel = new TypeUiRecordTableModel( Controller().Document().Context().Struct(), this );
+    m_RecordTableModel = new TypeUiRecordTableModel( Document().Context().Struct(), this );
     ui->TableView->setModel( m_RecordTableModel );
 
     connect(
@@ -83,12 +83,12 @@ void TypeUiRecordExplorer::Update()
     //
     // Update record search widget contents:
 
-    if( &Context().Struct() != &Context().Root() )
-        ui->LineEdit->setText( Context().Struct().ParentRecord()->FullName() );
+    if( &Document().Context().Struct() != &Document().Context().Root() )
+        ui->LineEdit->setText( Document().Context().Struct().ParentRecord()->FullName() );
     else
         ui->LineEdit->setText( "" );
 
-    m_RecordTableModel->SetStruct( Context().Struct() );
+    m_RecordTableModel->SetStruct( Document().Context().Struct() );
     m_RecordTableModel->layoutChanged();
 
     emit Controller().RecordExplorerChanged();
@@ -102,7 +102,7 @@ QList<TypeRecord*> TypeUiRecordExplorer::Selection()
 
     for( auto index : index_list )
     {
-        TypeRecord* record = Context().Struct().FromIndex( index.row() );
+        TypeRecord* record = Document().Context().Struct().FromIndex( index.row() );
         record_list.append( record );
     }
 
@@ -128,7 +128,7 @@ void TypeUiRecordExplorer::OpenRecord( TypeRecord* record )
 
     if( record->Struct() != 0 )
     {
-        Context().SetStruct( *( record->Struct() ) );
+        Document().Context().SetStruct( *( record->Struct() ) );
         Update();
         return;
     }
@@ -141,7 +141,7 @@ void TypeUiRecordExplorer::OpenRecord( TypeRecord* record )
     //
     // Set current struct in record explorer:
 
-    Context().SetStruct( *record->ParentStruct() );
+    Document().Context().SetStruct( *record->ParentStruct() );
     Update();
 
     //
@@ -161,7 +161,7 @@ void TypeUiRecordExplorer::ActivateRecord( TypeRecord* record )
     if( ActiveRecord() == 0 )
         return;
 
-    Context().SetStruct( *ActiveRecord()->ParentStruct() );
+    Document().Context().SetStruct( *ActiveRecord()->ParentStruct() );
     Update();
 
     //
@@ -178,10 +178,10 @@ void TypeUiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
     TypeRecord* record = 0;
 
     if( index.row() >= 0 )
-        record = Context().Struct().FromIndex( index.row() );
+        record = Document().Context().Struct().FromIndex( index.row() );
 
     ActivateRecord( record );
-    long action_flags = Context().Struct().Flags();
+    long action_flags = Document().Context().Struct().Flags();
     bool has_selection = false;
 
     if( record != 0 )
@@ -192,7 +192,7 @@ void TypeUiRecordExplorer::OnCustomContextMenuRequested( const QPoint& point )
 
 void TypeUiRecordExplorer::OnDoubleClicked( const QModelIndex& index )
 {
-    TypeRecord* record = Context().Struct().FromIndex( index.row() );
+    TypeRecord* record = Document().Context().Struct().FromIndex( index.row() );
     OpenRecord( record );
 
     emit Controller().SetActiveRecord( record );
@@ -200,7 +200,7 @@ void TypeUiRecordExplorer::OnDoubleClicked( const QModelIndex& index )
 
 void TypeUiRecordExplorer::OnRootButtonClicked()
 {
-    Context().SetStruct( Controller().Document().Root() );
+    Document().Context().SetStruct( Document().Root() );
     Update();
 
     emit Controller().SetActiveRecord( 0 );
@@ -208,9 +208,9 @@ void TypeUiRecordExplorer::OnRootButtonClicked()
 
 void TypeUiRecordExplorer::OnUpButtonClicked()
 {
-    if( &Context().Struct() != ( & Controller().Document().Root() ) )
+    if( &Document().Context().Struct() != ( & Document().Root() ) )
     {
-        Context().SetStruct( *Context().Struct().ParentStruct() );
+        Document().Context().SetStruct( *Document().Context().Struct().ParentStruct() );
         Update();
 
         emit Controller().SetActiveRecord( 0 );
@@ -238,14 +238,14 @@ void TypeUiRecordExplorer::OnLineEditReturnPressed()
 
     if( record_name == "" )
     {
-        Context().SetStruct( Controller().Document().Root() );
+        Document().Context().SetStruct( Document().Root() );
         Update();
         emit Controller().SetActiveRecord( 0 );
 
         return;
     }
 
-    TypeRootStruct& root = Controller().Document().Root();
+    TypeRootStruct& root = Document().Root();
     TypeRecord* record = root.FromName( record_name, true );
     OpenRecord( record );
 

@@ -21,6 +21,7 @@
 
 TypeUiHtmlTextView::TypeUiHtmlTextView(
     TypeController& controller,
+    TypeDocument& document,
     QString id,
     QString name,
     QString tab_name,
@@ -41,6 +42,7 @@ TypeUiHtmlTextView::TypeUiHtmlTextView(
         syntax_higlighter ),
 
     m_Controller( &controller ),
+    m_Document( &document ),
     m_ActiveRecord( 0 ),
     m_ActiveBlock( 0 )
 {
@@ -72,7 +74,7 @@ TypeUiHtmlTextView::TypeUiHtmlTextView(
 
     ui->TextEdit->setReadOnly( true );
     ui->TextEdit->setContextMenuPolicy( Qt::CustomContextMenu );
-    SetFormattedText( Controller().Document().HtmlBuilder().FormattedText() );
+    UpdateText();
     SetHasChanged( false );
     OnActionUpdate();
 
@@ -83,7 +85,7 @@ void TypeUiHtmlTextView::OnCustomContextMenuRequested( const QPoint& point )
 {
     int cursor_position = ui->TextEdit->cursorForPosition( point ).position();
     QPoint global_point = ui->TextEdit->viewport()->mapToGlobal( point );
-    TypeHtmlBlockStream& block_stream = Controller().Document().HtmlBuilder().BlockStream();
+    TypeHtmlBlockStream& block_stream = Document().HtmlBuilder().BlockStream();
     TypeHtmlBlock* block = block_stream.BlockFromCursorPosition( cursor_position );
     long action_flags;
 
@@ -92,12 +94,12 @@ void TypeUiHtmlTextView::OnCustomContextMenuRequested( const QPoint& point )
         //
         // There is no selection on html text view:
 
-        action_flags = Controller().Document().Context().Struct().Flags();
+        action_flags = Document().Context().Struct().Flags();
         TypeUiRecordContextMenu context_menu( Controller(), action_flags, false, global_point, this );
         return;
     }
 
-    TypeRootStruct& root = Controller().Document().Root();
+    TypeRootStruct& root = Document().Root();
     TypeRecord* record = root.FromId( block->RecordId(), true );
 
     SetActiveRecord( record );
@@ -110,7 +112,7 @@ void TypeUiHtmlTextView::OnCustomContextMenuRequested( const QPoint& point )
         //
         // The selected block doesn't contain any record:
 
-        action_flags = Controller().Document().Context().Struct().Flags();//WHY?--------------
+        action_flags = Document().Context().Struct().Flags();//WHY?--------------
         TypeUiRecordContextMenu context_menu( Controller(), action_flags, false, global_point, this );
         return;
     }
@@ -132,12 +134,17 @@ void TypeUiHtmlTextView::ActivateRecord( TypeRecord* active_record )
 
     if( active_record != 0 )
     {
-        TypeHtmlBlockStream& block_stream = Controller().Document().HtmlBuilder().BlockStream();
+        TypeHtmlBlockStream& block_stream = Document().HtmlBuilder().BlockStream();
         TypeHtmlBlock* block = block_stream.BlockFromRecordId( active_record->Id() );
 
         if( block != 0 )
             ActivateBlock( block );
     }
+}
+
+void TypeUiHtmlTextView::UpdateText()
+{
+    SetFormattedText( Document().HtmlBuilder().FormattedText() );
 }
 
 void TypeUiHtmlTextView::ActivateBlock( TypeHtmlBlock* block )
@@ -156,18 +163,18 @@ void TypeUiHtmlTextView::ActivateBlock( TypeHtmlBlock* block )
     if( ActiveBlock() != 0 )
         ActiveBlock()->SetSelected( true );
 
-    SetFormattedText( Controller().Document().HtmlBuilder().FormattedText() );
+    UpdateText();
 }
 
 void TypeUiHtmlTextView::OnCursorPositionChanged()
 {
     int cursor_position = ui->TextEdit->textCursor().position();
-    TypeHtmlBlockStream& block_stream = Controller().Document().HtmlBuilder().BlockStream();
+    TypeHtmlBlockStream& block_stream = Document().HtmlBuilder().BlockStream();
     TypeHtmlBlock* block =  block_stream.BlockFromCursorPosition( cursor_position );
 
     if( block != 0 )
     {
-        TypeRootStruct& root = Controller().Document().Root();
+        TypeRootStruct& root = Document().Root();
         TypeRecord* record = root.FromId( block->RecordId(), true );
 
         if( record != 0 )

@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////////////////////////////
 /// NON STATIC
 
-TypeStruct::TypeStruct(  TypeVariant* parent ):
+TypeStruct::TypeStruct( TypeVariant* parent ):
     TypeVariantStruct( parent ),
     m_Flags( FLAG_ACTION_ALL )
 {

@@ -24,6 +24,12 @@ void TypeHtmlBuilder::Build( TypeStruct& root )
 
     m_BlockStream = new TypeHtmlBlockStream( this );
 
+    BlockStream().Append( "\n<?php", "" );
+
+    for( TypeVariantPtr<TypeRecord> record : root )
+        record->Html( BlockStream(), FLAG_ROLE_PHP, root );
+
+    BlockStream().Append( "\n?>", "" );
     BlockStream().Append( "\n<!DOCTYPE html>", "" );
     BlockStream().Append( "\n<html>", "" );
     BlockStream().Append( "\n<head>", "" );

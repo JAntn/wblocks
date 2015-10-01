@@ -77,6 +77,7 @@ QWidget* TypeDocument::EditorWidget()
 
     QWidget* widget = new TypeUiHtmlTextView(
         Controller(),
+        Controller().Document(),
         Controller().NewHtmlTextViewId( FileName() ),
         FileName(),
         FileName().split( "/" ).back(),
@@ -102,7 +103,7 @@ void TypeDocument::Clear()
     Root().Clear();
     Scene().Clear();
 
-    emit Controller().RecordsChanged();
+    emit Controller().RecordChanged(/*generic slot*/);
 
     SetFileName( "" );
     SetPath( "" );
@@ -206,7 +207,7 @@ int TypeDocument::LoadFile( QString file_name )
         }
     }
 
-    emit Controller().RecordsChanged();
+    emit Controller().RecordChanged(/*generic slot*/);
 
     SetFileName( file_name );
     SetPath( QFileInfo( file_name ).canonicalPath() );
@@ -351,7 +352,7 @@ int TypeDocument::LoadSQL( QString file_name )
     }
 
     Controller().Database().CloseDatabase();
-    emit Controller().RecordsChanged();
+    emit Controller().RecordChanged(/*generic slot*/);
 
     SetFileName( file_name );
     SetPath( QFileInfo( file_name ).canonicalPath() );

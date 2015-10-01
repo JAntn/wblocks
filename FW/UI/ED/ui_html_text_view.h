@@ -8,6 +8,7 @@ class TypeUiSyntaxHighlighter;
 class TypeController;
 class TypeHtmlBlock;
 class TypeRecord;
+class TypeDocument;
 
 class TypeUiHtmlTextView : public TypeUiTextEditor
 {
@@ -17,6 +18,7 @@ public:
 
     TypeUiHtmlTextView(
         TypeController& controller,
+        TypeDocument& document,
         QString id,
         QString name,
         QString tab_name,
@@ -28,8 +30,10 @@ public:
 
     void                                    ActivateBlock( TypeHtmlBlock* block );
     void                                    ActivateRecord( TypeRecord* active_record );
+    void                                    UpdateText();
 
     M_REFERENCE                             ( Controller,         TypeController )
+    M_REFERENCE                             ( Document,         TypeDocument )
     M_POINTER                               ( ActiveRecord,       TypeRecord )
     M_POINTER                               ( ActiveBlock,        TypeHtmlBlock )
 

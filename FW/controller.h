@@ -24,9 +24,9 @@ class TypeController : public QObject, public TypeVariant
 
 public:
 
-    static const QList<TypeRecordFactory*>&      FactoryList();
-    static TypeRecordFactory*                    FactoryFromName(QString class_name);
-    static TypeUiSyntaxHighlighterFactory&       SyntaxHighlighterFactory();
+    static const QList<TypeRecordFactory*>& FactoryList();
+    static TypeRecordFactory*               FactoryFromName( QString class_name );
+    static TypeUiSyntaxHighlighterFactory&  SyntaxHighlighterFactory();
 
     TypeController();
     ~TypeController() override;
@@ -48,11 +48,9 @@ public:
     QString                                 NewFileNameId( QString file_name );
     QString                                 NewHtmlTextViewId( QString file_name );
 
-
     void                                    OpenRecordEditorWidget( TypeRecord& record );
     void                                    OpenFileUiEditor( QString file_name );
     void                                    NewFileUiEditor( QString file_name );
-
 
 public slots:
 
@@ -65,7 +63,9 @@ public slots:
     void                                    OnRecordExplorerChanged();
     void                                    OnFileExplorerChanged();
 
-    void                                    OnRecordsChanged();
+    void                                    OnRecordChanged( TypeRecord* record );
+    void                                    OnRecordRemoved( TypeRecord* record );
+
     void                                    OnSceneChanged();
     void                                    OnHtmlTextChanged();
     void                                    OnEditorContainerChanged();
@@ -108,6 +108,7 @@ public slots:
     void                                    OnActionFileOpen();
 
     // file explorer
+
     void                                    OnActionFileNew_FileExplorer();
     void                                    OnActionFileOpen_FileExplorer();
     void                                    OnActionFileRemove_FileExplorer();
@@ -118,12 +119,14 @@ signals:
     void                                    DirectoryChanged();
     void                                    RecordExplorerChanged();
     void                                    FileExplorerChanged();
-    void                                    RecordsChanged();
+
+    void                                    RecordChanged( TypeRecord* record = 0 );
+    void                                    RecordRemoved( TypeRecord* record = 0 );
+
     void                                    SceneChanged();
     void                                    HtmlTextChanged();
     void                                    EditorContainerChanged();
-    void                                    SetActiveRecord( TypeRecord* record );
-
+    void                                    SetActiveRecord( TypeRecord* record = 0 );
 };
 
 #endif // CONTROLLER_H

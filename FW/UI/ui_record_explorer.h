@@ -13,20 +13,20 @@ class TypeUiRecordTableModel;
 class TypeStruct;
 class TypeController;
 class TypeRecord;
-class TypeContext;
+class TypeDocument;
 
 class TypeUiRecordExplorer : public QWidget, public TypeVariant
 {
     Q_OBJECT
 
 public:
-    explicit TypeUiRecordExplorer( TypeContext& context, TypeController& controller, QWidget* parent = 0 );
+    explicit TypeUiRecordExplorer( TypeController& controller, TypeDocument& document, QWidget* parent = 0 );
     ~TypeUiRecordExplorer() override;
 
     void                                    Update();
 
-    M_REFERENCE                             ( Context,          TypeContext )
     M_REFERENCE                             ( Controller,       TypeController )
+    M_REFERENCE                             ( Document,         TypeDocument )
     M_REFERENCE                             ( RecordTableModel, TypeUiRecordTableModel )
     M_POINTER                               ( ActiveRecord,     TypeRecord )
 

@@ -167,8 +167,8 @@ QWidget* TypeRecord::PropertyWidget( TypeController& controller )
     {
         TypeVariantPtr<TypeUiRecordNameProperty> property = &property_base;
         this->SetName( property->Value() );
-        emit controller.RecordsChanged();
-
+        emit controller.RecordChanged( this );
+        emit controller.RecordChanged(/*generic slot*/);
         return true;
     } );
 
@@ -179,7 +179,8 @@ QWidget* TypeRecord::PropertyWidget( TypeController& controller )
     {
         TypeVariantPtr<TypeUiValueOpenProperty> property = &property_base;
         this->SetValue( property->Value() );
-        emit controller.RecordsChanged();
+        emit controller.RecordChanged( this );
+        emit controller.RecordChanged(/*generic slot*/);
         return true;
     };
 
@@ -206,7 +207,8 @@ QWidget* TypeRecord::PropertyWidget( TypeController& controller )
         {
             long role_flag = RoleFlagList[ index ];
             this->SetFlags( ( ( this->Flags() & ( ~FLAG_ROLE_ALL ) ) | role_flag ) );
-            emit controller.RecordsChanged();
+            emit controller.RecordChanged( this );
+            emit controller.RecordChanged(/*generic slot*/);
         }
 
         return true;
@@ -233,7 +235,8 @@ TypeUiEditor* TypeRecord::EditorWidget( QString id, TypeController& controller )
         TypeVariantPtr<TypeUiTextEditor> editor = &editor_base;
         this->SetValue( editor->Text() );
         controller.SetActiveRecord( this );
-        emit controller.RecordsChanged();
+        emit controller.RecordChanged( this );
+        emit controller.RecordChanged(/*generic slot*/);
         return true;
     };
 
@@ -261,6 +264,7 @@ TypeUiEditor* TypeRecord::EditorWidget( QString id, TypeController& controller )
     TypeUiSyntaxHighlighter* syntax_highlighter =
         controller.SyntaxHighlighterFactory().NewInstance( HighlightStringList[RecordRoleFlagIndex( *this )] );
 
+
     TypeUiTextEditor* text_editor = new TypeUiTextEditor(
         id,
         this->FullName(),
@@ -270,6 +274,24 @@ TypeUiEditor* TypeRecord::EditorWidget( QString id, TypeController& controller )
         &TypeUiEditor::empty_save_callback,
         update_callback,
         syntax_highlighter );
+
+    QObject::connect( &controller, TypeController::RecordChanged, [this, text_editor]( TypeRecord * record )
+    {
+        if( record == 0 )
+            return;
+
+        if( record == this || record->Struct() != 0 )
+            text_editor->OnActionUpdate();
+    } );
+
+    QObject::connect( &controller, TypeController::RecordRemoved, [this, text_editor]( TypeRecord * record )
+    {
+        if( record == 0 )
+            return;
+
+        if( record == this )
+            delete text_editor;
+    } );
 
     text_editor->SetText( this->Value() );
     text_editor->SetHasChanged( false );
@@ -306,7 +328,7 @@ void TypeRecord::Html( TypeHtmlBlockStream& block_stream, long role, TypeStruct&
 QString TypeRecord::ParseText( const QString& text, TypeRecord& record, TypeStruct& root )
 {
     QStringList output;
-    QRegExp regex( "\\[\\$[^\\]]*\\]" );
+    QRegExp regex( "\\[\\?[^\\]]*\\]" );
 
     int index = text.indexOf( regex ), prev;
     int length = regex.matchedLength();

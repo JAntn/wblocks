@@ -41,7 +41,7 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
 
     qDebug() << "Creating Window Contents..";
 
-    m_RecordExplorer = new TypeUiRecordExplorer( controller.Document().Context(), Controller(), this );
+    m_RecordExplorer = new TypeUiRecordExplorer( Controller(), Controller().Document(), this );
     m_FileExplorer = new TypeUiFileExplorer( controller, this );
     m_EditorContainer = new TypeUiEditorContainer( controller, this );
 
@@ -64,7 +64,8 @@ TypeUiMainWindow::TypeUiMainWindow( TypeController& controller, QWidget* parent 
     qDebug() << "Beggining Connections..";
 
     InitConnections();
-    emit Controller().RecordsChanged();
+    emit Controller().RecordChanged();
+    emit Controller().RecordChanged(/*generic slot*/);
     UpdateActions();
     SetCurrentTab( MAINWINDOW_TAB_SCENE );
 
@@ -308,7 +309,7 @@ void TypeUiMainWindow::UpdateFileExplorer()
 
 void TypeUiMainWindow::UpdateHtmlTextView()
 {
-    HtmlTextView().SetFormattedText( Controller().Document().HtmlBuilder().FormattedText() );
+    HtmlTextView().UpdateText();
     HtmlTextView().OnActionUpdate();
 }
 

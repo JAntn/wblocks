@@ -97,7 +97,7 @@ TypeController::TypeController(): TypeVariant()
 
     m_BinPath           = QDir().canonicalPath();
     m_Database          = new TypeDatabase( this );
-    m_Clipboard         = new TypeClipboard( this );
+    m_Clipboard         = new TypeClipboard( *this, this );
 
     if( SyntaxHighlighterFactory().Empty() )
     {
@@ -155,9 +155,15 @@ void TypeController::ConnectSlots()
 
     connect(
         this,
-        TypeController::RecordsChanged,
+        TypeController::RecordChanged,
         this,
-        TypeController::OnRecordsChanged );
+        TypeController::OnRecordChanged );
+
+    connect(
+        this,
+        TypeController::RecordRemoved,
+        this,
+        TypeController::OnRecordRemoved );
 
     connect(
         this,
@@ -481,12 +487,24 @@ void TypeController::OnFileExplorerChanged()
     MainWindow().UpdateActions();
 }
 
-void TypeController::OnRecordsChanged()
+void TypeController::OnRecordChanged( TypeRecord* record )
 {
-    MainWindow().UpdateRecordExplorer();
-    MainWindow().UpdateSceneView();
+    if( record == 0 )
+    {
+        MainWindow().UpdateRecordExplorer();
+        MainWindow().UpdateSceneView();
+        Document().UpdateHtml();
+    }
+}
 
-    Document().UpdateHtml();
+void TypeController::OnRecordRemoved( TypeRecord* record )
+{
+    if( record == 0 )
+    {
+        MainWindow().UpdateRecordExplorer();
+        MainWindow().UpdateSceneView();
+        Document().UpdateHtml();
+    }
 }
 
 void TypeController::OnHtmlTextChanged()
@@ -782,9 +800,12 @@ void TypeController::OnActionRecordRemove()
         emit SetActiveRecord( 0 );
 
         for( TypeRecord* record : selection_list )
+        {
             delete record;
+            emit RecordRemoved( record );
+        }
 
-        emit RecordsChanged();
+        emit RecordRemoved(/*generic slot*/);
     }
     else
         qDebug() << "FLAG_ACTION_REMOVE is disabled on parent struct.";
@@ -904,7 +925,7 @@ void TypeController::OnActionRecordPaste()
         );
 
         Clipboard().Clear();
-        emit RecordsChanged();
+        emit RecordChanged(/*generic slot*/);
     }
     else
     {
@@ -939,11 +960,12 @@ void TypeController::OnActionRecordCut()
             auto items = Document().Scene().FromRecord( *record );
 
             for( auto item : items )
+            {
                 delete item;
+            }
         }
 
         Clipboard().Copy( selection_list );
-        emit RecordsChanged();
     }
     else
     {

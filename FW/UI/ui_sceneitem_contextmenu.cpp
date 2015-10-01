@@ -115,7 +115,8 @@ void TypeUiSceneItemContextMenu::OnActionRemoveRecord()
                     tr( "Remove this record?" ) ) )
         {
             delete & SceneItem().Record();
-            emit Controller().RecordsChanged();
+            emit Controller().RecordRemoved(&SceneItem().Record());
+            emit Controller().RecordRemoved(/*generic slot*/);
         }
     }
     else

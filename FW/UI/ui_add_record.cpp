@@ -129,7 +129,8 @@ void TypeUiAddRecord::OnButtonBoxAccepted()
             Context().Scene().NewItem( *record );
 
         emit Controller().SetActiveRecord( record );
-        emit Controller().RecordsChanged();
+        emit Controller().RecordChanged( record );
+        emit Controller().RecordChanged(/*generic slot*/);
         close();
     }
 }

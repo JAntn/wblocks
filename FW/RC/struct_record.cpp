@@ -95,7 +95,8 @@ QWidget* TypeStructRecord::PropertyWidget( TypeController& controller )
     {
         auto& property = static_cast<TypeUiRecordNameProperty&>( property_base );
         this->SetName( property.Value() );
-        emit controller.RecordsChanged();
+        emit controller.RecordChanged(this);
+        emit controller.RecordChanged(/*generic slot*/);
         return true;
     } );
 
